@@ -4,7 +4,10 @@
     <v-container>
       <v-row style="height:64px;"> 
         <v-col lg="2" md="2" sm="6" class="py-0">
-          <NuxtLink to="/" @click="toggleMenu('/')" id="link-logo"><img :src="logoUrl" id="main-logo" alt="main logo" /></NuxtLink>
+          <NuxtLink to="/" @click="toggleMenu('/')" id="link-logo">
+            <span id="node-name" v-if="nodeName">{{ nodeName }} node</span>
+            <img :src="logoUrl" id="main-logo" alt="main logo" />
+          </NuxtLink>
         </v-col>
 
         <v-col lg="10" md="10" sm="6" class="py-0">
@@ -46,6 +49,7 @@
 
   const config = useRuntimeConfig()
   const logoUrl = config.public.logoUrl
+  const nodeName = config.public.nodeName
 
   import structureSettings from '@/modules/structure/structureSettings'
 
@@ -75,6 +79,7 @@
 <style scoped>
   header { z-index:10000!important; }
   #link-logo { position: fixed; height:100%; display: flex; align-items: center; }
+  #node-name { position: absolute; right: 2px; top: 5px; font-size: .8rem; font-weight: 600; color: var(--palette-3); }
   #main-logo { max-height: 55px; vertical-align: bottom; }
   .v-btn { height: 100%; font-weight: 600; color: var(--palette-3)!important; }
   .v-btn--active { border-bottom: 2px solid;}

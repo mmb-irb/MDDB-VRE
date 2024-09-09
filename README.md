@@ -20,13 +20,12 @@ npm install
 
 3. A `.env` file must be created in the project root. The file `.env.git` can be taken as an example. The file must contain the following environment variables:
 
-TODO NODE (ie jsc)
-
 | key                       | value                                    | description                     |
 | ------------------------- | ---------------------------------------- | ------------------------------- |
 | BASE_URL_DEVELOPMENT      | string                                   | baseURL for development         |
 | BASE_URL_STAGING          | string                                   | baseURL for staging             |
 | BASE_URL_PRODUCTION       | string                                   | baseURL for production          |
+| NODE_NAME                 | string                                   | node identifier to deploy       |
 
 ## Development Server
 

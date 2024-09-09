@@ -77,6 +77,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
+      nodeName: process.env.NODE_NAME,
       logoUrl: `${baseURL}img/logo.png`,
       apiBase: '/api',
       apiEndPoints: [
