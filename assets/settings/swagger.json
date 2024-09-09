@@ -1,0 +1,152 @@
+
+{
+  "openapi": "3.0.2",
+  "info": {
+		"title": "",
+		"license": {
+				"name": "MIT License"
+		},
+		"version": "",
+		"description": ""
+  },
+  "consumes": [
+    "application\/json"
+  ],
+  "tags": [
+		{
+			"name": "Documents metadata",
+			"description": "Documents data and metadata"
+		}
+  ],
+  "paths": {
+		"\/documents": {
+			"get": {
+				"tags": [
+					"Documents metadata"
+				],
+				"summary": "Get list of documents",
+				"description": "Gets a paginated list of summaries of all the documents available in the database",
+				"operationId": "getDocuments",
+				"produces": [
+					"application\/json"
+				],
+				"parameters": [
+					{
+						"name": "limit",
+						"in": "query",
+						"description": "Maximum number of documents in each page",
+						"required": false,
+						"type": "integer",
+						"default": 10
+					},
+					{
+						"name": "page",
+						"in": "query",
+						"description": "Number of page to be returned",
+						"required": false,
+						"type": "integer",
+						"default": 1
+					}
+				],
+				"responses": {
+					"200": {
+						"description": "Total documents and paginated array of documents",
+						"content": {
+							"application/json": {
+								"schema": {
+									"properties": {
+										"total": {
+											"description": "Total number of documents in the database",
+											"type": "integer"
+										},
+										"documents": {
+											"description": "List of documents",
+											"type": "array",
+											"items": {
+												"$ref": "#\/components/schemas\/ShortDocument"
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				},
+				"deprecated": false
+			}
+		}
+  },
+  "definitions": {
+		"arguments": {
+			"doc_id": {
+				"name": "id",
+				"in": "path",
+				"description": "Document identifier",
+				"required": true,
+				"type": "string"
+			},
+			"file_id": {
+				"name": "id",
+				"in": "path",
+				"description": "File identifier",
+				"required": true,
+				"type": "string"
+			}
+		}
+  },
+  "components": {
+		"schemas": {
+			"ShortDocument": {
+				"required": [
+					"id",
+					"title",
+					"description",
+					"files",
+					"created"
+				],
+				"properties": {
+					"id": {
+						"description": "identifier",
+						"type": "string"
+					},
+					"title": {
+						"description": "document title",
+						"type": "string"
+					},
+					"description": {
+						"description": "document description",
+						"type": "string"
+					},
+					"files": {
+						"description": "document description",
+						"type": "integer"
+					},
+					"created": {
+						"description": "document date of creation",
+						"type": "string",
+            "format": "date-time"
+					}
+				},
+				"type": "object",
+				"xml": {
+					"name": "ShortDocument"
+				}
+			},
+			"StatusError": {
+				"required": [
+					"message"
+				],
+				"properties": {
+					"message": {
+						"description": "Response of the REST API server",
+						"type": "string"
+					}
+				},
+				"type": "object",
+				"xml": {
+					"name": "StatusError"
+				}
+			}
+		}
+  }
+}
