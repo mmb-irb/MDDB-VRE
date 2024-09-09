@@ -8,11 +8,15 @@ This repo contains the basic **VRE** for the [**MDDB**](https://mddbr.eu/) proje
 
 1. Git clone this same repository on the server:
 
-`git clone [git@mmb.irbbarcelona.org:22124]:gbayarri/mddb-vre.git`
+```bash
+git clone [git@mmb.irbbarcelona.org:22124]:gbayarri/mddb-vre.git
+```
 
 2. Install node modules:
 
-`npm install`
+```bash
+npm install
+```
 
 3. A `.env` file must be created in the project root. The file `.env.git` can be taken as an example. The file must contain the following environment variables:
 
@@ -82,7 +86,9 @@ sudo /etc/init.d/apache2 restart
 
 3. Install PM2 for running nodeJS server as a daemon:
 
-`sudo npm install pm2 -g`
+```bash
+sudo npm install pm2 -g
+```
 
 4. Create **ecosystem.config.js** file in the same folder where the **.output** folfer has been copied:
 
@@ -105,7 +111,9 @@ module.exports = {
 
 4. Launch server (from the folder where it's installed):
 
-`pm2 start ecosystem.config.js --name vre`
+```bash
+pm2 start ecosystem.config.js --name vre
+```
 
 5. Check that the server is up and running:
 
@@ -116,7 +124,9 @@ lsof -i tcp:3001
 
 5. Make pm2 persistent in case VM has to be reset:
     
-`pm2 startup systemd`
+```bash
+pm2 startup systemd
+```
 
 ## Credits
 
