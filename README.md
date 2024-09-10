@@ -27,6 +27,8 @@ npm install
 | BASE_URL_PRODUCTION       | string                                   | baseURL for production          |
 | NODE_NAME                 | string                                   | node identifier to deploy       |
 
+TODO PATH_DATA (to save there all the data uploaded)
+
 ## Development Server
 
 Start the development server on `http://localhost:3001`:
