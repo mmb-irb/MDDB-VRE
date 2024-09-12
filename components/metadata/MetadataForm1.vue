@@ -2,16 +2,16 @@
   <v-form
     v-model="form"
   >
-    <v-row class="mb-1">
+    <v-row class="mb-1 mt-1">
       <v-col lg="6" md="6" sm="12" cols="12" class="pb-0">
         <v-text-field
           v-model="fields.name"
           :rules="[rules.required]"
-          label="Name"
+          :label="texts.name.label"
           clearable
         >
           <template v-slot:append>
-            <form-tooltip :props="{width: 300, text: tooltips.name}" />
+            <form-tooltip :props="{width: 300, text: texts.name.tooltip}" />
           </template>
         </v-text-field>
       </v-col>
@@ -19,11 +19,11 @@
         <v-text-field
           v-model="fields.group"
           :rules="[]"
-          label="Group(s)"
+          :label="texts.group.label"
           clearable
         >
         <template v-slot:append>
-            <form-tooltip :props="{width: 300, text: tooltips.group}" />
+            <form-tooltip :props="{width: 300, text: texts.group.tooltip}" />
           </template>
       </v-text-field>
       </v-col>
@@ -33,13 +33,13 @@
         <v-textarea 
           v-model="fields.authors"
           :rules="[]"
-          label="Author(s)"
+          :label="texts.authors.label"
           rows="2"
           clearable
           no-resize
         >
           <template v-slot:append>
-            <form-tooltip :props="{width: 300, text: tooltips.authors}" />
+            <form-tooltip :props="{width: 300, text: texts.authors.tooltip}" />
           </template>
       </v-textarea>
       </v-col>
@@ -49,13 +49,13 @@
         <v-textarea 
           v-model="fields.description"
           :rules="[rules.required]"
-          label="Description"
+          :label="texts.description.label"
           clearable
           rows="4"
           no-resize
         >
         <template v-slot:append>
-            <form-tooltip :props="{width: 300, text: tooltips.description}" />
+            <form-tooltip :props="{width: 300, text: texts.description.tooltip}" />
           </template>
       </v-textarea>
       </v-col>
@@ -65,11 +65,11 @@
         <v-text-field
           v-model="fields.program"
           :rules="[rules.required]"
-          label="Program and version"
+          :label="texts.program.label"
           clearable
         >
         <template v-slot:append>
-            <form-tooltip :props="{width: 300, text: tooltips.program}" />
+            <form-tooltip :props="{width: 300, text: texts.program.tooltip}" />
           </template>
       </v-text-field>
       </v-col>
@@ -77,11 +77,11 @@
         <v-text-field
           v-model="fields.contact"
           :rules="[rules.required, rules.email]"
-          label="Contact"
+          :label="texts.contact.label"
           clearable
         >
         <template v-slot:append>
-            <form-tooltip :props="{width: 300, text: tooltips.contact}" />
+            <form-tooltip :props="{width: 300, text: texts.contact.tooltip}" />
           </template>
       </v-text-field>
       </v-col>
@@ -100,6 +100,32 @@
     program: null,
     contact: null
   })
+  const texts = {
+    name: {
+      label: 'Name *',
+      tooltip: 'Name to be shown in the browser and simulation(s) overview. This field is used by the browser to search the simulation(s).',
+    },
+    group: {
+      label: 'Group(s)',
+      tooltip: 'Group names to be shown in the simulation(s) overview (e.g. Orozco lab). This field is used by the browser to search the simulation(s).',
+    },
+    authors: {
+      label: 'Author(s)',
+      tooltip: 'Author names to be shown in the simulation(s) overview. This field is used by the browser to search the simulation(s).',
+    },
+    description: {
+      label: 'Description *',
+      tooltip: 'Description to be shown in the simulation(s) overview. This field is used by the browser to search the simulation(s).',
+    },
+    program: {
+      label: 'Program and version *',
+      tooltip: 'Software used to carry your simulation (e.g. Gromacs) and its version (e.g. 2020).',
+    },
+    contact: {
+      label: 'Contact *',
+      tooltip: 'An email address for anyone interested in the simulation to reach out.'
+    }
+  }
   const tooltips = {
     name: 'Name to be shown in the browser and simulation(s) overview. This field is used by the browser to search the simulation(s).',
     group: 'Group names to be shown in the simulation(s) overview (e.g. Orozco lab). This field is used by the browser to search the simulation(s).',

@@ -16,7 +16,19 @@
               <v-card-text>
                 <metadata-form1 @endFormMeta="handleEndFormMeta" />
               </v-card-text>
+
+              <template v-slot:actions>
+                <v-card-actions style="display: flex; justify-content: space-between; width:100%; ">
+                  &nbsp;
+                  <v-btn color="purple-accent-1" variant="flat" @click="step=step+1" id="next-btn">
+                    <v-icon size="large" icon="mdi-chevron-right"></v-icon>
+                    Next
+                  </v-btn>
+                </v-card-actions>
+              </template>
+
             </v-card>
+            
           </template>
 
           <template v-slot:item.2>
@@ -27,8 +39,22 @@
               </template>
 
               <v-card-text>
-                <upload-data @endFormMeta="handleEndFormMeta" />
+                <upload-data @endFormUpload="handleEndFormUpload" ref="uploadRef" />
               </v-card-text>
+
+              <template v-slot:actions>
+                <v-card-actions style="display: flex; justify-content: space-between; width:100%; ">
+                  <v-btn color="purple-accent-1" variant="outlined" @click="step=step-1">
+                    <v-icon size="large" icon="mdi-chevron-left"></v-icon>
+                    Previous
+                  </v-btn>
+                  <v-btn color="purple-accent-1" variant="flat" @click="startUploadData" id="upload-btn" :loading="uploading">
+                    <v-icon size="large" icon="mdi-tray-arrow-up"></v-icon>
+                    Upload
+                  </v-btn>
+                </v-card-actions>
+              </template>
+
             </v-card>
           </template>
 
@@ -45,14 +71,17 @@
             </v-card>
           </template>
 
-          <v-stepper-actions
+          <!--
+          v-btn v-theme--light v-btn--density-default v-btn--size-default v-btn--variant-text -->
+          <!--<v-stepper-actions
             :disabled="false"
             color="purple-accent-2"
-            :next-text="step>2?'finish':'next'"
+            :next-text="step>1?'upload':'next'"
             :prev-text="step>1?'back':''"
             @click:next="step=step+1"
             @click:prev="step=step-1"
-          ></v-stepper-actions>
+          >
+        </v-stepper-actions>-->
 
         </v-stepper>
       </v-col>
@@ -73,11 +102,22 @@
   const steps = ['Metadata', 'Data', 'Finish']
   const step = ref(1)
   const status = ref([null, false, false, false])
+  const uploading = ref(false)
+  const uploadRef = ref(null)
 
-  let buttons, backButton, nextButton
+  let nextButton
   onMounted(async () => {
+
+    nextButton = document.querySelector('#next-btn')
+    nextButton.disabled = true
+    nextButton.classList.add('v-btn--disabled')
+
+    /*uploadButton = document.querySelector('#upload-btn')
+    uploadButton.disabled = true
+    uploadButton.classList.add('v-btn--disabled')*/
+
     // Select the div with class "v-stepper-actions"
-    const stepperActionsDiv = document.querySelector('.v-stepper-actions');
+    /*const stepperActionsDiv = document.querySelector('.v-stepper-actions');
 
     // Get all buttons inside the selected div
     buttons = stepperActionsDiv.querySelectorAll('button')
@@ -87,7 +127,7 @@
     nextButton = buttons[1]
     backButton.style.visibility = 'hidden'
     nextButton.disabled = true
-    nextButton.classList.add('v-btn--disabled')
+    nextButton.classList.add('v-btn--disabled')*/
   })
 
   // handles the end of the metadata form
@@ -97,8 +137,21 @@
     v ? nextButton.classList.remove('v-btn--disabled') : nextButton.classList.add('v-btn--disabled')
   }
 
+  const handleEndFormUpload = (v) => {
+    let uploadButton = document.querySelector('#upload-btn')
+    uploadButton.disabled = !v
+    status.value[step.value] = v
+    v ? uploadButton.classList.remove('v-btn--disabled') : uploadButton.classList.add('v-btn--disabled')
+  }
+
+  const startUploadData = () => {
+    uploading.value = true
+    console.log('uploading data...')
+    uploadRef.value.sendToREST()
+  }
+
   // shows or hides the back and next buttons based on the current step
-  watch(step, (ns, os) => {
+  /*watch(step, (ns, os) => {
 
     // hide back button on first step
     if(ns === 1) backButton.style.visibility = 'hidden'
@@ -112,9 +165,9 @@
     if(ns !== os) {
       nextButton.disabled = !status.value[step.value]
       status.value[step.value] ? nextButton.classList.remove('v-btn--disabled') : nextButton.classList.add('v-btn--disabled')
-    } 
+    }
 
-  })
+  })*/
 
 </script>
 
