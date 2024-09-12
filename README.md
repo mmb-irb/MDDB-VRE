@@ -34,7 +34,6 @@ TODO PATH_DATA (to save there all the data uploaded)
 Start the development server on `http://localhost:3001`:
 
 ```bash
-# npm
 npm run dev
 ```
 
@@ -47,7 +46,6 @@ Build the application for production.
 Build the application for development server (webdev3).
 
 ```bash
-# npm
 npm run build:staging
 ```
 
@@ -58,7 +56,6 @@ Copy the **.output** folder to the server.
 Build the application for production server.
 
 ```bash
-# npm
 npm run build:production
 ```
 
