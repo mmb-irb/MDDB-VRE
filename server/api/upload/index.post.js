@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
 
   const config = useRuntimeConfig();
 
-  const form = formidable({ maxFileSize: config.public.maxUploadTrjSize }); // 1GB
+  const form = formidable({ maxFileSize: config.public.maxUploadTrjSize });
   const uploadDir = config.dataPath;
 
   return new Promise((resolve, reject) => {
