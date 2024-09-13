@@ -48,7 +48,12 @@
 
 <script setup>
 
-  const { $globals } = useNuxtApp()
+  import structureStorage from '@/modules/structure/structureStorage'
+
+  const { getMetadata } = structureStorage()
+
+  const config = useRuntimeConfig()
+  const { $globals, $axios } = useNuxtApp()
   
   const form = ref(false)
   const fields = reactive({
@@ -89,26 +94,42 @@
 
     const formData = new FormData()
     formData.append('top', fields.top)
-    fields.traj.forEach(file => formData.append('traj', file))
-
-    //console.log(formData)
+    if(fields.traj) fields.traj.forEach(file => formData.append('traj', file))
 
     // Create JSON with metadata
-    // TODO WITH REAL DATA FROM THE FORM
-    // CREATE A NEW structureStorage.js file????
-    const metadata = {
-      // Add your metadata fields here
-      exampleField: 'exampleValue',
-      anotherField: 'anotherValue',
-    };
+    const metadata = getMetadata()
+    metadata.trjType = fields.type
     const metadataBlob = new Blob([JSON.stringify(metadata)], { type: 'application/json' });
-    formData.append('metadata', metadataBlob, 'metadata.json');
+    //console.log(metadata, metadataBlob)
+    formData.append('meta', metadataBlob, 'metadata.json');
 
-    for (let [key, value] of formData.entries()) {
+    /*for (let [key, value] of formData.entries()) {
       console.log(`Key: ${key}`);
       console.log(`Name: ${value.name}`);
       console.log(`Size: ${value.size}`);
-    }
+    }*/
+
+    let resp = null
+    $axios
+      .post(`${config.public.apiBase}/upload`, formData,
+      {
+          onUploadProgress: (e) => {
+              /*if (e.lengthComputable) {
+                  document.querySelector(".p-progressbar-value.p-progressbar-value-animate").style.width = Math.floor((e.loaded/e.total) * 100) + "%"
+              }*/
+             console.log(Math.floor((e.loaded/e.total) * 100) + "%")
+          }
+      })
+      .then(function (response) {
+          //console.log(response);
+          resp = response.data
+      })
+      .catch(err => console.error(err.message))
+      .finally( () => {
+
+        console.log(resp)
+
+      })
 
     /*const response = await fetch('http://localhost:3000/upload', {
       method: 'POST',

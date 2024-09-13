@@ -8,6 +8,7 @@
           v-model="fields.name"
           :rules="[rules.required]"
           :label="texts.name.label"
+          @update:modelValue="setMetadata('name', fields.name)"
           clearable
         >
           <template v-slot:append>
@@ -20,6 +21,7 @@
           v-model="fields.group"
           :rules="[]"
           :label="texts.group.label"
+          @update:modelValue="setMetadata('group', fields.group)"
           clearable
         >
         <template v-slot:append>
@@ -34,6 +36,7 @@
           v-model="fields.authors"
           :rules="[]"
           :label="texts.authors.label"
+          @update:modelValue="setMetadata('authors', fields.authors)"
           rows="2"
           clearable
           no-resize
@@ -50,6 +53,7 @@
           v-model="fields.description"
           :rules="[rules.required]"
           :label="texts.description.label"
+          @update:modelValue="setMetadata('description', fields.description)"
           clearable
           rows="4"
           no-resize
@@ -66,6 +70,7 @@
           v-model="fields.program"
           :rules="[rules.required]"
           :label="texts.program.label"
+          @update:modelValue="setMetadata('program', fields.program)"
           clearable
         >
         <template v-slot:append>
@@ -78,6 +83,7 @@
           v-model="fields.contact"
           :rules="[rules.required, rules.email]"
           :label="texts.contact.label"
+          @update:modelValue="setMetadata('contact', fields.contact)"
           clearable
         >
         <template v-slot:append>
@@ -91,6 +97,10 @@
 
 <script setup>
   
+  import structureStorage from '@/modules/structure/structureStorage'
+
+  const { setMetadata } = structureStorage()
+
   const form = ref(false)
   const fields = reactive({
     name: null,

@@ -76,15 +76,15 @@ export default defineNuxtConfig({
   ],
 
   runtimeConfig: {
+    dataPath: process.env.DATA_PATH,
     public: {
       nodeName: process.env.NODE_NAME,
+      maxUploadTrjSize: process.env.MAX_FILE_SIZE,
       logoUrl: `${baseURL}img/logo.png`,
-      apiBase: '/api',
+      apiBase: `${baseURL}api`,
       apiEndPoints: [
         '/api', 
-        '/^\/api\/documents(\\/)?(\\?[\\w=&]+)?$/', 
-        '/^\/api\/documents\/[a-zA-Z0-9\_\.]+$/',
-        '/^\/api\/files\/[a-zA-Z0-9\_\.]+$/',
+        '/api/upload'
       ]
     }
   },

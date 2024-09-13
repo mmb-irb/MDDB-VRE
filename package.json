@@ -30,6 +30,8 @@
     "vue-router": "^4.2.5"
   },
   "dependencies": {
+    "axios": "^1.7.7",
+    "formidable": "^3.5.1",
     "swagger-ui": "^5.17.3"
   }
 }
