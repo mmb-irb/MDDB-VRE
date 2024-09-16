@@ -39,12 +39,12 @@
               </template>
 
               <v-card-text>
-                <upload-data @endFormUpload="handleEndFormUpload" ref="uploadRef" />
+                <upload-data @endFormUpload="handleEndFormUpload" @endUploadFiles="handleEndUploadFiles" ref="uploadRef" />
               </v-card-text>
 
               <template v-slot:actions>
                 <v-card-actions style="display: flex; justify-content: space-between; width:100%; ">
-                  <v-btn color="purple-accent-1" variant="outlined" @click="step=step-1">
+                  <v-btn color="purple-accent-1" variant="outlined" @click="step=step-1" id="prev-btn">
                     <v-icon size="large" icon="mdi-chevron-left"></v-icon>
                     Previous
                   </v-btn>
@@ -66,22 +66,10 @@
               </template>
 
               <v-card-text>
-                2 possible components: ok, everything is up or return the keyphrase for completing the data upload!
+                <end-process />
               </v-card-text>
             </v-card>
           </template>
-
-          <!--
-          v-btn v-theme--light v-btn--density-default v-btn--size-default v-btn--variant-text -->
-          <!--<v-stepper-actions
-            :disabled="false"
-            color="purple-accent-2"
-            :next-text="step>1?'upload':'next'"
-            :prev-text="step>1?'back':''"
-            @click:next="step=step+1"
-            @click:prev="step=step-1"
-          >
-        </v-stepper-actions>-->
 
         </v-stepper>
       </v-col>
@@ -112,22 +100,6 @@
     nextButton.disabled = true
     nextButton.classList.add('v-btn--disabled')
 
-    /*uploadButton = document.querySelector('#upload-btn')
-    uploadButton.disabled = true
-    uploadButton.classList.add('v-btn--disabled')*/
-
-    // Select the div with class "v-stepper-actions"
-    /*const stepperActionsDiv = document.querySelector('.v-stepper-actions');
-
-    // Get all buttons inside the selected div
-    buttons = stepperActionsDiv.querySelectorAll('button')
-
-    // Access the first and second buttons
-    backButton = buttons[0]
-    nextButton = buttons[1]
-    backButton.style.visibility = 'hidden'
-    nextButton.disabled = true
-    nextButton.classList.add('v-btn--disabled')*/
   })
 
   // handles the end of the metadata form
@@ -146,28 +118,20 @@
 
   const startUploadData = () => {
     uploading.value = true
-    console.log('uploading data...')
+    let prevButton = document.querySelector('#prev-btn')
+    prevButton.disabled = true
+    prevButton.classList.add('v-btn--disabled')
+    //console.log('uploading data...')
     uploadRef.value.sendToREST()
   }
 
-  // shows or hides the back and next buttons based on the current step
-  /*watch(step, (ns, os) => {
-
-    // hide back button on first step
-    if(ns === 1) backButton.style.visibility = 'hidden'
-    else backButton.style.visibility = 'visible'
-
-    // hide next button on last step
-    if(ns === 3) nextButton.style.visibility = 'hidden'
-    else nextButton.style.visibility = 'visible'
-
-    // enable or disable next button based on the status of the current step
-    if(ns !== os) {
-      nextButton.disabled = !status.value[step.value]
-      status.value[step.value] ? nextButton.classList.remove('v-btn--disabled') : nextButton.classList.add('v-btn--disabled')
+  const handleEndUploadFiles = (v) => {
+    uploading.value = false
+    if(v) {
+      //console.log('upload finished!')
+      step.value = step.value + 1
     }
-
-  })*/
+  }
 
 </script>
 

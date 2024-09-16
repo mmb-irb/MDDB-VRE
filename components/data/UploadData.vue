@@ -43,6 +43,20 @@
         ></v-switch>
       </v-col>
     </v-row>
+    <v-row>
+      <v-col cols="12" class="py-0">
+        <v-progress-linear
+          v-model="progress"
+          color="deep-purple-lighten-4"
+          height="15"
+          v-if="progress > 0"
+        >
+          <template v-slot:default="{ value }">
+            <strong style="font-size:.7rem;">{{ Math.ceil(value) }}%</strong>
+          </template>
+        </v-progress-linear>
+      </v-col>
+    </v-row>
   </v-form>
 </template>
 
@@ -62,12 +76,12 @@
     type: 'small'
   })
   const isFormValid = computed(() => {
-    //return fields.top && fields.traj && fields.traj.length && fields.traj.reduce((acc, file) => acc + file.size, 0) < $globals.maxUploadTrjSize;
     return (fields.top && (fields.type === 'large' || (fields.traj && fields.traj.length && fields.traj.reduce((acc, file) => acc + file.size, 0) < $globals.maxUploadTrjSize)))
   })
   const trjDisabled = computed(() => fields.type === 'large')
+  const progress = ref(0)
 
-  const emit = defineEmits(['endFormUpload']);
+  const emit = defineEmits(['endFormUpload', 'endUploadFiles']);
 
   const rules = {
     top: [
@@ -100,24 +114,19 @@
     const metadata = getMetadata()
     metadata.trjType = fields.type
     const metadataBlob = new Blob([JSON.stringify(metadata)], { type: 'application/json' });
-    //console.log(metadata, metadataBlob)
     formData.append('meta', metadataBlob, 'metadata.json');
-
-    /*for (let [key, value] of formData.entries()) {
-      console.log(`Key: ${key}`);
-      console.log(`Name: ${value.name}`);
-      console.log(`Size: ${value.size}`);
-    }*/
 
     let resp = null
     $axios
       .post(`${config.public.apiBase}/upload`, formData,
       {
           onUploadProgress: (e) => {
-              /*if (e.lengthComputable) {
-                  document.querySelector(".p-progressbar-value.p-progressbar-value-animate").style.width = Math.floor((e.loaded/e.total) * 100) + "%"
-              }*/
-             console.log(Math.floor((e.loaded/e.total) * 100) + "%")
+              if (e.lengthComputable) {
+                  progress.value = Math.floor((e.loaded/e.total) * 100)
+                  if(progress.value >= 100) {
+                    emit('endUploadFiles', true)
+                  }
+              }
           }
       })
       .then(function (response) {
@@ -130,12 +139,6 @@
         console.log(resp)
 
       })
-
-    /*const response = await fetch('http://localhost:3000/upload', {
-      method: 'POST',
-      body: formData
-    })
-    console.log(response)*/
   }
 
   // controls "upload" button on parent component

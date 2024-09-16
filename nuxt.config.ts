@@ -68,7 +68,8 @@ export default defineNuxtConfig({
   components: [
     { path: '~/components/common', extensions: ['vue'] },
     { path: '~/components/metadata', extensions: ['vue'] },
-    { path: '~/components/data', extensions: ['vue'] }
+    { path: '~/components/data', extensions: ['vue'] },
+    { path: '~/components/end', extensions: ['vue'] }
   ],
 
   plugins: [
