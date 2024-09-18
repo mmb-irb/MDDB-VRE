@@ -79,7 +79,7 @@
 <style scoped>
   header { z-index:10000!important; }
   #link-logo { position: fixed; height:100%; display: flex; align-items: center; }
-  #node-name { position: absolute; right: 2px; top: 5px; font-size: .8rem; font-weight: 600; color: var(--palette-3); }
+  #node-name { position: absolute; right: 2px; top: 14px; font-size: .8rem; font-weight: 600; color: var(--palette-4); }
   #main-logo { max-height: 55px; vertical-align: bottom; }
   .v-btn { height: 100%; font-weight: 600; color: var(--palette-3)!important; }
   .v-btn--active { border-bottom: 2px solid;}
