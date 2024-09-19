@@ -85,7 +85,8 @@ export default defineNuxtConfig({
       apiBase: `${baseURL}api`,
       apiEndPoints: [
         '/api', 
-        '/api/upload'
+        '/api/upload',
+        '/^\/api/mc(\\?.*)?$/'
       ]
     }
   },
