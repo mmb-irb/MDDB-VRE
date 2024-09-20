@@ -7,6 +7,7 @@ export default defineEventHandler(async (event) => {
 
   // Handle query params (GET)
   const query = getQuery(event);
+  const bucket = query.bucket;
   const files = query.files;
 
   // Check if files is present and is either a string or an array
@@ -17,15 +18,6 @@ export default defineEventHandler(async (event) => {
 
   // Ensure files is an array for consistent processing
   const filesArray = Array.isArray(files) ? files : [files];
-
-  const generateUniqueId = (length = 10) => {
-		const chars = 'abcdefghijklmnopqrstuvwxyz0123456789-';
-		let result = '';
-		for (let i = 0; i < length; i++) {
-			result += chars.charAt(Math.floor(Math.random() * chars.length));
-		}
-		return result;
-	}
 
   const execCommand = (file, newBucket) => {
     return new Promise((resolve, reject) => {
@@ -43,19 +35,17 @@ export default defineEventHandler(async (event) => {
         const curlCommandMatch = stdout.match(/(curl .*)/);
         const curlCommand = curlCommandMatch ? curlCommandMatch[1] : 'Curl command not found';
 
-        resolve({ message: curlCommand });
+        resolve({ file, code: curlCommand });
       });
     });
   };
 
-  const newBucket = generateUniqueId();
-
   try {
     // Create the new bucket and await its completion
-    await execPromise(`mc mb myminio/${newBucket}`);
+    await execPromise(`mc mb myminio/${bucket}`);
     // Generate presigned URL for each file
-    const results = await Promise.all(filesArray.map(file => execCommand(file, newBucket)));
-    return { results, uid: newBucket };
+    const results = await Promise.all(filesArray.map(file => execCommand(file, bucket)));
+    return { results, uid: bucket };
   } catch (error) {
     return { error: error.message };
   }

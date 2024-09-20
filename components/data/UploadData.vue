@@ -90,7 +90,7 @@
   const { getMetadata } = structureStorage()
 
   const config = useRuntimeConfig()
-  const { $globals, $axios } = useNuxtApp()
+  const { $globals, $axios, $generateUniqueId } = useNuxtApp()
   
   const texts = {
     top: {
@@ -191,7 +191,10 @@
     // Create JSON with metadata
     const metadata = getMetadata()
     metadata.trjType = fields.type
-    if(fields.type === 'large') metadata.trajNames = trajNames.value
+    if(fields.type === 'large') {
+      metadata.bucket = $generateUniqueId()
+      metadata.trajNames = trajNames.value
+    }
     const metadataBlob = new Blob([JSON.stringify(metadata)], { type: 'application/json' });
     formData.append('meta', metadataBlob, 'metadata.json');
 
