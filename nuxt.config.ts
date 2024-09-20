@@ -83,6 +83,7 @@ export default defineNuxtConfig({
       maxUploadTrjSize: process.env.MAX_FILE_SIZE,
       logoUrl: `${baseURL}img/logo.png`,
       apiBase: `${baseURL}api`,
+      minioURL: process.env.MINIO_URL,
       apiEndPoints: [
         '/api', 
         '/api/upload',

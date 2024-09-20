@@ -22,7 +22,8 @@ export default defineEventHandler(async (event) => {
 
           for (const file of fileArray) {
             const filePath = path.join(uploadDir, file.originalFilename);
-            await fs.rename(file.filepath, filePath);
+            //await fs.rename(file.filepath, filePath);
+            await fs.copyFile(file.filepath, filePath);
           }
         }
         resolve({ message: 'Files uploaded successfully' });

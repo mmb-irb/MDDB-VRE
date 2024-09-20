@@ -63,6 +63,15 @@
   const codes = ref([])
   const snackbar = ref(false)
 
+  const processResults = (results) => {
+    return results.map(result => {
+      return {
+        file: result.file,
+        code: result.code.replace(/http:\/\/[^:]+:/g, `http://${config.public.minioURL}:`)
+      }
+    })
+  }
+
   if (trjType === 'large') {
     let resp = null
 
@@ -78,7 +87,8 @@
       })
       .catch(err => console.error(err.message))
       .finally( () => {
-        codes.value = resp.results
+        const processed_results = processResults(resp.results)
+        codes.value = processed_results
       })
   }
 
