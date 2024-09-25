@@ -25,9 +25,10 @@ npm install
 | BASE_URL_DEVELOPMENT      | string                                   | baseURL for development         |
 | BASE_URL_STAGING          | string                                   | baseURL for staging             |
 | BASE_URL_PRODUCTION       | string                                   | baseURL for production          |
+| DATA_PATH                 | string                                   | path where the data will be saved       |
+| MAX_FILE_SIZE             | string                                   | maximum size for all the trajectory files       |
+| MINIO_URL                 | string                                   | url for minio (ie localhost)    |
 | NODE_NAME                 | string                                   | node identifier to deploy       |
-
-TODO PATH_DATA (to save there all the data uploaded)
 
 ## Development Server
 
@@ -60,6 +61,12 @@ npm run build:production
 ```
 
 Copy the **.output** folder to the server.
+
+## Requirements
+
+This VRE need to have the Minio Client installed for working properly.
+
+[Click here](https://min.io/docs/minio/linux/reference/minio-mc.html?utm_term=&utm_campaign=&utm_source=adwords&utm_medium=ppc&hsa_acc=8976569894&hsa_cam=20593618271&hsa_grp=&hsa_ad=&hsa_src=x&hsa_tgt=&hsa_kw=&hsa_mt=&hsa_net=adwords&hsa_ver=3&gad_source=1&gclid=CjwKCAjw6c63BhAiEiwAF0EH1NP-B28zkYOdJKeiaXN2KlSts-UBx2PFxKHpF7IOD0X2nZ0HZQv87BoC8r8QAvD_BwE) for taking a look to the installation tutorial.
 
 ## Configuration for apache server (development)
 
