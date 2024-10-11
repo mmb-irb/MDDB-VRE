@@ -67,7 +67,7 @@
     return results.map(result => {
       return {
         file: result.file,
-        code: result.code.replace(/http:\/\/[^:]+:/g, `http://${config.public.minioURL}:`)
+        code: result.code.replace(/http:\/\/[^:]+:\d{4}/g, config.public.minioURL)
       }
     })
   }
