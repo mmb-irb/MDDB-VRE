@@ -18,19 +18,63 @@
       variant="tonal"
       elevation="2"
     >
-      <span><strong>Topology uploaded</strong>, please copy the below code(s) for uploading your trajectory file(s) <strong>from your computer</strong>. Be aware to <strong>replace &lt;FILE&gt;</strong> by the <strong>path</strong> of the trajectory file(s) to upload. The link(s) will <strong>expire</strong> in <strong>one day</strong>.</span>
+      <span><strong>Topology uploaded</strong>, please choose your favourite <strong>command line</strong> method for uploading the <strong>trajectory file(s)</strong>.</span>
     </v-alert>
-    <v-textarea
-      v-for="(c, index) in codes"
-      class="my-2"
-      append-inner-icon="mdi-content-copy"
-      @click:append-inner="copyCode(index)"
-      :label="codes[index].file"
-      v-model="codes[index].code"
-      auto-grow
-      readonly
-      hide-details="auto"
-    ></v-textarea>
+
+    <div class="text-center pt-5" v-if="loading">
+      <v-progress-circular
+        color="purple-darken-1"
+        indeterminate
+      ></v-progress-circular>
+    </div>
+
+    <v-expansion-panels class="my-4" variant="inset" v-if="!loading">
+      <v-expansion-panel>
+        <v-expansion-panel-title collapse-icon="mdi-minus" expand-icon="mdi-plus">
+          <div class="container-logo">
+            <img src="/img/curl.png" class="img-logo">
+          </div>
+          <span class="panel-title">curl</span>  
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+          <panel-c-u-r-l :codes="codes.curl" @copyCode="handleCopyCode" />
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+      <v-expansion-panel>
+        <v-expansion-panel-title collapse-icon="mdi-minus" expand-icon="mdi-plus">
+          <div class="container-logo">
+            <img src="/img/minio.png" class="img-logo">
+          </div>
+          <span class="panel-title">MinIO Client</span>
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+          <panel-m-c :codes="codes.mc" :bucket="codes.bucket" @copyCode="handleCopyCode" />
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+      <v-expansion-panel>
+        <v-expansion-panel-title collapse-icon="mdi-minus" expand-icon="mdi-plus">
+          <div class="container-logo">
+            <img src="/img/aws.png" class="img-logo2">
+          </div>
+          <span class="panel-title">AWS CLI</span>
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+          <panel-a-w-s :codes="codes.aws" :bucket="codes.bucket" @copyCode="handleCopyCode" />
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+      <v-expansion-panel>
+        <v-expansion-panel-title collapse-icon="mdi-minus" expand-icon="mdi-plus">
+          <div class="container-logo">
+            <img src="/img/rclone.png" class="img-logo">
+          </div>
+          <span class="panel-title">Rclone</span>
+        </v-expansion-panel-title>
+        <v-expansion-panel-text>
+          <panel-rclone :codes="codes.rclone" :bucket="codes.bucket" @copyCode="handleCopyCode" />
+        </v-expansion-panel-text>
+      </v-expansion-panel>
+    </v-expansion-panels>
+
   </div>
   <v-snackbar
     v-model="snackbar"
@@ -56,20 +100,22 @@
 
   const { getMetadata } = structureStorage()
   const config = useRuntimeConfig()
-  const { $axios } = useNuxtApp()
+  const { $globals, $axios } = useNuxtApp()
 
   const metadata = getMetadata()
   const trjType = metadata.trjType
   const codes = ref([])
   const snackbar = ref(false)
+  const loading = ref(true)
 
-  const processResults = (results) => {
-    return results.map(result => {
-      return {
-        file: result.file,
-        code: result.code.replace(/http:\/\/[^:]+:\d{4}/g, config.public.minioURL)
+  const processResults = (obj, oldUrl, newUrl) => {
+    for (let key in obj) {
+      if (typeof obj[key] === 'object') {
+        processResults(obj[key], oldUrl, newUrl);
+      } else if (typeof obj[key] === 'string') {
+        obj[key] = obj[key].replace(oldUrl, newUrl)
       }
-    })
+    }
   }
 
   if (trjType === 'large') {
@@ -77,7 +123,7 @@
 
     // Manually serialize the query parameters
     const params = new URLSearchParams()
-    metadata.trajNames.forEach(file => params.append('files', file))
+    //metadata.trajNames.forEach(file => params.append('files', file))
     params.append('bucket', metadata.bucket)
 
     $axios
@@ -87,18 +133,23 @@
       })
       .catch(err => console.error(err.message))
       .finally( () => {
-        const processed_results = processResults(resp.results)
-        codes.value = processed_results
+        codes.value = processResults(resp.results, /http:\/\/[^:]+:\d{4}/g, config.public.minioURL)
+        codes.value = resp.results
+        loading.value = false
       })
   }
 
-  const copyCode = (index) => {
-    navigator.clipboard.writeText(codes.value[index].code)
+  const handleCopyCode = (l1, l2) => {
+    navigator.clipboard.writeText(codes.value[l1][l2])
     snackbar.value = true
   }
 
 </script>
 
 <style scoped>
-
+  .v-expansion-panel-title.v-expansion-panel-title--active { background-color: #f6f1ff; }
+  .container-logo { min-width: 40px; }
+  .img-logo { height: 30px; }
+  .img-logo2 { margin-top:7px; }
+  .panel-title { font-size: 1.1rem; font-weight: 500; }
 </style>

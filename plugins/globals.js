@@ -4,13 +4,15 @@ export default defineNuxtPlugin(() => {
   return {
       provide: {
         globals: {
-          shortName: 'MDDB VRE',
+          shortName: 'MDDB VRElite',
           fullName: 'Molecular Dynamics Database Virtual Reality Environment',
 
           topFormats: ['.pdb', '.top', '.cif'],
           trajFormats: ['.xtc', '.dcd', '.mdcrd', '.trr', '.nc', '.netcdf'],
           maxUploadTrjSize: config.public.maxUploadTrjSize,
           maxUploadTrjSizeHumanReadable: $formatBytes(config.public.maxUploadTrjSize),
+
+          curl_expire: 'one day',
       }
     }
   }

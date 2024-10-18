@@ -25,7 +25,7 @@ npm install
 | BASE_URL_DEVELOPMENT      | string                                   | baseURL for development         |
 | BASE_URL_STAGING          | string                                   | baseURL for staging             |
 | BASE_URL_PRODUCTION       | string                                   | baseURL for production          |
-| DATA_PATH                 | string                                   | path where the data will be saved       |
+| LOG_PATH                 | string                                   | path where the log will be saved       |
 | MAX_FILE_SIZE             | string                                   | maximum size for all the trajectory files       |
 | MINIO_URL                 | string                                   | url for minio (ie localhost)    |
 | NODE_NAME                 | string                                   | node identifier to deploy       |

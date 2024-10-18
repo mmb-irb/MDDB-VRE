@@ -51,8 +51,8 @@
         ></v-switch>
       </v-col>
     </v-row>
-    <v-row class="mb-1 mt-1" v-if="fields.type === 'large'">
-      <v-col cols="12">As the <strong>MDDB VRE</strong> doesn't support transference of big files, fill the fields below with the name of the trajectory files to upload. Please provide <strong>only the name</strong> with one of the accepted trajectory formats: <strong>{{ $globals.trajFormats.join(', ') }}</strong>. Further instructions will be provided in the next step after clicking the <strong>UPLOAD</strong> button. </v-col>
+    <!--<v-row class="mb-1 mt-1" v-if="fields.type === 'large'">
+      <v-col cols="12">As the <strong>{{ $globals.shortName }}</strong> doesn't support transference of big files, fill the fields below with the name of the trajectory files to upload. Please provide <strong>only the name</strong> with one of the accepted trajectory formats: <strong>{{ $globals.trajFormats.join(', ') }}</strong>. Further instructions will be provided in the next step after clicking the <strong>UPLOAD</strong> button. </v-col>
       <v-col lg="6" md="6" sm="12" cols="12" class="pb-0" v-for="(field, index) in trajNames" :key="index">
         <v-text-field
           v-model="trajNames[index]"
@@ -65,7 +65,7 @@
           :rules="rules.trjNames"
         ></v-text-field>
       </v-col>
-    </v-row>
+    </v-row>-->
     <v-row>
       <v-col cols="12" class="py-0">
         <v-progress-linear
@@ -78,6 +78,17 @@
             <strong style="font-size:.7rem;">{{ Math.ceil(value) }}%</strong>
           </template>
         </v-progress-linear>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col cols="12" class="py-0">
+        <div class="text-center py-1" v-if="processing">
+          <v-progress-circular
+            color="purple-darken-1"
+            :size="15"
+            indeterminate
+          ></v-progress-circular> processing data
+        </div>
       </v-col>
     </v-row>
   </v-form>
@@ -105,8 +116,8 @@
     },
     switch: {
       label: {
-        small: `Click here if the total size of your trajectory files is larger than ${$globals.maxUploadTrjSizeHumanReadable}. In this case, he upload must be done manually.`,
-        large: `Click again if the total size of your trajectory files is smaller than ${$globals.maxUploadTrjSizeHumanReadable}.`
+        small: `Click here if the total size of your trajectory files is larger than ${$globals.maxUploadTrjSizeHumanReadable}. In this case, the trajectory upload must be done via command line (more instructions in the following step).`,
+        large: `Trajectory upload disabled (more instructions for uploading it via command line in the following step). Click again if the total size of your trajectory files is smaller than ${$globals.maxUploadTrjSizeHumanReadable}.`
       }
     },
     trajName: {
@@ -124,7 +135,7 @@
   const isFormValid = computed(() => {
     return (
       fields.top && 
-      (fields.type === 'large' && trajNames.value.every(name => name !== '' && name !== null && validExtension(name)) || 
+      (fields.type === 'large' /*&& trajNames.value.every(name => name !== '' && name !== null && validExtension(name))*/ || 
         (fields.traj && 
         fields.traj.length && 
         fields.traj.reduce((acc, file) => acc + file.size, 0) < $globals.maxUploadTrjSize)
@@ -132,8 +143,9 @@
     )
   })
   const trjDisabled = computed(() => fields.type === 'large')
-  const trajNames = ref([''])
+  //const trajNames = ref([''])
   const progress = ref(0)
+  const processing = ref(false)
 
   const emit = defineEmits(['endFormUpload', 'endUploadFiles']);
 
@@ -168,19 +180,19 @@
     return $globals.trajFormats.includes(extension);
   }
 
-  const createNewField = (index) => {
+  /*const createNewField = (index) => {
     if (trajNames.value[index] && validExtension(trajNames.value[index])) {
       // Add a new empty field
       trajNames.value.push('');
     }
-  }
+  }*/
 
-  const removeField = (index) => {
+  /*const removeField = (index) => {
     if (index > 0) {
       // Remove the field
       trajNames.value.splice(index, 1);
     }
-  }
+  }*/
 
   const sendToREST = async () => {
 
@@ -191,12 +203,15 @@
     // Create JSON with metadata
     const metadata = getMetadata()
     metadata.trjType = fields.type
-    if(fields.type === 'large') {
-      metadata.bucket = $generateUniqueId()
-      metadata.trajNames = trajNames.value
-    }
+    metadata.bucket = $generateUniqueId()
+    //metadata.trajNames = trajNames.value
+
     const metadataBlob = new Blob([JSON.stringify(metadata)], { type: 'application/json' });
     formData.append('meta', metadataBlob, 'metadata.json');
+
+    // Add fields to the FormData
+    formData.append('bucket', metadata.bucket);
+    formData.append('type', metadata.trjType);
 
     let resp = null
     $axios
@@ -206,7 +221,7 @@
               if (e.lengthComputable) {
                   progress.value = Math.floor((e.loaded/e.total) * 100)
                   if(progress.value >= 100) {
-                    emit('endUploadFiles', true)
+                    processing.value = true
                   }
               }
           }
@@ -218,6 +233,8 @@
       .catch(err => console.error(err.message))
       .finally( () => {
 
+        emit('endUploadFiles', true)
+        processing.value = false
         console.log(resp)
 
       })
