@@ -1,5 +1,5 @@
 <template>
-  <p>Follow and <strong>execute in terminal</strong> the instructions below for uploading your trajectory file(s) <a href="https://min.io/docs/minio/linux/reference/minio-mc.html#install-mc" target="_blank" class="font-weight-black">via MinIO Client (mc)</a>.</p>
+  <p>Follow and <strong>execute in terminal</strong> the instructions below for uploading your trajectory file(s) <a href="https://min.io/docs/minio/linux/reference/minio-mc.html#install-mc" target="_blank" class="font-weight-black">via MinIO Client (mc)</a>. The <strong>credentials are temporary</strong> and they will <strong>expire in {{ $globals.curl_expire }}</strong>.</p>
 
   <p>First off, <strong>create an mc alias</strong> with the new <strong>temporary credentials</strong> generated for uploading files to the <strong>{{ bucket }} bucket</strong>.</p>
   <v-textarea
@@ -55,6 +55,7 @@
   const { codes, bucket } = defineProps(['codes', 'bucket'])
 
   const emit = defineEmits(['copyCode']);
+  const { $globals } = useNuxtApp()
 
   const copyCode = (type, code) => {
     emit('copyCode', type, code)

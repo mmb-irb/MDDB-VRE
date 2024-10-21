@@ -1,5 +1,5 @@
 <template>
-  <p><strong>Copy the text below</strong> and <strong>execute it in terminal</strong> for uploading your trajectory file(s) <a href="https://curl.se/" target="_blank" class="font-weight-black">via curl</a>. Be aware to <strong>replace trajectory.file</strong> by the <strong>name</strong> of the trajectory file(s) to upload and <strong>&lt;FILE&gt;</strong> by the <strong>local path</strong> of the file(s) in your computer. The credentials will <strong>expire</strong> in <strong>{{ $globals.curl_expire }}</strong>.</p>
+  <p><strong>Copy the text below</strong> and <strong>execute it in terminal</strong> for uploading your trajectory file(s) <a href="https://curl.se/" target="_blank" class="font-weight-black">via curl</a>. Be aware to <strong>replace trajectory.file</strong> by the <strong>name</strong> of the trajectory file(s) to upload and <strong>&lt;FILE&gt;</strong> by the <strong>local path</strong> of the file(s) in your computer. The following <strong>instruction is temporary</strong> and it will <strong>expire in {{ $globals.curl_expire }}</strong>.</p>
     
   <p>Due to its limitations, <strong>curl doesn't allow to upload folders and/or multiple files</strong>. For this operation, please <strong>repeat</strong> the instruction below or use any of the <strong>other methods</strong> in this same section.</p>
   <v-textarea

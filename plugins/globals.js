@@ -12,7 +12,7 @@ export default defineNuxtPlugin(() => {
           maxUploadTrjSize: config.public.maxUploadTrjSize,
           maxUploadTrjSizeHumanReadable: $formatBytes(config.public.maxUploadTrjSize),
 
-          curl_expire: 'one day',
+          curl_expire: `${config.public.timeDiff} days`,
       }
     }
   }

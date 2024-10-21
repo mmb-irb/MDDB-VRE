@@ -1,5 +1,5 @@
 <template>
-  <p>Follow and <strong>execute in terminal</strong> the instructions below for uploading your trajectory file(s) <a href="https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html" target="_blank" class="font-weight-black">via Amazon Web Services Command Line Interface (AWS CLI)</a>.</p>
+  <p>Follow and <strong>execute in terminal</strong> the instructions below for uploading your trajectory file(s) <a href="https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html" target="_blank" class="font-weight-black">via Amazon Web Services Command Line Interface (AWS CLI)</a>. The <strong>credentials are temporary</strong> and they will <strong>expire in {{ $globals.curl_expire }}</strong>.</p>
 
   <p class="mt-4"><strong>Upload single file:</strong> be aware to <strong>replace /path/to/file</strong> by the <strong>local path</strong> of the file in your computer.</p>
   <v-textarea
