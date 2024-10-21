@@ -46,11 +46,11 @@ export default defineEventHandler(async (event) => {
         if(fields.type == 'small') {
           // log
           const logObject = {
-            date: new Date().toISOString(),
             bucket: `${bucket}`,
-            type: 'small'
+            type: 'small',
+            processed: null
           };
-          logMessage(logPath, `${JSON.stringify(logObject)}`);
+          logMessage(logPath, logObject);
         }
 
         resolve({ message: 'Files uploaded successfully' });

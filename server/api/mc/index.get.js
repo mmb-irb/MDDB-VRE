@@ -84,11 +84,11 @@ export default defineEventHandler(async (event) => {
 
     // log
     const logObject = {
-      date: new Date().toISOString(),
       bucket: bucket,
-      type: 'large'
+      type: 'large',
+      processed: false
     };
-    logMessage(logPath, `${JSON.stringify(logObject)}`);
+    logMessage(logPath, logObject);
 
     return {
       results: {
