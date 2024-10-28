@@ -79,6 +79,7 @@ export default defineNuxtConfig({
   runtimeConfig: {
     logPath: process.env.LOG_PATH,
     public: {
+      baseURL: baseURL,
       nodeName: process.env.NODE_NAME,
       maxUploadTrjSize: process.env.MAX_FILE_SIZE,
       timeDiff: process.env.TIME_DIFF,

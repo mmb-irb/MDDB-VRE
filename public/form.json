@@ -1,0 +1,317 @@
+[
+  {
+    "id": "project",
+    "shortName": "Project",
+    "name": "Project Metadata",
+    "icon": "mdi-code-block-tags",
+    "description": "The following metadata has no effect on the workflow itself, but it will be written to the <strong>output metadata</strong> file. These values will be <strong>uploaded to the database</strong> and then exposed in the <strong>project overview</strong>. They may be also useful to <strong>search this project</strong> using the browser.",
+    "fields": [
+      {
+        "id": "name",
+        "label": "Name *",
+        "type": "input",
+        "inputType": "text",
+        "description": "Write a brief description or title for this trajectory for the overview page. This name may be used by the client to search the trajectory in the database. The name is displayed in the overview page.",
+        "rules": [
+          {
+            "id": "required",
+            "regex": "!!v",
+            "message": "This field is required"
+          }
+        ],
+        "required": true,
+        "cols": 12
+      },
+      {
+        "id": "description",
+        "label": "Description *",
+        "type": "textarea",
+        "rows": 3,
+        "description": "Write additional comments about the project. The description is displayed in the overview page.",
+        "rules": [
+          {
+            "id": "required",
+            "regex": "!!v",
+            "message": "This field is required"
+          }
+        ],
+        "required": true,
+        "cols": 12
+      },
+      {
+        "id": "authors",
+        "label": "Authors *",
+        "inputs": [
+          {
+            "id": "authors",
+            "label": "Author *",
+            "inputType": "text",
+            "description": "Write author names. Authors are displayed in the overview page. IMPORTANT: Check already existing values for this field to avoid making duplicates."
+          },
+          {
+            "id": "groups",
+            "label": "Group *",
+            "inputType": "text",
+            "description": "Write author group name/s. The group is displayed in the overview page. IMPORTANT: Check already existing values for this field to avoid making duplicates."
+          }
+        ],
+        "type": "multiple-multi-input",
+        "rules": [
+          {
+            "authors": [
+              {
+                "id": "required",
+                "regex": "!!v",
+                "message": "This field is required"
+              }
+            ],
+            "groups": [
+              {
+                "id": "required",
+                "regex": "!!v",
+                "message": "This field is required"
+              }
+            ]
+          }
+        ],
+        "required": true,
+        "cols": 12
+      },
+      {
+        "id": "citation",
+        "label": "Write here the citation *",
+        "type": "rich-textarea",
+        "rows": 4,
+        "description": "Citation for refering this simulation or related paper. The citation is displayed in the overview page.",
+        "rules": [
+          {
+            "id": "required",
+            "regex": "!!v",
+            "message": "This field is required"
+          }
+        ],
+        "required": true,
+        "cols": 12
+      },
+      {
+        "id": "thanks",
+        "label": "Acknowledgements",
+        "type": "textarea",
+        "rows": 2,
+        "description": "Acknowledgements to be shown in the overview page. E.g. I would like to thank my funders ...",
+        "required": false,
+        "cols": 12
+      },
+      {
+        "id": "contact",
+        "label": "Contact *",
+        "type": "input",
+        "inputType": "mail",
+        "description": "Mail to contact the authors. The contact is displayed in the overview page.",
+        "rules": [
+          {
+            "id": "required",
+            "regex": "!!v",
+            "message": "This field is required"
+          },
+          {
+            "id": "email",
+            "regex": "/.+@.+\\..+/.test(v)",
+            "message": "E-mail must be valid"
+          }
+        ],
+        "required": true,
+        "cols": 6
+      },
+      {
+        "id": "type",
+        "label": "Type *",
+        "type": "select",
+        "description": "Type of molecular dynamics. At this moment there are only two options in this field: 'trajectory' and 'ensemble'.",
+        "rules": [
+          {
+            "id": "required",
+            "regex": "!!v",
+            "message": "This field is required"
+          }
+        ],
+        "required": true,
+        "options": "https://mmb.mddbr.eu/api/rest/current/projects/options?projection=metadata.TYPE",
+        "cols": 6
+      },
+      {
+        "id": "program",
+        "label": "Program *",
+        "type": "select",
+        "description": "Program (software) name which carried the trajectory. Program and version are both displayed in the overview page.",
+        "rules": [
+          {
+            "id": "required",
+            "regex": "!!v",
+            "message": "This field is required"
+          }
+        ],
+        "required": true,
+        "options": "https://mmb.mddbr.eu/api/rest/current/projects/options?projection=metadata.PROGRAM",
+        "cols": 6
+      },
+      {
+        "id": "version",
+        "label": "Version *",
+        "type": "input",
+        "inputType": "text",
+        "description": "Version of the program (software) which carried the trajectory. Program and version are both displayed in the overview page.",
+        "rules": [
+          {
+            "id": "required",
+            "regex": "!!v",
+            "message": "This field is required"
+          }
+        ],
+        "required": true,
+        "cols": 6
+      },
+      {
+        "id": "license",
+        "label": "License text *",
+        "type": "input",
+        "inputType": "text",
+        "description": "The license is displayed in the overview page. E.g. This trajectory dataset is released under a Creative Commons Attribution 4.0 International Public License.",
+        "rules": [
+          {
+            "id": "required",
+            "regex": "!!v",
+            "message": "This field is required"
+          }
+        ],
+        "required": true,
+        "cols": 6
+      },
+      {
+        "id": "linkcense",
+        "label": "License link *",
+        "type": "input",
+        "inputType": "url",
+        "description": "Under the license there is a 'More information' button. The link is used to redirect the user when this button is clicked.",
+        "rules": [
+          {
+            "id": "required",
+            "regex": "!!v",
+            "message": "This field is required"
+          },
+          {
+            "id": "url",
+            "regex": "/^https?:\\/\\//.test(v)",
+            "message": "URL must start with http:// or https://"
+          }
+        ],
+        "required": true,
+        "cols": 6
+      },
+      {
+        "id": "method",
+        "label": "Method *",
+        "type": "select",
+        "description": "MD method is displayed in the overview.",
+        "rules": [
+          {
+            "id": "required",
+            "regex": "!!v",
+            "message": "This field is required"
+          }
+        ],
+        "required": true,
+        "options": "https://mmb.mddbr.eu/api/rest/current/projects/options?projection=metadata.METHOD",
+        "cols": 6
+      },
+      {
+        "id": "accession",
+        "label": "Accession",
+        "type": "input",
+        "inputType": "text",
+        "description": "Use this field to force a custom accession. Accession is a short code to refer this project in your local database. If no accession is forced then a default formatted accession will be generated when loading the project.",
+        "required": false,
+        "cols": 6
+      }
+    ]
+  },
+  {
+    "id": "references",
+    "shortName": "References",
+    "name": "References to other databases",
+    "icon": "mdi-database-export-outline",
+    "description": "References to other databases to enrich our data. Links to somewhere related to the simulation. These links are displayed in the overview page.",
+    "fields": [
+      {
+        "id": "links",
+        "label": "Links",
+        "inputs": [
+          {
+            "id": "name",
+            "label": "Name",
+            "inputType": "text",
+            "description": "Name for the links to somewhere related to the simulation. These links are displayed in the overview page."
+          },
+          {
+            "id": "url",
+            "label": "URL",
+            "inputType": "url",
+            "description": "Links to somewhere related to the simulation. These links are displayed in the overview page. WARNING: This field has no effect in our workflow BUT others may rely on it. MolSSI uses this field to find simulations in our database and place the embed viewer in their website. You must fit to the standard when adding a new MolSSI simulation."
+          }
+        ],
+        "type": "multiple-multi-input",
+        "rules": [
+          {
+            "url": [
+              {
+                "id": "url",
+                "regex": "/^https?:\\/\\//.test(v)",
+                "message": "URL must start with http:// or https://"
+              }
+            ]
+          }
+        ],
+        "required": false,
+        "cols": 12
+      },
+      {
+        "id": "pdbIds",
+        "label": "PDB id's *",
+        "type": "multiple-input",
+        "inputType": "pdb",
+        "description": "Set the source pdb ids of the trajectory structure. Additional data from the pdb is harvested by the loader while uploading to the database. This data is displayed in the overview page.",
+        "rules": [
+          {
+            "id": "pdb",
+            "regex": "/^[0-9][A-Za-z0-9]{3}$/.test(v)",
+            "message": "Incorrect PDB id"
+          }
+        ],
+        "required": false,
+        "cols": 6
+      }
+    ]
+  },
+  {
+    "id": "simulation",
+    "shortName": "Simulation",
+    "name": "Simulation metadata",
+    "icon": "mdi-tune",
+    "description": "Simulation parameters.",
+    "fields": [
+      {
+        "id": "framestep",
+        "label": "Framestep (ns)",
+        "type": "number",
+        "min": 0.01,
+        "max": 1000,
+        "step": 0.01,
+        "suffix": "ns",
+        "default": null,
+        "description": "Time framestep in nanoseconds (ns). May be null if this is not a trajectory, but an ensemble. Framestep is an important value since it is used in many graph axes in the web client.",
+        "required": false,
+        "cols": 6
+      }
+    ]
+  }
+]

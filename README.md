@@ -27,7 +27,10 @@ npm install
 | BASE_URL_PRODUCTION       | string                                   | baseURL for production          |
 | LOG_PATH                 | string                                   | path where the log will be saved       |
 | MAX_FILE_SIZE             | string                                   | maximum size for all the trajectory files       |
-| MINIO_URL                 | string                                   | url for minio (ie localhost)    |
+| TIME_DIFF             | string                                   | number of days to be subtracted from now to run the cleaning jobs for the VRE lite       |
+| MINIO_PROTOCOL                 | string                                   | MinIO API protocol (http|https)    |
+| MINIO_URL                 | `<url>`                                   | url for MinIO (ie localhost)     |
+| MINIO_PORT                 | string                                   | MinIO API outer port    |
 | NODE_NAME                 | string                                   | node identifier to deploy       |
 
 ## Development Server
