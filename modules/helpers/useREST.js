@@ -6,7 +6,7 @@ export default function useREST() {
   const extractNestedKeys = (data) => {
     for (const key in data) {
       if (data.hasOwnProperty(key) && typeof data[key] === 'object' && !Array.isArray(data[key])) {
-        return Object.keys(data[key]);
+        return Object.keys(data[key]).filter(k => k !== 'null');
       }
     }
     return [];

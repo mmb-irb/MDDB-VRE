@@ -1,6 +1,6 @@
 <template>
   <v-number-input
-    :max="props.max"
+    :max="props.max !== undefined ? props.max : Infinity"
     :min="props.min"
     :label="props.label"
     :rules="rules"

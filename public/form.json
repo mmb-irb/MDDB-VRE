@@ -40,42 +40,35 @@
       },
       {
         "id": "authors",
-        "label": "Authors *",
-        "inputs": [
-          {
-            "id": "authors",
-            "label": "Author *",
-            "inputType": "text",
-            "description": "Write author names. Authors are displayed in the overview page. IMPORTANT: Check already existing values for this field to avoid making duplicates."
-          },
-          {
-            "id": "groups",
-            "label": "Group *",
-            "inputType": "text",
-            "description": "Write author group name/s. The group is displayed in the overview page. IMPORTANT: Check already existing values for this field to avoid making duplicates."
-          }
-        ],
-        "type": "multiple-multi-input",
+        "label": "Author *",
+        "type": "multiple-input",
+        "description": "Write author names. Authors are displayed in the overview page. IMPORTANT: Check already existing values for this field to avoid making duplicates.",
         "rules": [
           {
-            "authors": [
-              {
-                "id": "required",
-                "regex": "!!v",
-                "message": "This field is required"
-              }
-            ],
-            "groups": [
-              {
-                "id": "required",
-                "regex": "!!v",
-                "message": "This field is required"
-              }
-            ]
+            "id": "required",
+            "regex": "!!v",
+            "message": "This field is required"
           }
         ],
         "required": true,
-        "cols": 12
+        "cols": 12,
+        "subCols": 6
+      },
+      {
+        "id": "group",
+        "label": "Group *",
+        "type": "multiple-input",
+        "description": "Write author group name/s. The group is displayed in the overview page. IMPORTANT: Check already existing values for this field to avoid making duplicates.",
+        "rules": [
+          {
+            "id": "required",
+            "regex": "!!v",
+            "message": "This field is required"
+          }
+        ],
+        "required": true,
+        "cols": 12,
+        "subCols": 6
       },
       {
         "id": "citation",
@@ -136,6 +129,7 @@
           }
         ],
         "required": true,
+        "multiple": false,
         "options": "https://mmb.mddbr.eu/api/rest/current/projects/options?projection=metadata.TYPE",
         "cols": 6
       },
@@ -147,11 +141,12 @@
         "rules": [
           {
             "id": "required",
-            "regex": "!!v",
+            "regex": "!!v && v.length > 0",
             "message": "This field is required"
           }
         ],
         "required": true,
+        "multiple": false,
         "options": "https://mmb.mddbr.eu/api/rest/current/projects/options?projection=metadata.PROGRAM",
         "cols": 6
       },
@@ -196,13 +191,13 @@
         "rules": [
           {
             "id": "required",
-            "regex": "!!v",
+            "regex": "!!v && v.length > 0",
             "message": "This field is required"
           },
           {
             "id": "url",
-            "regex": "/^https?:\\/\\//.test(v)",
-            "message": "URL must start with http:// or https://"
+            "regex": "v === '' || v === null || /^(https?:\\/\\/)?([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}(\\/[^\\s]*)?$/.test(v)",
+            "message": "Please type a valid URL (ie http[s]://domain.org)"
           }
         ],
         "required": true,
@@ -216,11 +211,12 @@
         "rules": [
           {
             "id": "required",
-            "regex": "!!v",
+            "regex": "!!v && v.length > 0",
             "message": "This field is required"
           }
         ],
         "required": true,
+        "multiple": false,
         "options": "https://mmb.mddbr.eu/api/rest/current/projects/options?projection=metadata.METHOD",
         "cols": 6
       },
@@ -260,35 +256,68 @@
           }
         ],
         "type": "multiple-multi-input",
-        "rules": [
-          {
-            "url": [
-              {
-                "id": "url",
-                "regex": "/^https?:\\/\\//.test(v)",
-                "message": "URL must start with http:// or https://"
-              }
-            ]
-          }
-        ],
+        "rules": {
+          "url": [
+            {
+              "id": "url",
+              "regex": "v === '' || v === null || /^(https?:\\/\\/)?([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}(\\/[^\\s]*)?$/.test(v)",
+              "message": "Please type a valid URL (ie http[s]://domain.org)"
+            }
+          ]
+        },
         "required": false,
         "cols": 12
       },
       {
         "id": "pdbIds",
-        "label": "PDB id's *",
+        "label": "PDB id",
         "type": "multiple-input",
         "inputType": "pdb",
         "description": "Set the source pdb ids of the trajectory structure. Additional data from the pdb is harvested by the loader while uploading to the database. This data is displayed in the overview page.",
         "rules": [
           {
             "id": "pdb",
-            "regex": "/^[0-9][A-Za-z0-9]{3}$/.test(v)",
+            "regex": "v === '' || v === null || /^[0-9][A-Za-z0-9]{3}$/.test(v)",
             "message": "Incorrect PDB id"
           }
         ],
         "required": false,
-        "cols": 6
+        "cols": 12,
+        "subCols": 4
+      },
+      {
+        "id": "forced_references",
+        "label": "Forced UniProt ID",
+        "type": "multiple-input",
+        "inputType": "uniprot",
+        "description": "Set which reference sequences must be used in order to map residues in the structure of the simulation. UniProt accession ids are accepted. Forced references may be not provided or just cover the structure partially. Then a blast will be run for each orphan chain sequence. In addition, UniProt accession ids may be guessed from the PDB ids, when provided. Forced references may be provided as a list. In this scenario UniProt sequences are aligned to chain sequences to guess which UniProt belongs to each chain. Forced references may be provided as a dictionary. Then the user specifies which reference belongs to each chain. Use the 'noref' flag to mark a chain as 'no referable' (e.g. antibodies, synthetic constructs). Eg: Q9BYF1, B: A0A023GPI8, C: noref.",
+        "rules": [
+          {
+            "id": "pdb",
+            "regex": "v === '' || v === null || /^(?:[OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2}|[A-Za-z]: ?(?:[OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2}|noref))$/.test(v)",
+            "message": "Incorrect UniProt id"
+          }
+        ],
+        "required": false,
+        "cols": 12,
+        "subCols": 4
+      },
+      {
+        "id": "ligands",
+        "label": "Simulation ligand",
+        "type": "multiple-input",
+        "inputType": "ligand",
+        "description": "Set ligands in the simulation. The workflow identifies ligands by their pubchem accession. If a pubchem accession is passed then it is used. Otherwise, the pubchem accession is found using other database accessions. Optionally, a list of residue indices may be provided to force the mapping. Ligands are mapped in the standard topology file. In addition, an RMSD analysis is run for every defined ligand. Eg: pubchem: 1986, drugbank: DB00945, chembl: CHEMBL1201179, residue: 234, 32, 54.",
+        "rules": [
+          {
+            "id": "pdb",
+            "regex": "v === '' || v === null || /^(?:pubchem: ?[1-9][0-9]*|drugbank: ?DB\\d{5}|chembl: ?CHEMBL\\d+|residue: ?(?:\\d{1,3}(?:, ?\\d{1,3})*))$/.test(v)",
+            "message": "Incorrect ligand format"
+          }
+        ],
+        "required": false,
+        "cols": 12,
+        "subCols": 4
       }
     ]
   },
@@ -304,12 +333,83 @@
         "label": "Framestep (ns)",
         "type": "number",
         "min": 0.01,
-        "max": 1000,
         "step": 0.01,
         "suffix": "ns",
         "default": null,
         "description": "Time framestep in nanoseconds (ns). May be null if this is not a trajectory, but an ensemble. Framestep is an important value since it is used in many graph axes in the web client.",
         "required": false,
+        "cols": 6
+      },
+      {
+        "id": "timestep",
+        "label": "Timestep (fs)",
+        "type": "number",
+        "min": 1,
+        "step": 1,
+        "suffix": "fs",
+        "default": null,
+        "description": "Simulation timestep in femtoseconds (fs).",
+        "required": false,
+        "cols": 6
+      },
+      {
+        "id": "temp",
+        "label": "Temperature (K)",
+        "type": "number",
+        "min": 0,
+        "step": 1,
+        "suffix": "K",
+        "default": 310,
+        "description": "Temperature in Kelvin (K).",
+        "required": false,
+        "cols": 6
+      },
+      {
+        "id": "ensemble",
+        "label": "Ensemble",
+        "type": "select",
+        "description": "Ensemble.",
+        "rules": [
+        ],
+        "required": false,
+        "multiple": false,
+        "options": "https://mmb.mddbr.eu/api/rest/current/projects/options?projection=metadata.ENSEMBLE",
+        "cols": 6
+      },
+      {
+        "id": "ff",
+        "label": "Force fields",
+        "type": "select",
+        "description": "Force fields.",
+        "rules": [
+        ],
+        "required": false,
+        "multiple": true,
+        "options": "https://mmb.mddbr.eu/api/rest/current/projects/options?projection=metadata.FF",
+        "cols": 6
+      },
+      {
+        "id": "wat",
+        "label": "Water force fields",
+        "type": "select",
+        "description": "Water force fields.",
+        "rules": [
+        ],
+        "required": false,
+        "multiple": false,
+        "options": "https://mmb.mddbr.eu/api/rest/current/projects/options?projection=metadata.WAT",
+        "cols": 6
+      },
+      {
+        "id": "boxtype",
+        "label": "Boxtype",
+        "type": "select",
+        "description": "Boxtype.",
+        "rules": [
+        ],
+        "required": false,
+        "multiple": false,
+        "options": "https://mmb.mddbr.eu/api/rest/current/projects/options?projection=metadata.BOXTYPE",
         "cols": 6
       }
     ]

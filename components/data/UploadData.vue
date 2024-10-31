@@ -51,21 +51,6 @@
         ></v-switch>
       </v-col>
     </v-row>
-    <!--<v-row class="mb-1 mt-1" v-if="fields.type === 'large'">
-      <v-col cols="12">As the <strong>{{ $globals.shortName }}</strong> doesn't support transference of big files, fill the fields below with the name of the trajectory files to upload. Please provide <strong>only the name</strong> with one of the accepted trajectory formats: <strong>{{ $globals.trajFormats.join(', ') }}</strong>. Further instructions will be provided in the next step after clicking the <strong>UPLOAD</strong> button. </v-col>
-      <v-col lg="6" md="6" sm="12" cols="12" class="pb-0" v-for="(field, index) in trajNames" :key="index">
-        <v-text-field
-          v-model="trajNames[index]"
-          :label="texts.trajName.label"
-          append-icon="mdi-file-document-plus-outline"
-          :append-inner-icon="index > 0 ? 'mdi-delete-outline' : ''"
-          @click:append="createNewField(index)"
-          @click:append-inner="removeField(index)"
-          clearable
-          :rules="rules.trjNames"
-        ></v-text-field>
-      </v-col>
-    </v-row>-->
     <v-row>
       <v-col cols="12" class="py-0">
         <v-progress-linear
@@ -97,6 +82,7 @@
 <script setup>
 
   import structureStorage from '@/modules/structure/structureStorage'
+  import YAML from 'yaml';
 
   const { getMetadata } = structureStorage()
 
@@ -135,7 +121,7 @@
   const isFormValid = computed(() => {
     return (
       fields.top && 
-      (fields.type === 'large' /*&& trajNames.value.every(name => name !== '' && name !== null && validExtension(name))*/ || 
+      (fields.type === 'large' || 
         (fields.traj && 
         fields.traj.length && 
         fields.traj.reduce((acc, file) => acc + file.size, 0) < $globals.maxUploadTrjSize)
@@ -143,7 +129,6 @@
     )
   })
   const trjDisabled = computed(() => fields.type === 'large')
-  //const trajNames = ref([''])
   const progress = ref(0)
   const processing = ref(false)
 
@@ -180,20 +165,6 @@
     return $globals.trajFormats.includes(extension);
   }
 
-  /*const createNewField = (index) => {
-    if (trajNames.value[index] && validExtension(trajNames.value[index])) {
-      // Add a new empty field
-      trajNames.value.push('');
-    }
-  }*/
-
-  /*const removeField = (index) => {
-    if (index > 0) {
-      // Remove the field
-      trajNames.value.splice(index, 1);
-    }
-  }*/
-
   const sendToREST = async () => {
 
     const formData = new FormData()
@@ -204,10 +175,14 @@
     const metadata = getMetadata()
     metadata.trjType = fields.type
     metadata.bucket = $generateUniqueId()
-    //metadata.trajNames = trajNames.value
 
-    const metadataBlob = new Blob([JSON.stringify(metadata)], { type: 'application/json' });
-    formData.append('meta', metadataBlob, 'metadata.json');
+    /*const metadataBlob = new Blob([JSON.stringify(metadata)], { type: 'application/json' });
+    formData.append('meta', metadataBlob, 'metadata.json');*/
+    
+    const metadataYaml = YAML.stringify(metadata);
+    const metadataYamlBlob = new Blob([metadataYaml], { type: 'application/x-yaml' });
+    console.log(metadataYaml, metadataYamlBlob)
+    formData.append('meta', metadataYamlBlob, 'metadata.yaml');
 
     // Add fields to the FormData
     formData.append('bucket', metadata.bucket);

@@ -8,12 +8,20 @@ export default function structureStorage() {
         metadata[field] = data
     }
 
+    const setMultiMultiMetadata = (id, index, field, data) => {
+        //console.log('setMultiMultiMetadata', id, index, field, data)
+        if (!metadata[id]) metadata[id] = []
+        if (!metadata[id][index]) metadata[id][index] = {}
+        metadata[id][index][field] = data
+    }
+
     const getMetadata = () => {
         return metadata
     }
 
     return {
         setMetadata,
+        setMultiMultiMetadata,
         getMetadata
     }
 
