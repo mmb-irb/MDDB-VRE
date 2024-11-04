@@ -42,7 +42,7 @@
               </template>
 
               <v-card-text>
-                <upload-data @endFormUpload="handleEndFormUpload" @endUploadFiles="handleEndUploadFiles" ref="uploadRef" />
+                <upload-data :fData="formData" @endFormUpload="handleEndFormUpload" @endUploadFiles="handleEndUploadFiles" ref="uploadRef" />
               </v-card-text>
 
               <template v-slot:actions>

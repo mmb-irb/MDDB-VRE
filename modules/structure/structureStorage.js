@@ -19,10 +19,23 @@ export default function structureStorage() {
         return metadata
     }
 
+    const getObjectFieldIds = (form) => {
+        const ids = []
+        form.forEach(section => {
+            section.fields.forEach(field => {
+            if (field.object) {
+                ids.push(field.id)
+            }
+            })
+        })
+        return ids
+    };
+
     return {
         setMetadata,
         setMultiMultiMetadata,
-        getMetadata
+        getMetadata,
+        getObjectFieldIds
     }
 
 }

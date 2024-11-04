@@ -289,6 +289,7 @@
         "id": "forced_references",
         "label": "Forced UniProt ID",
         "type": "multiple-input",
+        "object": true,
         "inputType": "uniprot",
         "description": "Set which reference sequences must be used in order to map residues in the structure of the simulation. UniProt accession ids are accepted. Forced references may be not provided or just cover the structure partially. Then a blast will be run for each orphan chain sequence. In addition, UniProt accession ids may be guessed from the PDB ids, when provided. Forced references may be provided as a list. In this scenario UniProt sequences are aligned to chain sequences to guess which UniProt belongs to each chain. Forced references may be provided as a dictionary. Then the user specifies which reference belongs to each chain. Use the 'noref' flag to mark a chain as 'no referable' (e.g. antibodies, synthetic constructs). Eg: Q9BYF1, B: A0A023GPI8, C: noref.",
         "rules": [
@@ -306,6 +307,7 @@
         "id": "ligands",
         "label": "Simulation ligand",
         "type": "multiple-input",
+        "object": true,
         "inputType": "ligand",
         "description": "Set ligands in the simulation. The workflow identifies ligands by their pubchem accession. If a pubchem accession is passed then it is used. Otherwise, the pubchem accession is found using other database accessions. Optionally, a list of residue indices may be provided to force the mapping. Ligands are mapped in the standard topology file. In addition, an RMSD analysis is run for every defined ligand. Eg: pubchem: 1986, drugbank: DB00945, chembl: CHEMBL1201179, residue: 234, 32, 54.",
         "rules": [

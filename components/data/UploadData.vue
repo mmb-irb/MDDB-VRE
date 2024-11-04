@@ -84,10 +84,11 @@
   import structureStorage from '@/modules/structure/structureStorage'
   import YAML from 'yaml';
 
-  const { getMetadata } = structureStorage()
+  const { getMetadata, getObjectFieldIds } = structureStorage()
 
   const config = useRuntimeConfig()
   const { $globals, $axios, $generateUniqueId } = useNuxtApp()
+  const { fData } = defineProps(['fData'])
   
   const texts = {
     top: {
@@ -171,17 +172,30 @@
     formData.append('top', fields.top)
     if(fields.traj) fields.traj.forEach(file => formData.append('traj', file))
 
-    // Create JSON with metadata
+    // Create JSON with metadata    
     const metadata = getMetadata()
     metadata.trjType = fields.type
     metadata.bucket = $generateUniqueId()
-
-    /*const metadataBlob = new Blob([JSON.stringify(metadata)], { type: 'application/json' });
-    formData.append('meta', metadataBlob, 'metadata.json');*/
-    
-    const metadataYaml = YAML.stringify(metadata);
-    const metadataYamlBlob = new Blob([metadataYaml], { type: 'application/x-yaml' });
-    console.log(metadataYaml, metadataYamlBlob)
+    // get the fields that are objects (must be processed as objects instead of strings)
+    const fieldsToProcess = getObjectFieldIds(fData)
+    // process the fields that are objects
+    fieldsToProcess.forEach(field => {
+      if (metadata[field]) {
+        metadata[field] = metadata[field].map(item => {
+          const colonIndex = item.indexOf(':')
+          if (colonIndex !== -1) {
+            const key = item.substring(0, colonIndex).trim()
+            const value = item.substring(colonIndex + 1).trim()
+            return { [key]: value }
+          }
+          return item
+        })
+      }
+    })
+    // convert metadata to YAML
+    let metadataYaml = YAML.stringify(metadata);
+    // create a Blob from the YAML string
+    const metadataYamlBlob = new Blob([metadataYaml], { type: 'application/x-yaml' })    
     formData.append('meta', metadataYamlBlob, 'metadata.yaml');
 
     // Add fields to the FormData

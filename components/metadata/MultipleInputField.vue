@@ -49,6 +49,7 @@
     const regex = /(?:[A-Za-z]: ?)?([OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2})/
     const vals = refInputs.value
       .map(val => {
+        if (val === null) return []
         const match = val.match(regex)
         return match ? match[1] : null
       })
@@ -62,6 +63,7 @@
     const regex = /^(?:pubchem: ?([1-9][0-9]*)|drugbank: ?(DB\d{5})|chembl: ?(CHEMBL\d+)|residue: ?(?:\d{1,3}(?:, ?\d{1,3})*))$/;
     const vals = refInputs.value
       .map(val => {
+        if (val === null) return []
         const match = val.match(regex);
         if (match) {
           if (match[1]) return match[1]
@@ -77,6 +79,7 @@
 
   // shows / hides eye icon depending if the input fulfills the rules
   const setViewIcon = (val) => {
+    if (val === null) return ''
     switch (props.inputType) {
       case 'pdb':
         return (pdbs.value.find(entry => entry[val])?.[val]) ? 'mdi-eye-circle-outline' : ''
