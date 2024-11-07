@@ -30,6 +30,7 @@
   const { props } = defineProps(['props'])
   const refModel = ref(null)
   const refModel2 = ref(null)
+  const required = ref(props.required)
   // TODO
   const rules = ref(props.rules ? getRules(props.rules) : [])
 
@@ -39,7 +40,7 @@
     // Initialize Quill editor with custom toolbar
     const editor = new $Quill(refModel.value, {
       theme: 'snow',
-      placeholder: props.label,
+      placeholder: `${props.label} ${required.value ? '*' : ''}`,
       modules: {
         toolbar: [
           ['bold', 'italic', 'link'],                    // Link option

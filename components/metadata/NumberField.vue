@@ -2,7 +2,7 @@
   <v-number-input
     :max="props.max !== undefined ? props.max : Infinity"
     :min="props.min"
-    :label="props.label"
+    :label="`${props.label} ${required ? '*' : ''}`"
     :rules="rules"
     v-model="refModel"
     :step="props.step"
@@ -27,6 +27,7 @@
 
   const { props } = defineProps(['props'])
   const refModel = ref(props.default)
+  const required = ref(props.required)
   const rules = ref(props.rules ? getRules(props.rules) : [])
 
 </script>

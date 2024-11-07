@@ -1,13 +1,15 @@
 <template>
   <v-autocomplete
+    v-if="!other"
     v-model="refModel"
     :rules="rules"
     :items="items"
-    :label="props.label"
+    :label="`${props.label} ${required ? '*' : ''}`"
     item-title="text"
     item-value="option"
-    @update:modelValue="setMetadata(props.id, refModel)"
+    @update:modelValue="handleInput"
     clearable
+    allow-new
     :chips="props.multiple"
     :multiple="props.multiple"
   >
@@ -27,6 +29,20 @@
       <form-tooltip :props="{width: 300, text: props.description}" />
     </template>
   </v-autocomplete>
+  <v-text-field
+    v-if="other"
+    ref="otherField"
+    v-model="refModel"
+    :rules="rules"
+    :label="`${props.label} (Other) ${required ? '*' : ''}`"
+    @update:modelValue="setMetadata(props.id, refModel)"
+    @click:clear="other = false"
+    clearable
+  >
+    <template v-slot:append>
+      <form-tooltip :props="{width: 300, text: props.description}" />
+    </template>
+  </v-text-field>
 </template>
 
 <script setup>
@@ -38,13 +54,27 @@
   const { setMetadata } = structureStorage()
   const { getRules } = useRules()
   const { getSelectOptions } = useREST()
-
-  // TODO MULTISELECTABLE OPTIONAL!!!!
+  const { $sleep } = useNuxtApp()
 
   const { props } = defineProps(['props'])
   const refModel = ref(null)
+  const required = ref(props.required)
+  const otherField = ref(null)
+  const other = ref(null)
   const rules = ref(props.rules ? getRules(props.rules) : [])
   const items = ref(await getSelectOptions(props.options))
+  // add Other option if props.other is true
+  if(props.other) items.value.push('Other')
+
+  // sets the metadata for the select input and in case of 'Other' option, it focuses on the input field
+  const handleInput = async (value) => {
+    if (value === 'Other') {
+      refModel.value = ''
+      other.value = true
+      await $sleep(1)
+      otherField.value.focus()
+    } else setMetadata(props.id, value)
+}
 
 </script>
 

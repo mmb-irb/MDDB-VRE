@@ -2,7 +2,7 @@
   <v-text-field
     v-model="refModel"
     :rules="rules"
-    :label="props.label"
+    :label="`${props.label} ${required ? '*' : ''}`"
     :prepend-inner-icon="setViewIcon(refModel)"
     @update:modelValue="setMetadata(props.id, refModel)"
     @click:prepend-inner="setViewIconLink(refModel)"
@@ -24,6 +24,7 @@
 
   const { props } = defineProps(['props'])
   const refModel = ref('')
+  const required = ref(props.required)
   const rules = ref(props.rules ? getRules(props.rules) : [])
 
   // shows / hides eye icon depending if the input fulfills the rules

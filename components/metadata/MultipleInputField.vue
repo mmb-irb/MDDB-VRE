@@ -5,7 +5,7 @@
       <v-text-field
         v-model="refInputs[index]"
         :rules="rules"
-        :label="props.label"
+        :label="`${props.label} ${required ? '*' : ''}`"
         :prepend-inner-icon="setViewIcon(refInputs[index])"
         :append-inner-icon="index > 0 ? 'mdi-delete-outline' : ''"
         @click:append-inner="removeInput(index)"
@@ -31,6 +31,7 @@
 
   const { props } = defineProps(['props'])
   const refInputs = ref([''])
+  const required = ref(props.required)
   const rules = ref(props.rules ? getRules(props.rules) : [])
 
   // computed property to check if all values are non-empty and fulfill the rules

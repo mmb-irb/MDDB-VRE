@@ -7,8 +7,57 @@
     "description": "The following metadata has no effect on the workflow itself, but it will be written to the <strong>output metadata</strong> file. These values will be <strong>uploaded to the database</strong> and then exposed in the <strong>project overview</strong>. They may be also useful to <strong>search this project</strong> using the browser.",
     "fields": [
       {
+        "id": "ligands",
+        "type": "select-input-multiple",
+        "cols": 12,
+        "subCols": 6,
+        "fields": [
+          {
+            "id": "ligands",
+            "label": "Ligands database",
+            "type": "select",
+            "description": "The database from wich the ligand will be downloaded.",
+            "required": false,
+            "other": true,
+            "items": [
+              {
+                "name": "PubChem",
+                "val": "pubchem"
+              },
+              {
+                "name": "DrugBank",
+                "val": "drugbank"
+              },
+              {
+                "name": "ChEMBL",
+                "val": "CHEMBL"
+              },
+              {
+                "name": "Residue",
+                "val": "residue"
+              }
+            ]
+          },
+          {
+            "id": "ligands",
+            "label": "Simulation ligand",
+            "type": "input",
+            "inputType": "ligand",
+            "description": "Set ligands in the simulation. The workflow identifies ligands by their pubchem accession. If a pubchem accession is passed then it is used. Otherwise, the pubchem accession is found using other database accessions. Optionally, a list of residue indices may be provided to force the mapping. Ligands are mapped in the standard topology file. In addition, an RMSD analysis is run for every defined ligand. Eg: pubchem: 1986, drugbank: DB00945, chembl: CHEMBL1201179, residue: 234, 32, 54. (REVIEEEEEW)",
+            "rules": [
+              {
+                "id": "ligand",
+                "regex": "v === '' || v === null || /^(?:pubchem: ?[1-9][0-9]*|drugbank: ?DB\\d{5}|chembl: ?CHEMBL\\d+|residue: ?(?:\\d{1,3}(?:, ?\\d{1,3})*))$/.test(v)",
+                "message": "Incorrect ligand format"
+              }
+            ],
+            "required": false
+          }
+        ]
+      },
+      {
         "id": "name",
-        "label": "Name *",
+        "label": "Name",
         "type": "input",
         "inputType": "text",
         "description": "Write a brief description or title for this trajectory for the overview page. This name may be used by the client to search the trajectory in the database. The name is displayed in the overview page.",
@@ -24,7 +73,7 @@
       },
       {
         "id": "description",
-        "label": "Description *",
+        "label": "Description",
         "type": "textarea",
         "rows": 3,
         "description": "Write additional comments about the project. The description is displayed in the overview page.",
@@ -40,7 +89,7 @@
       },
       {
         "id": "authors",
-        "label": "Author *",
+        "label": "Author",
         "type": "multiple-input",
         "description": "Write author names. Authors are displayed in the overview page. IMPORTANT: Check already existing values for this field to avoid making duplicates.",
         "rules": [
@@ -56,7 +105,7 @@
       },
       {
         "id": "group",
-        "label": "Group *",
+        "label": "Group",
         "type": "multiple-input",
         "description": "Write author group name/s. The group is displayed in the overview page. IMPORTANT: Check already existing values for this field to avoid making duplicates.",
         "rules": [
@@ -72,7 +121,7 @@
       },
       {
         "id": "citation",
-        "label": "Write here the citation *",
+        "label": "Write here the citation",
         "type": "rich-textarea",
         "rows": 4,
         "description": "Citation for refering this simulation or related paper. The citation is displayed in the overview page.",
@@ -97,7 +146,7 @@
       },
       {
         "id": "contact",
-        "label": "Contact *",
+        "label": "Contact",
         "type": "input",
         "inputType": "mail",
         "description": "Mail to contact the authors. The contact is displayed in the overview page.",
@@ -118,7 +167,7 @@
       },
       {
         "id": "type",
-        "label": "Type *",
+        "label": "Type",
         "type": "select",
         "description": "Type of molecular dynamics. At this moment there are only two options in this field: 'trajectory' and 'ensemble'.",
         "rules": [
@@ -135,7 +184,7 @@
       },
       {
         "id": "program",
-        "label": "Program *",
+        "label": "Program",
         "type": "select",
         "description": "Program (software) name which carried the trajectory. Program and version are both displayed in the overview page.",
         "rules": [
@@ -147,12 +196,13 @@
         ],
         "required": true,
         "multiple": false,
+        "other": true,
         "options": "https://mmb.mddbr.eu/api/rest/current/projects/options?projection=metadata.PROGRAM",
         "cols": 6
       },
       {
         "id": "version",
-        "label": "Version *",
+        "label": "Version",
         "type": "input",
         "inputType": "text",
         "description": "Version of the program (software) which carried the trajectory. Program and version are both displayed in the overview page.",
@@ -168,44 +218,94 @@
       },
       {
         "id": "license",
-        "label": "License text *",
-        "type": "input",
-        "inputType": "text",
-        "description": "The license is displayed in the overview page. E.g. This trajectory dataset is released under a Creative Commons Attribution 4.0 International Public License.",
-        "rules": [
+        "type": "select-input",
+        "cols": 12,
+        "fields": [
           {
-            "id": "required",
-            "regex": "!!v",
-            "message": "This field is required"
-          }
-        ],
-        "required": true,
-        "cols": 6
-      },
-      {
-        "id": "linkcense",
-        "label": "License link *",
-        "type": "input",
-        "inputType": "url",
-        "description": "Under the license there is a 'More information' button. The link is used to redirect the user when this button is clicked.",
-        "rules": [
-          {
-            "id": "required",
-            "regex": "!!v && v.length > 0",
-            "message": "This field is required"
+            "id": "license",
+            "label": "License text",
+            "type": "select",
+            "description": "The license is displayed in the overview page.",
+            "rules": [
+              {
+                "id": "required",
+                "regex": "!!v && v.length > 0",
+                "message": "This field is required"
+              }
+            ],
+            "required": true,
+            "other": true,
+            "items": [
+              {
+                "name": "MIT License",
+                "link": "https://opensource.org/license/mit"
+              },
+              {
+                "name": "Apache License 2.0",
+                "link": "https://www.apache.org/licenses/LICENSE-2.0"
+              },
+              {
+                "name": "GNU General Public License (GPL) v3.0",
+                "link": "https://www.gnu.org/licenses/gpl-3.0.en.html"
+              },
+              {
+                "name": "GNU Lesser General Public License (LGPL) v3.0",
+                "link": "https://www.gnu.org/licenses/lgpl-3.0.en.html"
+              },
+              {
+                "name": "Mozilla Public License 2.0 (MPL)",
+                "link": "https://www.mozilla.org/en-US/MPL/2.0/"
+              },
+              {
+                "name": "BSD 2-Clause License (Simplified)",
+                "link": "https://opensource.org/license/bsd-2-clause"
+              },
+              {
+                "name": "BSD 3-Clause License (New or Revised)",
+                "link": "https://opensource.org/license/bsd-3-clause"
+              },
+              {
+                "name": "Creative Commons Zero (CC0)",
+                "link": "https://creativecommons.org/public-domain/cc0/"
+              },{
+                "name": "Unlicense",
+                "link": "https://unlicense.org/"
+              },
+              {
+                "name": "Eclipse Public License 2.0 (EPL)",
+                "link": "https://www.eclipse.org/legal/epl-2.0/"
+              },
+              {
+                "name": "Academic Free License 3.0 (AFL)",
+                "link": "https://opensource.org/license/afl-3-0-php"
+              }
+            ]
           },
           {
-            "id": "url",
-            "regex": "v === '' || v === null || /^(https?:\\/\\/)?([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}(\\/[^\\s]*)?$/.test(v)",
-            "message": "Please type a valid URL (ie http[s]://domain.org)"
+            "id": "linkcense",
+            "label": "License link",
+            "type": "input",
+            "inputType": "url",
+            "description": "Under the license there is a 'More information' button. The link is used to redirect the user when this button is clicked.",
+            "rules": [
+              {
+                "id": "required",
+                "regex": "!!v && v.length > 0",
+                "message": "This field is required"
+              },
+              {
+                "id": "url",
+                "regex": "v === '' || v === null || /^(https?:\\/\\/)?([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}(\\/[^\\s]*)?$/.test(v)",
+                "message": "Please type a valid URL (ie http[s]://domain.org)"
+              }
+            ],
+            "required": true
           }
-        ],
-        "required": true,
-        "cols": 6
+        ]
       },
       {
         "id": "method",
-        "label": "Method *",
+        "label": "Method",
         "type": "select",
         "description": "MD method is displayed in the overview.",
         "rules": [
@@ -217,6 +317,7 @@
         ],
         "required": true,
         "multiple": false,
+        "other": true,
         "options": "https://mmb.mddbr.eu/api/rest/current/projects/options?projection=metadata.METHOD",
         "cols": 6
       },

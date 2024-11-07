@@ -2,7 +2,7 @@
   <v-textarea 
     v-model="refModel"
     :rules="rules"
-    :label="props.label"
+    :label="`${props.label} ${required ? '*' : ''}`"
     @update:modelValue="setMetadata(props.id, refModel)"
     :rows="props.rows"
     clearable
@@ -24,6 +24,7 @@
 
   const { props } = defineProps(['props'])
   const refModel = ref(null)
+  const required = ref(props.required)
   const rules = ref(props.rules ? getRules(props.rules) : [])
 
 </script>

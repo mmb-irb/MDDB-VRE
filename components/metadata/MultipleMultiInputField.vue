@@ -6,7 +6,7 @@
         :key="j"
         v-model="modelGroup[i][input.id]"
         :rules="rules[input.id]"
-        :label="input.label"
+        :label="`${props.label} ${required ? '*' : ''}`"
         :prepend-inner-icon="setViewIcon(modelGroup[i][input.id], input.inputType)"
         @update:modelValue="setMultiMultiMetadata(props.id, i, input.id, modelGroup[i][input.id])"
         @click:prepend-inner="setViewIconLink(modelGroup[i][input.id], input.inputType)"
@@ -60,6 +60,7 @@
   }, {})
   const modelGroup = ref([{ ...initModel }])
 
+  const required = ref(props.required)
   const rules = ref(props.rules ? getMultipleRules(props.rules, Object.keys(initModel)) : [])
 
   // computed property to check if all values are non-empty and fulfill the rules
