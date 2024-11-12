@@ -9,7 +9,6 @@ export default function useRules() {
         rs[rule.id] = v => f(v) || rule.message
         rules.push(rs[rule.id])
     });
-
     return rules
   }
 

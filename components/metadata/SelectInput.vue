@@ -1,6 +1,6 @@
 <template>
-  <div class="select-input" style="display: flex;">
-    <div class="sel-class" style=" ">
+  <div class="select-input">
+    <div class="sel-class">
       <v-autocomplete
         v-if="!other"
         v-model="refModelSelect"

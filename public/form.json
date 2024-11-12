@@ -7,55 +7,6 @@
     "description": "The following metadata has no effect on the workflow itself, but it will be written to the <strong>output metadata</strong> file. These values will be <strong>uploaded to the database</strong> and then exposed in the <strong>project overview</strong>. They may be also useful to <strong>search this project</strong> using the browser.",
     "fields": [
       {
-        "id": "ligands",
-        "type": "select-input-multiple",
-        "cols": 12,
-        "subCols": 6,
-        "fields": [
-          {
-            "id": "ligands",
-            "label": "Ligands database",
-            "type": "select",
-            "description": "The database from wich the ligand will be downloaded.",
-            "required": false,
-            "other": true,
-            "items": [
-              {
-                "name": "PubChem",
-                "val": "pubchem"
-              },
-              {
-                "name": "DrugBank",
-                "val": "drugbank"
-              },
-              {
-                "name": "ChEMBL",
-                "val": "CHEMBL"
-              },
-              {
-                "name": "Residue",
-                "val": "residue"
-              }
-            ]
-          },
-          {
-            "id": "ligands",
-            "label": "Simulation ligand",
-            "type": "input",
-            "inputType": "ligand",
-            "description": "Set ligands in the simulation. The workflow identifies ligands by their pubchem accession. If a pubchem accession is passed then it is used. Otherwise, the pubchem accession is found using other database accessions. Optionally, a list of residue indices may be provided to force the mapping. Ligands are mapped in the standard topology file. In addition, an RMSD analysis is run for every defined ligand. Eg: pubchem: 1986, drugbank: DB00945, chembl: CHEMBL1201179, residue: 234, 32, 54. (REVIEEEEEW)",
-            "rules": [
-              {
-                "id": "ligand",
-                "regex": "v === '' || v === null || /^(?:pubchem: ?[1-9][0-9]*|drugbank: ?DB\\d{5}|chembl: ?CHEMBL\\d+|residue: ?(?:\\d{1,3}(?:, ?\\d{1,3})*))$/.test(v)",
-                "message": "Incorrect ligand format"
-              }
-            ],
-            "required": false
-          }
-        ]
-      },
-      {
         "id": "name",
         "label": "Name",
         "type": "input",
@@ -406,21 +357,97 @@
       },
       {
         "id": "ligands",
-        "label": "Simulation ligand",
-        "type": "multiple-input",
-        "object": true,
-        "inputType": "ligand",
-        "description": "Set ligands in the simulation. The workflow identifies ligands by their pubchem accession. If a pubchem accession is passed then it is used. Otherwise, the pubchem accession is found using other database accessions. Optionally, a list of residue indices may be provided to force the mapping. Ligands are mapped in the standard topology file. In addition, an RMSD analysis is run for every defined ligand. Eg: pubchem: 1986, drugbank: DB00945, chembl: CHEMBL1201179, residue: 234, 32, 54.",
-        "rules": [
-          {
-            "id": "pdb",
-            "regex": "v === '' || v === null || /^(?:pubchem: ?[1-9][0-9]*|drugbank: ?DB\\d{5}|chembl: ?CHEMBL\\d+|residue: ?(?:\\d{1,3}(?:, ?\\d{1,3})*))$/.test(v)",
-            "message": "Incorrect ligand format"
-          }
-        ],
-        "required": false,
+        "type": "ligands",
+        "description": "Set ligands in the simulation. The workflow identifies ligands by their accession. Ligands are mapped in the standard topology file. In addition, an RMSD analysis is run for every defined ligand. Eg: pubchem: 1986, drugbank: DB00945, chembl: CHEMBL1201179. Optionally, a list of residue indices may be provided to force the mapping. Eg: 234, 32, 54.",
+        "description2": "Other ligands not found in the previous databases. Optionally, a list of residue indices may be provided to force the mapping. Eg: 234, 32, 54.",
         "cols": 12,
-        "subCols": 4
+        "subCols": 12,
+        "fields": [
+          {
+            "id": "sel-db",
+            "label": "Ligands database",
+            "type": "select",
+            "required": false,
+            "other": false,
+            "items": [
+              {
+                "name": "PubChem",
+                "option": "pubchem"
+              },
+              {
+                "name": "DrugBank",
+                "option": "drugbank"
+              },
+              {
+                "name": "ChEMBL",
+                "option": "CHEMBL"
+              }
+            ]
+          },
+          {
+            "id": "inp-ligand",
+            "label": "Simulation ligand",
+            "type": "input",
+            "inputType": "ligand",
+            "rules": {
+              "input": [{
+                "id": "input",
+                "regex": "v === '' || v === null || /^(?:[1-9][0-9]*|DB\\d{5}|CHEMBL\\d+)$/.test(v)",
+                "message": "Incorrect ligand format"
+              }]
+            },
+            "required": false
+          },
+          {
+            "id": "other-ligand",
+            "label": "Ligand name",
+            "type": "other",
+            "required": false
+          },
+          {
+            "id": "inp-residue",
+            "label": "Residue(s)",
+            "type": "residue",
+            "inputType": "residue",
+            "rules": {
+              "residue": [{
+                "id": "residue",
+                "regex": "v === '' || v === null || /^(\\d{1,3}(?:, ?\\d{1,3})*)$/.test(v)",
+                "message": "Incorrect residue format"
+              }]
+            },
+            "required": false
+          }
+        ]
+      },
+      {
+        "id": "ligands",
+        "type": "ligands-other",
+        "description": "Other ligands not found in the previous databases. Optionally, a list of residue indices may be provided to force the mapping. Eg: 234, 32, 54.",
+        "cols": 12,
+        "subCols": 12,
+        "fields": [
+          {
+            "id": "inp-ligand",
+            "label": "Ligand name",
+            "type": "input",
+            "required": false
+          },
+          {
+            "id": "inp-residue",
+            "label": "Residue(s)",
+            "type": "residue",
+            "inputType": "residue",
+            "rules": {
+              "residue": [{
+                "id": "residue",
+                "regex": "v === '' || v === null || /^(\\d{1,3}(?:, ?\\d{1,3})*)$/.test(v)",
+                "message": "Incorrect residue format"
+              }]
+            },
+            "required": false
+          }
+        ]
       }
     ]
   },

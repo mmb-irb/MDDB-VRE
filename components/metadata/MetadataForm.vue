@@ -13,6 +13,7 @@
         <multiple-input-field v-if="item.type === 'multiple-input'" :props="item" />
         <multiple-multi-input-field v-if="item.type === 'multiple-multi-input'" :props="item" />
         <select-input v-if="item.type === 'select-input'" :props="item" />
+        <ligands v-if="item.type === 'ligands'" :props="item" />
 
       </v-col>
     </v-row>
