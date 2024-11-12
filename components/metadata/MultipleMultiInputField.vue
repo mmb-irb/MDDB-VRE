@@ -10,6 +10,7 @@
         :prepend-inner-icon="setViewIcon(modelGroup[i][input.id], input.inputType)"
         @update:modelValue="setMultiMultiMetadata(props.id, i, input.id, modelGroup[i][input.id])"
         @click:prepend-inner="setViewIconLink(modelGroup[i][input.id], input.inputType)"
+        density="comfortable"
         clearable
       >
         <template v-slot:append>
@@ -100,6 +101,8 @@
   const removeGroup = (index) => {
     if (index > 0) {
       modelGroup.value.splice(index, 1)
+      // TO CKECK????
+      setMetadata(props.id, modelGroup.value)
     }
   }
 

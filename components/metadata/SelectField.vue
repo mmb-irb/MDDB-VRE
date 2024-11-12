@@ -8,6 +8,7 @@
     item-title="text"
     item-value="option"
     @update:modelValue="handleInput"
+    density="comfortable"
     clearable
     allow-new
     :chips="props.multiple"
@@ -49,7 +50,7 @@
 
   import structureStorage from '@/modules/structure/structureStorage'
   import useRules from '@/modules/helpers/useRules'
-  import useREST from '@/modules/helpers/useREST'; 
+  import useREST from '@/modules/helpers/useREST'
 
   const { setMetadata } = structureStorage()
   const { getRules } = useRules()

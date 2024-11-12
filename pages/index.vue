@@ -104,9 +104,9 @@
   let nextButton
   onMounted(async () => {
 
-    nextButton = document.querySelector('#next-btn')
+    /*nextButton = document.querySelector('#next-btn')
     nextButton.disabled = true
-    nextButton.classList.add('v-btn--disabled')
+    nextButton.classList.add('v-btn--disabled')*/
 
   })
 

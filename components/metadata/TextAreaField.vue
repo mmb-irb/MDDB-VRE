@@ -6,6 +6,7 @@
     @update:modelValue="setMetadata(props.id, refModel)"
     :rows="props.rows"
     clearable
+    density="comfortable"
     no-resize
   >
     <template v-slot:append>

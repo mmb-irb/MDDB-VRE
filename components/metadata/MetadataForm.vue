@@ -14,6 +14,7 @@
         <multiple-multi-input-field v-if="item.type === 'multiple-multi-input'" :props="item" />
         <select-input v-if="item.type === 'select-input'" :props="item" />
         <ligands v-if="item.type === 'ligands'" :props="item" />
+        <interactions v-if="item.type === 'interactions'" :props="item" />
 
       </v-col>
     </v-row>
@@ -31,7 +32,7 @@
    // controls "next" button on parent component
    watch(form, (nf, of) => {
     //console.log(nf)
-    emit('endFormMeta', nf)
+    //emit('endFormMeta', nf)
   })
 
 </script>

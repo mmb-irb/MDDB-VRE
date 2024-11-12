@@ -11,6 +11,7 @@
         @click:append-inner="removeInput(index)"
         @click:prepend-inner="setViewIconLink(refInputs[index])"
         @update:modelValue="setMetadata(props.id, refInputs)"
+        density="comfortable"
         clearable
       >
         <template v-slot:append>
@@ -134,6 +135,7 @@
   const removeInput = (index) => {
     if (index > 0) {
       refInputs.value.splice(index, 1)
+      setMetadata(props.id, refInputs.value)
     }
   }
 

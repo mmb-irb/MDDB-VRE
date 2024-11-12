@@ -12,6 +12,7 @@
             @update:modelValue="(value) => handleSelect(index)"
             item-title="name"
             item-value="option"
+            density="compact"
             clearable
             allow-new
           >
@@ -25,6 +26,7 @@
             :prepend-inner-icon="setViewIcon(refModel[index].input)"
             @update:modelValue="(value) => handleInput(index)"
             @click:prepend-inner="setViewIconLink(refModel[index].input)"
+            density="compact"
             clearable
           >
           </v-text-field>
@@ -37,6 +39,7 @@
             :append-inner-icon="index > 0 ? 'mdi-delete-outline' : ''"
             @update:modelValue="(value) => handleResidue(index)"
             @click:append-inner="remove(index)"
+            density="compact"
             clearable
           >
           <template v-slot:append>
@@ -56,6 +59,7 @@
             v-model="refModelOther[index].input"
             :label="`${otherLabel} ${otherRequired ? '*' : ''}`"
             @update:modelValue="(value) => handleInputOther(index)"
+            density="compact"
             clearable
           >
           </v-text-field>
@@ -68,6 +72,7 @@
             :append-inner-icon="index > 0 ? 'mdi-delete-outline' : ''"
             @update:modelValue="(value) => handleResidueOther(index)"
             @click:append-inner="removeOther(index)"
+            density="compact"
             clearable
           >
           <template v-slot:append>
@@ -85,7 +90,7 @@
   import structureStorage from '@/modules/structure/structureStorage'
   import useRules from '@/modules/helpers/useRules'
 
-  const { setMetadata, getMetadataField } = structureStorage()
+  const { setMetadata } = structureStorage()
   const { getRules, getMultipleRules, checkMultipleValuesAgainstRules } = useRules()
 
   const { props } = defineProps(['props'])

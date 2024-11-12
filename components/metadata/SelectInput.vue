@@ -11,6 +11,7 @@
         item-value="option"
         @update:modelValue="handleInput"
         clearable
+        density="comfortable"
         allow-new
       >
         <template v-slot:append>
@@ -25,6 +26,7 @@
         :label="`${select.label} (Other) ${select.required ? '*' : ''}`"
         @update:modelValue="setMetadata(select.id, refModelSelect)"
         @click:clear="other = false; refModelInput = null"
+        density="comfortable"
         clearable
       >
         <template v-slot:append>
@@ -42,6 +44,7 @@
         @click:prepend-inner="setViewIconLink(refModelInput)"
         :readonly="!other"
         :clearable="other"
+        density="comfortable"
       >
         <template v-slot:append>
           <form-tooltip :props="{width: 300, text: input.description}" />

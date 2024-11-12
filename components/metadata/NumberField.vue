@@ -9,6 +9,7 @@
     :suffix="props.suffix"
     @update:modelValue="setMetadata(props.id, refModel)"
     control-variant="stacked"
+    density="comfortable"
     inset
   >
     <template v-slot:append>

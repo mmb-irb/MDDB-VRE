@@ -6,6 +6,7 @@
     :prepend-inner-icon="setViewIcon(refModel)"
     @update:modelValue="setMetadata(props.id, refModel)"
     @click:prepend-inner="setViewIconLink(refModel)"
+    density="comfortable"
     clearable
   >
     <template v-slot:append>
