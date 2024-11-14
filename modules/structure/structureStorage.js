@@ -4,7 +4,7 @@ const metadata = reactive({})
 export default function structureStorage() {
 
     const setMetadata = (field, data) => {
-        console.log('setMetadata', field, data)
+        //console.log('setMetadata', field, data)
         metadata[field] = data
     }
 

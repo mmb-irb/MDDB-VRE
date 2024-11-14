@@ -120,18 +120,16 @@
   const nfEnabled = computed(() => allValuesNonEmpty(refModel.value) && checkMultipleValuesAgainstRules(refModel.value, inpRules2.value) === true)
   const nfOtherEnabled = computed(() => allOtherValuesNonEmpty(refModelOther.value))
 
-  //const totalInputs = computed(() => getMetadataField(props.id) ? getMetadataField(props.id).length : -1)
-
   // function to handle the select field
   const handleSelect = (index) => {
     if (refModel.value[index].input) {
       const obj = {
         [refModel.value[index].select]: refModel.value[index].input
       };
-      if (refModel.value[index].residue) obj['residue'] = refModel.value[index].residue;
+      if (refModel.value[index].residue) obj.residue = refModel.value[index].residue.split(',').map(Number).filter(n => !isNaN(n))
 
-      refLigands.value[index] = obj;
-      setMetadata(props.id, refLigands.value);
+      refLigands.value[index] = obj
+      setMetadata(props.id, refLigands.value)
     }
   }
 
@@ -140,11 +138,11 @@
     if (refModel.value[index].select) {
       const obj = {
         [refModel.value[index].select]: refModel.value[index].input
-      };
-      if (refModel.value[index].residue) obj['residue'] = refModel.value[index].residue;
+      }
+      if (refModel.value[index].residue) obj.residue = refModel.value[index].residue.split(',').map(Number).filter(n => !isNaN(n))
 
-      refLigands.value[index] = obj;
-      setMetadata(props.id, refLigands.value);
+      refLigands.value[index] = obj
+      setMetadata(props.id, refLigands.value)
     }
   }
   
@@ -152,7 +150,7 @@
   const handleResidue = (index) => {
     if(refModel.value[index].select && refModel.value[index].input) {
       const obj =  {
-        residue: refModel.value[index].residue
+        residue: refModel.value[index].residue.split(',').map(Number).filter(n => !isNaN(n))
       }
       if(refModel.value[index].select) obj[refModel.value[index].select] = refModel.value[index].input
       refLigands.value[index] = obj
@@ -165,16 +163,16 @@
     const obj = {
         name: refModelOther.value[index].input
     };
-    if (refModelOther.value[index].residue) obj['residue'] = refModelOther.value[index].residue;
+    if (refModelOther.value[index].residue) obj.residue = refModelOther.value[index].residue.split(',').map(Number).filter(n => !isNaN(n))
 
-    refLigandsOther.value[index] = obj;
-    setMetadata('ligands_other', refLigandsOther.value);
+    refLigandsOther.value[index] = obj
+    setMetadata('ligands_other', refLigandsOther.value)
   }
 
   const handleResidueOther = (index) => {
     if(refModelOther.value[index].input) {
       const obj =  {
-        residue: refModelOther.value[index].residue
+        residue: refModelOther.value[index].residue.split(',').map(Number).filter(n => !isNaN(n))
       }
       if(refModelOther.value[index].input) obj.name = refModelOther.value[index].input
       refLigandsOther.value[index] = obj

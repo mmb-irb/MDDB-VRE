@@ -1,5 +1,5 @@
 <template>
-  <p><strong>Copy the text below</strong> and use it for creating a new <strong>shell script</strong> (ie named curl.sh) for uploading your trajectory file(s) <a href="https://curl.se/" target="_blank" class="font-weight-black">via curl</a>. Once created, change the file permissions to executable and execute it:</p>
+  <p><strong>Copy the text below</strong> and use it for creating a new <strong>shell script</strong> (ie named curl.sh) for uploading your trajectory file(s) <a href="https://curl.se/" target="_blank" class="font-weight-black">via curl</a>. Once created, <strong>open a terminal console</strong>, change the file permissions to executable and execute it:</p>
     
   <p>
     <code>chmod +x curl.sh</code><br>

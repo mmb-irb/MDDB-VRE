@@ -32,7 +32,7 @@
    // controls "next" button on parent component
    watch(form, (nf, of) => {
     //console.log(nf)
-    //emit('endFormMeta', nf)
+    emit('endFormMeta', nf)
   })
 
 </script>
