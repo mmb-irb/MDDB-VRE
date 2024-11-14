@@ -7,7 +7,7 @@
         :rules="rules"
         :label="`${props.label} ${required ? '*' : ''}`"
         :prepend-inner-icon="setViewIcon(refInputs[index])"
-        :append-inner-icon="index > 0 ? 'mdi-delete-outline' : ''"
+        :append-inner-icon="refInputs.length > 1 ? 'mdi-delete-outline' : ''"
         @click:append-inner="removeInput(index)"
         @click:prepend-inner="setViewIconLink(refInputs[index])"
         @update:modelValue="setMetadata(props.id, refInputs)"
@@ -133,10 +133,10 @@
   }
 
   const removeInput = (index) => {
-    if (index > 0) {
+    //if (index > 0) {
       refInputs.value.splice(index, 1)
       setMetadata(props.id, refInputs.value)
-    }
+    //}
   }
 
 </script>

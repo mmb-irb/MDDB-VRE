@@ -86,6 +86,7 @@ export default defineNuxtConfig({
       logoUrl: `${baseURL}img/logo.png`,
       apiBase: `${baseURL}api`,
       minioURL: `${process.env.MINIO_PROTOCOL}://${process.env.MINIO_URL}:${process.env.MINIO_PORT}`,
+      minioHost: `${process.env.MINIO_URL}:${process.env.MINIO_PORT}`,
       apiEndPoints: [
         '/api', 
         '/api/upload',

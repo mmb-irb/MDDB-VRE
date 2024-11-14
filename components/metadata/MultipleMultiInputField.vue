@@ -1,37 +1,24 @@
 <template>
-  <div class="multi-multi" v-for="(group, i) in modelGroup">
-    <div class="container-input" >
-      <v-text-field
-        v-for="(input, j) in props.inputs"
-        :key="j"
-        v-model="modelGroup[i][input.id]"
-        :rules="rules[input.id]"
-        :label="`${props.label} ${required ? '*' : ''}`"
-        :prepend-inner-icon="setViewIcon(modelGroup[i][input.id], input.inputType)"
-        @update:modelValue="setMultiMultiMetadata(props.id, i, input.id, modelGroup[i][input.id])"
-        @click:prepend-inner="setViewIconLink(modelGroup[i][input.id], input.inputType)"
-        density="comfortable"
-        clearable
-      >
-        <template v-slot:append>
-          <form-tooltip :props="{width: 300, text: input.description}" />
-        </template>
-      </v-text-field>
-    </div>
-    <div class="container-btn mt-1">
-      <v-tooltip text="Remove group of inputs" location="bottom" v-if="i > 0">
-        <template v-slot:activator="{ props }">
-          <v-btn 
-            variant="text" 
-            color="purple-accent-1" 
-            icon="mdi-trash-can-outline" 
-            class="btn-remove" 
-            @click="removeGroup(i)"
-            v-bind="props"
-            ></v-btn>
-        </template>
-      </v-tooltip>
-    </div>
+  <div v-for="(group, i) in modelGroup">
+    <v-row class="mb-0">
+      <v-col v-for="(input, j) in props.inputs" :key="j" :lg="props.subCols" :md="props.subCols" sm="12" cols="12" class="pb-0">
+        <v-text-field
+          v-model="modelGroup[i][input.id]"
+          :rules="rules[input.id]"
+          :label="`${input.label} ${required ? '*' : ''}`"
+          :prepend-inner-icon="setViewIcon(modelGroup[i][input.id], input.inputType)"
+          @update:modelValue="setMultiMultiMetadata(props.id, i, input.id, modelGroup[i][input.id])"
+          @click:prepend-inner="setViewIconLink(modelGroup[i][input.id], input.inputType)"
+          density="comfortable"
+          clearable
+        >
+          <template v-slot:append>
+            <form-tooltip :props="{width: 300, text: input.description}" />
+            <v-icon v-if="modelGroup.length > 1  && j%props.inputs.length !== 0" @click="removeGroup(i)" color="purple-accent-1" class="ml-1">mdi-delete-outline</v-icon>
+          </template>
+        </v-text-field>
+      </v-col>
+    </v-row>
   </div>
   <v-btn
     variant="tonal" 
@@ -50,7 +37,7 @@
   import structureStorage from '@/modules/structure/structureStorage'
   import useRules from '@/modules/helpers/useRules'
 
-  const { setMultiMultiMetadata } = structureStorage()
+  const { setMultiMultiMetadata, setMetadata } = structureStorage()
   const { getMultipleRules, checkMultipleValuesAgainstRules } = useRules()
 
   const { props } = defineProps(['props'])
@@ -99,21 +86,16 @@
   }
 
   const removeGroup = (index) => {
-    if (index > 0) {
+    //if (index > 0) {
       modelGroup.value.splice(index, 1)
       // TO CKECK????
       setMetadata(props.id, modelGroup.value)
-    }
+    //}
   }
 
 </script>
 
-<style>
-  .multi-multi .v-input__append { margin-inline-end:10px; margin-inline-start:16px; }
-</style>
 <style scoped>
-  .multi-multi { display: flex; }
-  .container-input { display: flex; width: 95%; }
-  .container-btn { display: flex; width: 5%; justify-content: end; align-items:first baseline; }
+  .container-input { display: flex; width: 100%;  background-color: aquamarine; }
   .btn-add { text-transform: none; font-size: 12px; }
 </style>

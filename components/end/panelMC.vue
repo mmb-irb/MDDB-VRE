@@ -13,7 +13,7 @@
     readonly
     hide-details="auto"
   />
-  <p class="mt-4"><strong>Upload single file:</strong> be aware to <strong>replace /path/to/file</strong> by the <strong>local path</strong> of the file in your computer.</p>
+  <p class="mt-4"><strong>Upload single file:</strong> be aware to <strong>replace /path/to/file</strong> by the <strong>local path</strong> of the file in your computer and <strong>filename</strong> by the <strong>name of the file</strong>.</p>
   <v-textarea
     class="my-2"
     append-inner-icon="mdi-content-copy"

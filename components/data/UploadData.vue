@@ -84,7 +84,7 @@
   import structureStorage from '@/modules/structure/structureStorage'
   import YAML from 'yaml';
 
-  const { getMetadata, getObjectFieldIds } = structureStorage()
+  const { getMetadata, getObjectFieldIds, cleanObjectFields } = structureStorage()
 
   const config = useRuntimeConfig()
   const { $globals, $axios, $generateUniqueId } = useNuxtApp()
@@ -173,7 +173,7 @@
     if(fields.traj) fields.traj.forEach(file => formData.append('traj', file))
 
     // Create JSON with metadata    
-    const metadata = getMetadata()
+    let metadata = getMetadata()
     metadata.trjType = fields.type
     metadata.bucket = $generateUniqueId()
     // get the fields that are objects (must be processed as objects instead of strings)
@@ -192,6 +192,12 @@
         })
       }
     })
+    // trick for mixing both ligands objects
+    if(metadata.ligands_other) {
+      metadata.ligands = metadata.ligands ? metadata.ligands.concat(metadata.ligands_other) : metadata.ligands_other
+      delete metadata.ligands_other
+    }
+    metadata = cleanObjectFields(metadata)
     // convert metadata to YAML
     let metadataYaml = YAML.stringify(metadata);
     // create a Blob from the YAML string

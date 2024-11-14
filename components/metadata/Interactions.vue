@@ -1,6 +1,6 @@
 <template>
   <p style="color:#777;" v-html="props.description"></p>
-  <div v-for="(interaction, index) in modelGroup" :key="index" :class="`${index > 0 ? 'border-t-lg' : ''} pt-2`">
+  <div v-for="(interaction, index) in modelGroup" :key="index" class="pt-2" >
     <v-row class="mb-0" >
       <v-col v-for="(item, idx) in props.fields" :key="idx" :lg="item.subCols" :md="item.subCols" sm="12" cols="12" class="pb-0">
         <v-text-field
@@ -49,7 +49,7 @@
         </div>
       </v-col>
     </v-row>
-    <div v-if="modelGroup.length > 1"  :class="`${index < modelGroup.length - 1 ? 'border-s-md' : ''} pt-2 btn-remove`">
+    <div v-if="modelGroup.length > 1"  :class="`${index < modelGroup.length - 1 ? 'bg-bottom-interaction mb-2' : 'pt-2'} btn-remove`">
       <v-tooltip :text="`Remove group of ${ props.label }`" location="bottom" >
         <template v-slot:activator="{ props }">
           <v-btn 
@@ -166,5 +166,9 @@
   .btn-add { text-transform: none; font-size: 12px; }
   .container-add { display: flex; justify-content: space-between; }
   .mt-40 { margin-top: -40px; }
-  .btn-remove { display: flex; justify-content: end; }
+  .btn-remove { display: flex; justify-content: end; border-radius: 10px; }
+  .bg-bottom-interaction{
+    background: rgb(191,191,191);
+    background: linear-gradient(2deg, rgba(224,224,224,.7) 0%, rgba(255,255,255,1) 50%, rgba(255,255,255,1) 100%);
+  }
 </style>

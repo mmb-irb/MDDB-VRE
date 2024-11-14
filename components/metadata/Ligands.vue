@@ -36,14 +36,13 @@
             v-model="refModel[index].residue"
             :rules="resRules"
             :label="`${residueLabel} ${residueRequired ? '*' : ''}`"
-            :append-inner-icon="index > 0 ? 'mdi-delete-outline' : ''"
             @update:modelValue="(value) => handleResidue(index)"
-            @click:append-inner="remove(index)"
             density="compact"
             clearable
           >
           <template v-slot:append>
             <v-icon :color="!nfEnabled ? 'grey-lighten-1' : ''" @click="createNewInput()" v-if="index === refModel.length - 1">mdi-plus-circle-outline</v-icon>
+            <v-icon v-if="refModel.length > 1" @click="remove(index)" color="purple-accent-1" class="ml-1">mdi-delete-outline</v-icon>
           </template>
           </v-text-field>
         </div>
@@ -69,14 +68,13 @@
             v-model="refModelOther[index].residue"
             :rules="resRules"
             :label="`${residueLabel} ${residueRequired ? '*' : ''}`"
-            :append-inner-icon="index > 0 ? 'mdi-delete-outline' : ''"
             @update:modelValue="(value) => handleResidueOther(index)"
-            @click:append-inner="removeOther(index)"
             density="compact"
             clearable
           >
           <template v-slot:append>
             <v-icon :color="!nfOtherEnabled ? 'grey-lighten-1' : ''" @click="createNewInputOther(index)" v-if="index === refModelOther.length - 1">mdi-plus-circle-outline</v-icon>
+            <v-icon v-if="refModelOther.length > 1" @click="removeOther(index)" color="purple-accent-1" class="ml-1">mdi-delete-outline</v-icon>
           </template>
           </v-text-field>
         </div>
@@ -246,11 +244,11 @@
 
   // removes an input field
   const remove = (index) => {
-    if (index > 0) {
+    //if (index > 0) {
       refModel.value.splice(index, 1)
       refLigands.value.splice(index, 1)
       setMetadata(props.id, refLigands.value)
-    }
+    //}
   }
 
   // creates a new input field
@@ -262,11 +260,11 @@
 
   // removes an input field
   const removeOther = (index) => {
-    if (index > 0) {
+    //if (index > 0) {
       refModelOther.value.splice(index, 1)
       refLigandsOther.value.splice(index, 1)
       setMetadata(props.id, refLigandsOther.value)
-    }
+    //}
   }
 
 </script>

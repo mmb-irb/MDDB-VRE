@@ -4,7 +4,8 @@ import path from 'path';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import { tmpdir } from 'os';
-import { logMessage } from '../../utils/log'; // Import logMessage from log module
+import { logMessage } from '../../utils/log'; 
+import { getCurrentDateString } from '../../utils/utils'; 
 
 const execPromise = promisify(exec);
 
@@ -23,8 +24,9 @@ export default defineEventHandler(async (event) => {
       }
 
       const bucket = fields.bucket;
+      const date = getCurrentDateString();
       // Create the new bucket and await its completion
-      await execPromise(`mc mb myminio/${bucket}`);
+      await execPromise(`mc mb myminio/${date}/${bucket}`);
 
       try {
         for (const fieldName in files) {
@@ -36,7 +38,7 @@ export default defineEventHandler(async (event) => {
             await fs.copyFile(file.filepath, tempFilePath);
 
             // Upload the file to MinIO
-            await execPromise(`mc cp ${tempFilePath} myminio/${bucket}`);
+            await execPromise(`mc cp ${tempFilePath} myminio/${date}/${bucket}`);
 
             // Clean up the temporary file
             await fs.unlink(tempFilePath);
@@ -46,6 +48,7 @@ export default defineEventHandler(async (event) => {
         if(fields.type == 'small') {
           // log
           const logObject = {
+            date: `${date}`,
             bucket: `${bucket}`,
             type: 'small',
             processed: null

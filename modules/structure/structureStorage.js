@@ -4,7 +4,7 @@ const metadata = reactive({})
 export default function structureStorage() {
 
     const setMetadata = (field, data) => {
-        //console.log('setMetadata', field, data)
+        console.log('setMetadata', field, data)
         metadata[field] = data
     }
 
@@ -34,14 +34,45 @@ export default function structureStorage() {
             })
         })
         return ids
-    };
+    }
+
+    const cleanObjectFields = (obj) => {
+        for (const key in obj) {
+          if (obj.hasOwnProperty(key)) {
+            const value = obj[key];
+            if (value === null || value === '' || (Array.isArray(value) && value.length === 0)) {
+              delete obj[key];
+            } else if (Array.isArray(value)) {
+              obj[key] = value.filter(item => {
+                if (typeof item === 'string') {
+                  return item !== '';
+                } else if (typeof item === 'object' && item !== null) {
+                  cleanObjectFields(item);
+                  return Object.keys(item).length > 0;
+                }
+                return true;
+              });
+              if (obj[key].length === 0) {
+                delete obj[key];
+              }
+            } else if (typeof value === 'object' && value !== null) {
+              cleanObjectFields(value);
+              if (Object.keys(value).length === 0) {
+                delete obj[key];
+              }
+            }
+          }
+        }
+        return obj
+      }
 
     return {
         setMetadata,
         setMultiMultiMetadata,
         getMetadata,
         getMetadataField,
-        getObjectFieldIds
+        getObjectFieldIds,
+        cleanObjectFields
     }
 
 }
