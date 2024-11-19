@@ -10,6 +10,7 @@
           :label="texts.top.label"
           :rules="rules.top"
           prepend-icon="mdi-molecule"
+          :disabled="trjDisabled"
           show-size
         >
           <template v-slot:append>
@@ -46,7 +47,7 @@
           false-value="small"
           true-value="large"
           hide-details
-          theme="kk"
+          theme="up-swt"
           @click="switchTrajSize"
         ></v-switch>
       </v-col>
@@ -103,8 +104,8 @@
     },
     switch: {
       label: {
-        small: `Click here if the total size of your trajectory files is larger than ${$globals.maxUploadTrjSizeHumanReadable}. In this case, the trajectory upload must be done via command line (more instructions in the following step).`,
-        large: `Trajectory upload disabled (more instructions for uploading it via command line in the following step). Click again if the total size of your trajectory files is smaller than ${$globals.maxUploadTrjSizeHumanReadable}.`
+        small: `Click here if the total size of your trajectory files is larger than ${$globals.maxUploadTrjSizeHumanReadable}. In this case, the files upload must be done via command line (more instructions in the following step).`,
+        large: `Files upload disabled (more instructions for uploading them via command line in the following step). Click again if the total size of your trajectory files is smaller than ${$globals.maxUploadTrjSizeHumanReadable}.`
       }
     },
     trajName: {
@@ -121,7 +122,7 @@
   })
   const isFormValid = computed(() => {
     return (
-      fields.top && 
+      /*fields.top && */
       (fields.type === 'large' || 
         (fields.traj && 
         fields.traj.length && 
@@ -156,6 +157,7 @@
 
   const switchTrajSize = () => {
     if (fields.type === 'small') {
+      fields.top = null
       fields.traj = null
     }
   }
@@ -169,7 +171,7 @@
   const sendToREST = async () => {
 
     const formData = new FormData()
-    formData.append('top', fields.top)
+    if(fields.top) formData.append('top', fields.top)
     if(fields.traj) fields.traj.forEach(file => formData.append('traj', file))
 
     // Create JSON with metadata    
@@ -247,7 +249,7 @@
 </script>
 
 <style >
-  .v-theme--kk .v-label {
+  .v-theme--up-swt .v-label {
     font-size: .85rem!important;
   }
 </style>

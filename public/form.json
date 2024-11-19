@@ -76,14 +76,7 @@
         "type": "rich-textarea",
         "rows": 4,
         "description": "Citation for refering this simulation or related paper. The citation is displayed in the overview page.",
-        "rules": [
-          {
-            "id": "required",
-            "regex": "!!v",
-            "message": "This field is required"
-          }
-        ],
-        "required": true,
+        "required": false,
         "cols": 12
       },
       {
@@ -461,13 +454,13 @@
     "fields": [
       {
         "id": "framestep",
-        "label": "Framestep (ns)",
+        "label": "Framestep (ps)",
         "type": "number",
         "min": 0.01,
         "step": 0.01,
-        "suffix": "ns",
+        "suffix": "ps",
         "default": null,
-        "description": "Time framestep in nanoseconds (ns). May be null if this is not a trajectory, but an ensemble. Framestep is an important value since it is used in many graph axes in the web client.",
+        "description": "Time framestep in picoseconds (ps). Interval between successive snapshots (frames) saved in the trajectory file during the simulation",
         "required": false,
         "cols": 6
       },
