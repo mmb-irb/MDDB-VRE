@@ -30,6 +30,7 @@
   const { props } = defineProps(['props'])
   const refModel = ref(null)
   const refModel2 = ref(null)
+  if(props.default !== undefined) setMetadata(props.id, refModel.value)
   const required = ref(props.required)
   // TODO
   const rules = ref(props.rules ? getRules(props.rules) : [])
@@ -48,6 +49,13 @@
         ],
       },
     });
+
+    // Set default text if provided
+    if (props.default) {
+      editor.clipboard.dangerouslyPasteHTML(props.default);
+      setMetadata(props.id, editor.root.innerHTML)
+      refModel2.value = editor.root.innerText == '\n' || editor.root.innerText == '' ? '' : editor.root.innerText
+    }
 
     editor.on('text-change', () => {
       setMetadata(props.id, editor.root.innerHTML)

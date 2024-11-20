@@ -24,7 +24,8 @@
   const { getRules } = useRules()
 
   const { props } = defineProps(['props'])
-  const refModel = ref(null)
+  const refModel = ref(props.default)
+  if(props.default !== undefined) setMetadata(props.id, refModel.value)
   const required = ref(props.required)
   const rules = ref(props.rules ? getRules(props.rules) : [])
 

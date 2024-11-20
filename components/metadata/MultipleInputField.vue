@@ -31,7 +31,11 @@
   const { getRules, checkAllValuesAgainstRules } = useRules()
 
   const { props } = defineProps(['props'])
-  const refInputs = ref([''])
+  let refInputs = ref([''])
+  if(props.default !== undefined) {
+    refInputs.value[0] = props.default
+    setMetadata(props.id, refInputs.value)
+  }
   const required = ref(props.required)
   const rules = ref(props.rules ? getRules(props.rules) : [])
 

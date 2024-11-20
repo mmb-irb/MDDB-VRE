@@ -85,11 +85,11 @@
   import structureStorage from '@/modules/structure/structureStorage'
   import YAML from 'yaml';
 
-  const { getMetadata, getObjectFieldIds, cleanObjectFields } = structureStorage()
+  const { getMetadata, getObjectFieldIds, getNullExceptions, cleanObjectFields, getFData } = structureStorage()
 
   const config = useRuntimeConfig()
   const { $globals, $axios, $generateUniqueId } = useNuxtApp()
-  const { fData } = defineProps(['fData'])
+  const fData = getFData()
   
   const texts = {
     top: {
@@ -153,6 +153,7 @@
     let uploadButton = document.querySelector('#upload-btn')
     uploadButton.disabled = true
     uploadButton.classList.add('v-btn--disabled')
+
   })
 
   const switchTrajSize = () => {
@@ -180,7 +181,7 @@
     metadata.bucket = $generateUniqueId()
     // get the fields that are objects (must be processed as objects instead of strings)
     const fieldsToProcess = getObjectFieldIds(fData)
-    // process the fields that are objects
+    // process the fields that are objects (avoiding to show them as strings)
     fieldsToProcess.forEach(field => {
       if (metadata[field]) {
         metadata[field] = metadata[field].map(item => {
@@ -194,13 +195,16 @@
         })
       }
     })
+    // trick for mdref
+    const mdref = metadata.mds.findIndex(item => item.name == metadata.mdref)
+    metadata.mdref = mdref !== -1 ? mdref : 0
     // trick for mixing both ligands objects
     if(metadata.ligands_other) {
       metadata.ligands = metadata.ligands ? metadata.ligands.concat(metadata.ligands_other) : metadata.ligands_other
       delete metadata.ligands_other
     }
-    metadata = cleanObjectFields(metadata)
-    // convert metadata to YAML
+    const exceptions = getNullExceptions(fData)
+    metadata = cleanObjectFields(metadata, exceptions)
     let metadataYaml = YAML.stringify(metadata);
     // create a Blob from the YAML string
     const metadataYamlBlob = new Blob([metadataYaml], { type: 'application/x-yaml' })    

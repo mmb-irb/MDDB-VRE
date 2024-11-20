@@ -1,8 +1,9 @@
 <template>
   <div v-for="(group, i) in modelGroup">
     <v-row class="mb-0">
-      <v-col v-for="(input, j) in props.inputs" :key="j" :lg="props.subCols" :md="props.subCols" sm="12" cols="12" class="pb-0">
+      <v-col v-for="(input, j) in props.inputs.filter(item => item.hidden !== true)" :key="j" :lg="props.subCols" :md="props.subCols" sm="12" cols="12" class="pb-0">
         <v-text-field
+          v-if="input.inputType === 'text' || input.inputType === 'url'"
           v-model="modelGroup[i][input.id]"
           :rules="rules[input.id]"
           :label="`${input.label} ${required ? '*' : ''}`"
@@ -17,7 +18,31 @@
             <v-icon v-if="modelGroup.length > 1  && j%props.inputs.length !== 0" @click="removeGroup(i)" color="purple-accent-1" class="ml-1">mdi-delete-outline</v-icon>
           </template>
         </v-text-field>
+        <v-number-input
+          v-if="input.inputType === 'number'"
+          :max="input.max !== undefined ? input.max : Infinity"
+          :min="input.min"
+          :label="`${input.label} ${required ? '*' : ''}`"
+          :rules="rules[input.id]"
+          v-model="modelGroup[i][input.id]"
+          :step="input.step"
+          :suffix="input.suffix"
+          @update:modelValue="setMultiMultiMetadata(props.id, i, input.id, modelGroup[i][input.id])"
+          control-variant="stacked"
+          density="comfortable"
+          inset
+        >
+          <template v-slot:append>
+            <form-tooltip :props="{width: 300, text: input.description}" />
+            <v-icon v-if="modelGroup.length > 1  && j%props.inputs.length !== 0" @click="removeGroup(i)" color="purple-accent-1" class="ml-1">mdi-delete-outline</v-icon>
+          </template>
+        </v-number-input>  
       </v-col>
+      <v-text-field
+        v-for="(input, k) in props.inputs.filter(item => item.hidden === true)"
+        v-model="modelGroup[i][input.id]"
+        v-show="false"
+      ></v-text-field>
     </v-row>
   </div>
   <v-btn
@@ -28,7 +53,7 @@
     @click="createNewGroup()"
     :disabled="!ngEnabled"
     >
-    Add new group of {{ props.label }}
+    Add new {{ props.label }}
   </v-btn>
 </template>
 
@@ -43,10 +68,12 @@
   const { props } = defineProps(['props'])
 
   const initModel = props.inputs.reduce((acc, input) => {
-    acc[input.id] = ''
+    acc[input.id] = input.default !== undefined ? input.default : null
     return acc
   }, {})
+
   const modelGroup = ref([{ ...initModel }])
+  setMetadata(props.id, modelGroup.value)
 
   const required = ref(props.required)
   const rules = ref(props.rules ? getMultipleRules(props.rules, Object.keys(initModel)) : [])
@@ -80,8 +107,8 @@
 
   const createNewGroup = () => {
     if(allValuesNonEmpty(modelGroup.value) && checkMultipleValuesAgainstRules(modelGroup.value, rules.value) === true) {
+      props.inputs.forEach(field => { if (field.hidden) initModel[field.id] = initModel[field.id].replace(/\d+$/, modelGroup.value.length + 1) });
       modelGroup.value.push({ ...initModel })
-      //console.log(modelGroup.value)
     }
   }
 

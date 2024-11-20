@@ -13,9 +13,9 @@
                 <span class="font-weight-black">{{ item.name }}</span>
               </template>
 
-              <v-card-text>
-                <p v-html="item.description"></p>
-                <metadata-form :fields="item.fields" @endFormMeta="handleEndFormMeta" />
+              <v-card-text v-for="(dsc, i) in item.description" class="pt-0">
+                <p v-html="dsc"></p>
+                <metadata-form :fields="item.fields.filter(itm => itm.section === i)" @endFormMeta="handleEndFormMeta" />
               </v-card-text>
 
               <template v-slot:actions>
@@ -42,7 +42,7 @@
               </template>
 
               <v-card-text>
-                <upload-data :fData="formData" @endFormUpload="handleEndFormUpload" @endUploadFiles="handleEndUploadFiles" ref="uploadRef" />
+                <upload-data @endFormUpload="handleEndFormUpload" @endUploadFiles="handleEndUploadFiles" ref="uploadRef" />
               </v-card-text>
 
               <template v-slot:actions>
@@ -84,11 +84,16 @@
   
 <script setup>
 
+  import structureStorage from '@/modules/structure/structureStorage'
+
+  const { storeFData } = structureStorage()
+
   const config = useRuntimeConfig()
   const { $globals, $axios } = useNuxtApp()
 
   const conf = await $axios.get(`${config.public.baseURL}form.json`)
   const formData = conf.data
+  storeFData(formData)
   const lengthFormData = formData.length
 
   useHead({

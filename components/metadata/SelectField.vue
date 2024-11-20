@@ -52,18 +52,27 @@
   import useRules from '@/modules/helpers/useRules'
   import useREST from '@/modules/helpers/useREST'
 
-  const { setMetadata } = structureStorage()
+  const { setMetadata, getDependingItems } = structureStorage()
   const { getRules } = useRules()
   const { getSelectOptions } = useREST()
   const { $sleep } = useNuxtApp()
 
   const { props } = defineProps(['props'])
-  const refModel = ref(null)
+  const refModel = ref(props.default)
+  if(props.default !== undefined) setMetadata(props.id, refModel.value)
   const required = ref(props.required)
   const otherField = ref(null)
   const other = ref(null)
   const rules = ref(props.rules ? getRules(props.rules) : [])
-  const items = ref(await getSelectOptions(props.options))
+  // define items depending on the options (get from REST API), items (get from list) or depending (get from another field) properties
+  let items
+  if(props.options) items = ref(await getSelectOptions(props.options))
+  else if(props.items) items = ref(props.items)
+  else if(props.depending) {
+    items = computed(() => getDependingItems(props.depending))
+    if(props.default !== undefined) refModel.value = items.value[props.default]
+  } else items.value = ref([])
+
   // add Other option if props.other is true
   if(props.other) items.value.push('Other')
 

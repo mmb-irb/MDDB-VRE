@@ -4,11 +4,12 @@
     "shortName": "Project",
     "name": "Project Metadata",
     "icon": "mdi-code-block-tags",
-    "description": "The following metadata has no effect on the workflow itself, but it will be written to the <strong>output metadata</strong> file. These values will be <strong>uploaded to the database</strong> and then exposed in the <strong>project overview</strong>. They may be also useful to <strong>search this project</strong> using the browser.",
+    "description": ["The following metadata has no effect on the workflow itself, but it will be written to the <strong>output metadata</strong> file. These values will be <strong>uploaded to the database</strong> and then exposed in the <strong>project overview</strong>. They may be also useful to <strong>search this project</strong> using the browser."],
     "fields": [
       {
         "id": "name",
         "label": "Name",
+        "section": 0,
         "type": "input",
         "inputType": "text",
         "description": "Write a brief description or title for this trajectory for the overview page. This name may be used by the client to search the trajectory in the database. The name is displayed in the overview page.",
@@ -25,6 +26,7 @@
       {
         "id": "description",
         "label": "Description",
+        "section": 0,
         "type": "textarea",
         "rows": 3,
         "description": "Write additional comments about the project. The description is displayed in the overview page.",
@@ -41,6 +43,7 @@
       {
         "id": "authors",
         "label": "Author",
+        "section": 0,
         "type": "multiple-input",
         "description": "Write author names. Authors are displayed in the overview page. IMPORTANT: Check already existing values for this field to avoid making duplicates.",
         "rules": [
@@ -57,6 +60,7 @@
       {
         "id": "group",
         "label": "Group",
+        "section": 0,
         "type": "multiple-input",
         "description": "Write author group name/s. The group is displayed in the overview page. IMPORTANT: Check already existing values for this field to avoid making duplicates.",
         "rules": [
@@ -73,6 +77,7 @@
       {
         "id": "citation",
         "label": "Write here the citation",
+        "section": 0,
         "type": "rich-textarea",
         "rows": 4,
         "description": "Citation for refering this simulation or related paper. The citation is displayed in the overview page.",
@@ -82,6 +87,7 @@
       {
         "id": "thanks",
         "label": "Acknowledgements",
+        "section": 0,
         "type": "textarea",
         "rows": 2,
         "description": "Acknowledgements to be shown in the overview page. E.g. I would like to thank my funders ...",
@@ -91,6 +97,7 @@
       {
         "id": "contact",
         "label": "Contact",
+        "section": 0,
         "type": "input",
         "inputType": "mail",
         "description": "Mail to contact the authors. The contact is displayed in the overview page.",
@@ -112,6 +119,7 @@
       {
         "id": "type",
         "label": "Type",
+        "section": 0,
         "type": "select",
         "description": "Type of molecular dynamics. At this moment there are only two options in this field: 'trajectory' and 'ensemble'.",
         "rules": [
@@ -129,6 +137,7 @@
       {
         "id": "program",
         "label": "Program",
+        "section": 0,
         "type": "select",
         "description": "Program (software) name which carried the trajectory. Program and version are both displayed in the overview page.",
         "rules": [
@@ -147,6 +156,7 @@
       {
         "id": "version",
         "label": "Version",
+        "section": 0,
         "type": "input",
         "inputType": "text",
         "description": "Version of the program (software) which carried the trajectory. Program and version are both displayed in the overview page.",
@@ -163,6 +173,7 @@
       {
         "id": "license",
         "type": "select-input",
+        "section": 0,
         "cols": 12,
         "fields": [
           {
@@ -250,6 +261,7 @@
       {
         "id": "method",
         "label": "Method",
+        "section": 0,
         "type": "select",
         "description": "MD method is displayed in the overview.",
         "rules": [
@@ -268,6 +280,7 @@
       {
         "id": "accession",
         "label": "Accession",
+        "section": 0,
         "type": "input",
         "inputType": "text",
         "description": "Use this field to force a custom accession. Accession is a short code to refer this project in your local database. If no accession is forced then a default formatted accession will be generated when loading the project.",
@@ -281,11 +294,12 @@
     "shortName": "References",
     "name": "References to other databases",
     "icon": "mdi-database-export-outline",
-    "description": "References to other databases to enrich our data. Links to somewhere related to the simulation. These links are displayed in the overview page.",
+    "description": ["References to other databases to enrich our data. Links to somewhere related to the simulation. These links are displayed in the overview page."],
     "fields": [
       {
         "id": "links",
-        "label": "Links",
+        "label": "Link",
+        "section": 0,
         "inputs": [
           {
             "id": "name",
@@ -295,7 +309,7 @@
           },
           {
             "id": "url",
-            "label": "URL",
+            "label": "Link URL",
             "inputType": "url",
             "description": "Links to somewhere related to the simulation. These links are displayed in the overview page. WARNING: This field has no effect in our workflow BUT others may rely on it. MolSSI uses this field to find simulations in our database and place the embed viewer in their website. You must fit to the standard when adding a new MolSSI simulation."
           }
@@ -317,6 +331,7 @@
       {
         "id": "pdbIds",
         "label": "PDB id",
+        "section": 0,
         "type": "multiple-input",
         "inputType": "pdb",
         "description": "Set the source pdb ids of the trajectory structure. Additional data from the pdb is harvested by the loader while uploading to the database. This data is displayed in the overview page.",
@@ -334,6 +349,7 @@
       {
         "id": "forced_references",
         "label": "Forced UniProt ID",
+        "section": 0,
         "type": "multiple-input",
         "object": true,
         "inputType": "uniprot",
@@ -352,6 +368,7 @@
       {
         "id": "ligands",
         "type": "ligands",
+        "section": 0,
         "description": "Set ligands in the simulation. The workflow identifies ligands by their accession. Ligands are mapped in the standard topology file. In addition, an RMSD analysis is run for every defined ligand. Eg: pubchem: 1986, drugbank: DB00945, chembl: CHEMBL1201179. Optionally, a list of residue indices may be provided to force the mapping. Eg: 234, 32, 54.",
         "description2": "Other ligands not found in the previous databases. Optionally, a list of residue indices may be provided to force the mapping. Eg: 234, 32, 54.",
         "cols": 12,
@@ -417,6 +434,7 @@
       {
         "id": "ligands",
         "type": "ligands-other",
+        "section": 0,
         "description": "Other ligands not found in the previous databases. Optionally, a list of residue indices may be provided to force the mapping. Eg: 234, 32, 54.",
         "cols": 12,
         "subCols": 12,
@@ -450,16 +468,16 @@
     "shortName": "Simulation",
     "name": "Simulation metadata",
     "icon": "mdi-tune",
-    "description": "Simulation parameters.",
+    "description": ["Simulation parameters", "Simulation replicas"],
     "fields": [
       {
         "id": "framestep",
         "label": "Framestep (ps)",
+        "section": 0,
         "type": "number",
         "min": 0.01,
         "step": 0.01,
         "suffix": "ps",
-        "default": null,
         "description": "Time framestep in picoseconds (ps). Interval between successive snapshots (frames) saved in the trajectory file during the simulation",
         "required": false,
         "cols": 6
@@ -467,30 +485,19 @@
       {
         "id": "timestep",
         "label": "Timestep (fs)",
+        "section": 0,
         "type": "number",
         "min": 1,
         "step": 1,
         "suffix": "fs",
-        "default": null,
         "description": "Simulation timestep in femtoseconds (fs).",
-        "required": false,
-        "cols": 6
-      },
-      {
-        "id": "temp",
-        "label": "Temperature (K)",
-        "type": "number",
-        "min": 0,
-        "step": 1,
-        "suffix": "K",
-        "default": 310,
-        "description": "Temperature in Kelvin (K).",
         "required": false,
         "cols": 6
       },
       {
         "id": "ensemble",
         "label": "Ensemble",
+        "section": 0,
         "type": "select",
         "description": "Ensemble.",
         "rules": [
@@ -503,6 +510,7 @@
       {
         "id": "ff",
         "label": "Force fields",
+        "section": 0,
         "type": "select",
         "description": "Force fields.",
         "rules": [
@@ -515,6 +523,7 @@
       {
         "id": "wat",
         "label": "Water force fields",
+        "section": 0,
         "type": "select",
         "description": "Water force fields.",
         "rules": [
@@ -527,6 +536,7 @@
       {
         "id": "boxtype",
         "label": "Boxtype",
+        "section": 0,
         "type": "select",
         "description": "Boxtype.",
         "rules": [
@@ -534,6 +544,80 @@
         "required": false,
         "multiple": false,
         "options": "https://mmb.mddbr.eu/api/rest/current/projects/options?projection=metadata.BOXTYPE",
+        "cols": 6
+      },
+      {
+        "id": "mds",
+        "label": "Replica",
+        "section": 1,
+        "inputs": [
+          {
+            "id": "name",
+            "label": "Replica definition",
+            "inputType": "text",
+            "default": "replica 310 K",
+            "description": "A description for this replica, please explain the purpose of the replica.",
+            "required": true
+          },
+          {
+            "id": "mdir",
+            "default": "replica_1",
+            "rule": "incremental",
+            "hidden": true
+          },
+          {
+            "id": "temp",
+            "label": "Temperature (K)",
+            "inputType": "number",
+            "description": "Temperature in Kelvin (K) for this replica.",
+            "min": 0,
+            "step": 1,
+            "suffix": "K",
+            "default": 310,
+            "required": true
+          }
+        ],
+        "type": "multiple-multi-input",
+        "rules": {
+          "name": [
+            {
+              "id": "required",
+              "regex": "!!v",
+              "message": "This field is required"
+            }
+          ],
+          "temp": [
+            {
+              "id": "required",
+              "regex": "v !== '' && v !== null ",
+              "message": "This field is required"
+            }
+          ]
+        },
+        "required": true,
+        "cols": 12,
+        "subCols": 6
+      },
+      {
+        "id": "mdref",
+        "label": "Replica reference",
+        "section": 1,
+        "type": "select",
+        "description": "Replica that will be taken as reference.",
+        "rules": [
+          {
+            "id": "required",
+            "regex": "!!v && v.length > 0",
+            "message": "This field is required"
+          }
+        ],
+        "required": true,
+        "multiple": false,
+        "default": 0,
+        "depending": {
+          "field": "mds",
+          "input": "name"
+        },
         "cols": 6
       }
     ]
@@ -543,12 +627,13 @@
     "shortName": "Analysis",
     "name": "Analysis parameters",
     "icon": "mdi-atom-variant",
-    "description": "These fields have an impact in the analysis workflow.",
+    "description": ["These fields have an impact in the analysis workflow."],
     "fields": [
       {
         "id": "interactions",
         "type": "interactions",
         "label": "Interactions",
+        "section": 0,
         "description": "Set which are the interesting interactions to be analyzed. A bunch of interaction-specific analyses will be run for each interaction and displayed in the web client. Interactions are defined by the 'agents' which are meant to interact pairwise. An 'agent' may be anything, even a group of unrelated molecules. The only condition is that agents must be defined by residues. Residues of different agents which are close enought will be considered as interface residues. These residues will be the ones considered in interface analyses. If no interface residues are found then the interaction is considered not valid and the user is warned. Interactions are uploaded to the database as part of the project metadata and as an independent analysis. Project metadata includes the interaction name, agents name and agent residues selections (vmd syntax). Analysis data includes also every agent residue indices (both the whole agent and the interface only). See the <a href='https://www.ks.uiuc.edu/Research/vmd/vmd-1.3/ug/node132.html' target='_blank'>VMD atom selection language</a> for more information about VMD selections.",
         "cols": 12,
         "fields": [
@@ -680,12 +765,15 @@
       {
         "id": "pbc_selection",
         "label": "PBC Selection",
+        "section": 0,
         "type": "input",
         "inputType": "text",
         "description": "Set those residues which are under periodic boundary conditions (PBC). These residues are excluded from the imaging centering and fitting.",
         "rules": [
         ],
         "required": false,
+        "force_null": true,
+        "default": null,
         "cols": 6
       }
     ]
