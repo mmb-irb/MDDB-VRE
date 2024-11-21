@@ -18,7 +18,7 @@
       variant="tonal"
       elevation="2"
     >
-      <span><strong>Topology uploaded</strong>, please choose your favourite <strong>command line</strong> method for uploading the <strong>trajectory file(s)</strong>.</span>
+      <span><strong>Metadata uploaded</strong>, please choose your favourite <strong>command line</strong> method for uploading the <strong>topology and trajectory (or trajectories) files</strong>.</span>
     </v-alert>
 
     <div class="text-center pt-5" v-if="loading">
