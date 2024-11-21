@@ -25,7 +25,7 @@
                     Previous
                   </v-btn>
                   <span v-else>&nbsp;</span>
-                  <v-btn color="purple-accent-1" variant="flat" @click="step=step+1" id="next-btn">
+                  <v-btn color="purple-accent-1" variant="flat" @click="step=step+1" id="next-btn" :disabled="disableNext">
                     <v-icon size="large" icon="mdi-chevron-right"></v-icon>
                     Next
                   </v-btn>
@@ -102,30 +102,27 @@
 
   const steps = [...formData.map(item => item.shortName), ...['Data', 'Finish']]
   const step = ref(1)
-  const status = ref(Array.from({ length: steps.length + 1 }, (v, i) => (i === 0 ? null : false)))
   const uploading = ref(false)
   const uploadRef = ref(null)
 
   let nextButton
+  let disableNext = ref(true)
   onMounted(async () => {
 
     nextButton = document.querySelector('#next-btn')
-    nextButton.disabled = true
     nextButton.classList.add('v-btn--disabled')
 
   })
 
   // handles if all the mandatory fields of the metadata form are filled
   const handleEndFormMeta = (v) => {
-    nextButton.disabled = !v
-    status.value[step.value] = v
+    disableNext.value = !v
     v ? nextButton.classList.remove('v-btn--disabled') : nextButton.classList.add('v-btn--disabled')
   }
 
   const handleEndFormUpload = (v) => {
     let uploadButton = document.querySelector('#upload-btn')
     uploadButton.disabled = !v
-    status.value[step.value] = v
     v ? uploadButton.classList.remove('v-btn--disabled') : uploadButton.classList.add('v-btn--disabled')
   }
 

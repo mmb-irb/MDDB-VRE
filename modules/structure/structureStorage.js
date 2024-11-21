@@ -33,11 +33,17 @@ export default function structureStorage() {
         return metadata[field]
     }
 
+    const checkIfNull = (value) => {
+      if(value === null || value === '' || (Array.isArray(value) && value.length === 0) || (Array.isArray(value) && value.length === 1 && value[0] === null)) {
+        return true
+      }
+    }
+
     const getObjectFieldIds = (form) => {
       const ids = []
       form.forEach(section => {
           section.fields.forEach(field => {
-          if (field.object) ids.push(field.id)
+          if (field.object && !checkIfNull(metadata[field.id])) ids.push(field.id)
         })
       })
       return ids
@@ -83,6 +89,25 @@ export default function structureStorage() {
       return obj
     }
 
+    const nullifyFields = (obj) => {
+      for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          const value = obj[key]
+          if (Array.isArray(value) && value.length === 1 && value[0] === null) obj[key] = null
+        }
+      }
+      for (const key in obj) {
+        if (obj.hasOwnProperty(key)) {
+          const value = obj[key]
+          if (Array.isArray(value) && value.length === 1 && typeof value[0] === 'object') {
+            const allNull = Object.values(value[0]).every(val => val === null);
+            if (allNull) obj[key] = null;
+          }
+        }
+      }
+      return obj
+    }
+
     const getDependingItems = (dependencies) => {
       switch(Object.keys(dependencies).length){
         case 1: break;
@@ -101,6 +126,7 @@ export default function structureStorage() {
         getNullExceptions,
         getObjectFieldIds,
         cleanObjectFields,
+        nullifyFields,
         getDependingItems
     }
 

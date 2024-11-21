@@ -85,7 +85,7 @@
   import structureStorage from '@/modules/structure/structureStorage'
   import YAML from 'yaml';
 
-  const { getMetadata, getObjectFieldIds, getNullExceptions, cleanObjectFields, getFData } = structureStorage()
+  const { getMetadata, getObjectFieldIds, getNullExceptions, cleanObjectFields, nullifyFields, getFData } = structureStorage()
 
   const config = useRuntimeConfig()
   const { $globals, $axios, $generateUniqueId } = useNuxtApp()
@@ -153,7 +153,6 @@
     let uploadButton = document.querySelector('#upload-btn')
     uploadButton.disabled = true
     uploadButton.classList.add('v-btn--disabled')
-
   })
 
   const switchTrajSize = () => {
@@ -198,13 +197,20 @@
     // trick for mdref
     const mdref = metadata.mds.findIndex(item => item.name == metadata.mdref)
     metadata.mdref = mdref !== -1 ? mdref : 0
+    // trick for temperature
+    metadata.temp = metadata.mds[metadata.mdref].temp
     // trick for mixing both ligands objects
     if(metadata.ligands_other) {
       metadata.ligands = metadata.ligands ? metadata.ligands.concat(metadata.ligands_other) : metadata.ligands_other
       delete metadata.ligands_other
     }
+    // tricks for avoiding dani's mess with nulls
+    if(metadata.ligands === undefined) metadata.ligands = null
+    if(metadata.interactions === undefined) metadata.interactions = null
     const exceptions = getNullExceptions(fData)
+    exceptions.push('linkcense')
     metadata = cleanObjectFields(metadata, exceptions)
+    metadata = nullifyFields(metadata)
     let metadataYaml = YAML.stringify(metadata);
     // create a Blob from the YAML string
     const metadataYamlBlob = new Blob([metadataYaml], { type: 'application/x-yaml' })    

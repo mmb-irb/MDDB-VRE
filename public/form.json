@@ -21,6 +21,8 @@
           }
         ],
         "required": true,
+        "force_null": true,
+        "default": null,
         "cols": 12
       },
       {
@@ -38,6 +40,8 @@
           }
         ],
         "required": true,
+        "force_null": true,
+        "default": null,
         "cols": 12
       },
       {
@@ -54,11 +58,13 @@
           }
         ],
         "required": true,
+        "force_null": true,
+        "default": null,
         "cols": 12,
         "subCols": 6
       },
       {
-        "id": "group",
+        "id": "groups",
         "label": "Group",
         "section": 0,
         "type": "multiple-input",
@@ -71,6 +77,8 @@
           }
         ],
         "required": true,
+        "force_null": true,
+        "default": null,
         "cols": 12,
         "subCols": 6
       },
@@ -82,6 +90,8 @@
         "rows": 4,
         "description": "Citation for refering this simulation or related paper. The citation is displayed in the overview page.",
         "required": false,
+        "force_null": true,
+        "default": null,
         "cols": 12
       },
       {
@@ -92,6 +102,8 @@
         "rows": 2,
         "description": "Acknowledgements to be shown in the overview page. E.g. I would like to thank my funders ...",
         "required": false,
+        "force_null": true,
+        "default": null,
         "cols": 12
       },
       {
@@ -114,6 +126,8 @@
           }
         ],
         "required": true,
+        "force_null": true,
+        "default": null,
         "cols": 6
       },
       {
@@ -130,6 +144,8 @@
           }
         ],
         "required": true,
+        "force_null": true,
+        "default": null,
         "multiple": false,
         "options": "https://mmb.mddbr.eu/api/rest/current/projects/options?projection=metadata.TYPE",
         "cols": 6
@@ -148,6 +164,8 @@
           }
         ],
         "required": true,
+        "force_null": true,
+        "default": null,
         "multiple": false,
         "other": true,
         "options": "https://mmb.mddbr.eu/api/rest/current/projects/options?projection=metadata.PROGRAM",
@@ -168,6 +186,8 @@
           }
         ],
         "required": true,
+        "force_null": true,
+        "default": null,
         "cols": 6
       },
       {
@@ -175,6 +195,8 @@
         "type": "select-input",
         "section": 0,
         "cols": 12,
+        "force_null": true,
+        "default": null,
         "fields": [
           {
             "id": "license",
@@ -189,6 +211,8 @@
               }
             ],
             "required": true,
+            "force_null": true,
+            "default": null,
             "other": true,
             "items": [
               {
@@ -254,7 +278,9 @@
                 "message": "Please type a valid URL (ie http[s]://domain.org)"
               }
             ],
-            "required": true
+            "required": true,
+            "force_null": true,
+            "default": null
           }
         ]
       },
@@ -272,6 +298,8 @@
           }
         ],
         "required": true,
+        "force_null": true,
+        "default": null,
         "multiple": false,
         "other": true,
         "options": "https://mmb.mddbr.eu/api/rest/current/projects/options?projection=metadata.METHOD",
@@ -284,7 +312,16 @@
         "type": "input",
         "inputType": "text",
         "description": "Use this field to force a custom accession. Accession is a short code to refer this project in your local database. If no accession is forced then a default formatted accession will be generated when loading the project.",
+        "rules":[
+          {
+            "id": "acession",
+            "regex": "v === '' || v === null || /^[a-zA-Z0-9]+$/.test(v)",
+            "message": "Please type a valid acession id (only letters and numbers)"
+          }
+        ],
         "required": false,
+        "force_null": true,
+        "default": null,
         "cols": 6
       }
     ]
@@ -325,6 +362,8 @@
           ]
         },
         "required": false,
+        "force_null": true,
+        "default": null,
         "cols": 12,
         "subCols": 6
       },
@@ -343,6 +382,8 @@
           }
         ],
         "required": false,
+        "force_null": true,
+        "default": null,
         "cols": 12,
         "subCols": 4
       },
@@ -362,6 +403,8 @@
           }
         ],
         "required": false,
+        "force_null": true,
+        "default": null,
         "cols": 12,
         "subCols": 4
       },
@@ -373,6 +416,8 @@
         "description2": "Other ligands not found in the previous databases. Optionally, a list of residue indices may be provided to force the mapping. Eg: 234, 32, 54.",
         "cols": 12,
         "subCols": 12,
+        "force_null": true,
+        "default": null,
         "fields": [
           {
             "id": "sel-db",
@@ -480,6 +525,8 @@
         "suffix": "ps",
         "description": "Time framestep in picoseconds (ps). Interval between successive snapshots (frames) saved in the trajectory file during the simulation",
         "required": false,
+        "force_null": true,
+        "default": null,
         "cols": 6
       },
       {
@@ -492,6 +539,8 @@
         "suffix": "fs",
         "description": "Simulation timestep in femtoseconds (fs).",
         "required": false,
+        "force_null": true,
+        "default": null,
         "cols": 6
       },
       {
@@ -503,6 +552,8 @@
         "rules": [
         ],
         "required": false,
+        "force_null": true,
+        "default": null,
         "multiple": false,
         "options": "https://mmb.mddbr.eu/api/rest/current/projects/options?projection=metadata.ENSEMBLE",
         "cols": 6
@@ -516,6 +567,8 @@
         "rules": [
         ],
         "required": false,
+        "force_null": true,
+        "default": null,
         "multiple": true,
         "options": "https://mmb.mddbr.eu/api/rest/current/projects/options?projection=metadata.FF",
         "cols": 6
@@ -529,6 +582,8 @@
         "rules": [
         ],
         "required": false,
+        "force_null": true,
+        "default": null,
         "multiple": false,
         "options": "https://mmb.mddbr.eu/api/rest/current/projects/options?projection=metadata.WAT",
         "cols": 6
@@ -542,6 +597,8 @@
         "rules": [
         ],
         "required": false,
+        "force_null": true,
+        "default": null,
         "multiple": false,
         "options": "https://mmb.mddbr.eu/api/rest/current/projects/options?projection=metadata.BOXTYPE",
         "cols": 6
@@ -595,6 +652,8 @@
           ]
         },
         "required": true,
+        "force_null": true,
+        "default": null,
         "cols": 12,
         "subCols": 6
       },
@@ -636,6 +695,8 @@
         "section": 0,
         "description": "Set which are the interesting interactions to be analyzed. A bunch of interaction-specific analyses will be run for each interaction and displayed in the web client. Interactions are defined by the 'agents' which are meant to interact pairwise. An 'agent' may be anything, even a group of unrelated molecules. The only condition is that agents must be defined by residues. Residues of different agents which are close enought will be considered as interface residues. These residues will be the ones considered in interface analyses. If no interface residues are found then the interaction is considered not valid and the user is warned. Interactions are uploaded to the database as part of the project metadata and as an independent analysis. Project metadata includes the interaction name, agents name and agent residues selections (vmd syntax). Analysis data includes also every agent residue indices (both the whole agent and the interface only). See the <a href='https://www.ks.uiuc.edu/Research/vmd/vmd-1.3/ug/node132.html' target='_blank'>VMD atom selection language</a> for more information about VMD selections.",
         "cols": 12,
+        "force_null": true,
+        "default": null,
         "fields": [
           {
             "id": "name",
@@ -659,45 +720,10 @@
           {
             "id": "agent_1",
             "label": "Agent 1",
-            "type": "select",
+            "type": "input",
             "description": "The name of the first agent in the interaction, which is used to label in the client.",
             "required": false,
-            "subCols": 6,
-            "other": true,
-            "items": [
-              {
-                "name": "Protein",
-                "option": "protein"
-              },
-              {
-                "name": "Ligand",
-                "option": "ligand"
-              },
-              {
-                "name": "Nucleic",
-                "option": "nucleic"
-              },
-              {
-                "name": "Active site",
-                "option": "active_site"
-              },
-              {
-                "name": "Domain 1",
-                "option": "domain_1"
-              },
-              {
-                "name": "Domain 2",
-                "option": "domain_2"
-              },
-              {
-                "name": "Chain 1",
-                "option": "chain_1"
-              },
-              {
-                "name": "Chain 2",
-                "option": "chain_2"
-              }
-            ]
+            "subCols": 6
           },
           {
             "id": "selection_1",
@@ -711,45 +737,10 @@
           {
             "id": "agent_2",
             "label": "Agent 2",
-            "type": "select",
+            "type": "input",
             "description": "The name of the second agent in the interaction, which is used to label in the client.",
             "required": false,
-            "subCols": 6,
-            "other": true,
-            "items": [
-              {
-                "name": "Protein",
-                "option": "protein"
-              },
-              {
-                "name": "Ligand",
-                "option": "ligand"
-              },
-              {
-                "name": "Nucleic",
-                "option": "nucleic"
-              },
-              {
-                "name": "Active site",
-                "option": "active_site"
-              },
-              {
-                "name": "Domain 1",
-                "option": "domain_1"
-              },
-              {
-                "name": "Domain 2",
-                "option": "domain_2"
-              },
-              {
-                "name": "Chain 1",
-                "option": "chain_1"
-              },
-              {
-                "name": "Chain 2",
-                "option": "chain_2"
-              }
-            ]
+            "subCols": 6
           },
           {
             "id": "selection_2",
@@ -775,6 +766,41 @@
         "force_null": true,
         "default": null,
         "cols": 6
+      },
+      {
+        "id": "collections",
+        "type": "hidden",
+        "section": 0,
+        "force_null": true,
+        "default": null
+      },
+      {
+        "id": "chainnames",
+        "type": "hidden",
+        "section": 0,
+        "force_null": true,
+        "default": null
+      },
+      {
+        "id": "membranes",
+        "type": "hidden",
+        "section": 0,
+        "force_null": true,
+        "default": null
+      },
+      {
+        "id": "customs",
+        "type": "hidden",
+        "section": 0,
+        "force_null": true,
+        "default": null
+      },
+      {
+        "id": "multimeric",
+        "type": "hidden",
+        "section": 0,
+        "force_null": true,
+        "default": null
       }
     ]
   }

@@ -15,6 +15,7 @@
         <select-input v-if="item.type === 'select-input'" :props="item" />
         <ligands v-if="item.type === 'ligands'" :props="item" />
         <interactions v-if="item.type === 'interactions'" :props="item" />
+        <hidden-field v-if="item.type === 'hidden'" :props="item" />
 
       </v-col>
     </v-row>

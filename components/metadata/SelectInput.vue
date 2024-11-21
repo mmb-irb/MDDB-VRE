@@ -72,6 +72,8 @@
   const select = props.fields.filter(f => f.type === 'select')[0]
   const items = select.items
   const input = props.fields.filter(f => f.type === 'input')[0]
+  setMetadata(select.id, refModelSelect.value)
+  setMetadata(input.id, refModelInput.value)
 
   const selRules = ref(select.rules ? getRules(select.rules) : [])
   const inpRules = ref(input.rules ? getRules(input.rules) : [])
