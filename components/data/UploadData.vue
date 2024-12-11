@@ -214,7 +214,7 @@
     let metadataYaml = YAML.stringify(metadata);
     // create a Blob from the YAML string
     const metadataYamlBlob = new Blob([metadataYaml], { type: 'application/x-yaml' })    
-    formData.append('meta', metadataYamlBlob, 'metadata.yaml');
+    formData.append('meta', metadataYamlBlob, 'inputs.yaml');
 
     // Add fields to the FormData
     formData.append('bucket', metadata.bucket);
