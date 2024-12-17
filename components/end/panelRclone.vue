@@ -1,5 +1,5 @@
 <template>
-  <p>Follow and <strong>execute in terminal</strong> the instructions below for uploading your trajectory file(s) <a href="https://rclone.org/install/" target="_blank" class="font-weight-black">via Rclone</a>. The <strong>credentials are temporary</strong> and they will <strong>expire in {{ $globals.curl_expire }}</strong>.</p>
+  <p>Follow and <strong>execute in terminal</strong> the instructions below for uploading your trajectory file(s) <a href="https://rclone.org/install/" target="_blank" class="font-weight-black">via Rclone</a>. The <strong>credentials are temporary</strong> and they will <strong>expire in {{ $globals.expire }}</strong>.</p>
 
   <p class="mt-4"><strong>Upload single file:</strong> be aware to <strong>replace /path/to/file</strong> by the <strong>local path</strong> of the file in your computer.</p>
   <v-textarea

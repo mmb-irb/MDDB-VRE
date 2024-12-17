@@ -87,6 +87,7 @@ export default defineNuxtConfig({
       apiBase: `${baseURL}api`,
       minioURL: `${process.env.MINIO_PROTOCOL}://${process.env.MINIO_URL}:${process.env.MINIO_PORT}`,
       minioHost: `${process.env.MINIO_URL}:${process.env.MINIO_PORT}`,
+      minioUsr: process.env.MINIO_USER,
       apiEndPoints: [
         '/api', 
         '/api/upload',

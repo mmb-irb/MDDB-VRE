@@ -4,7 +4,7 @@ import { tmpdir } from 'os';
 import { writeFile, unlink } from 'fs/promises';
 import { join } from 'path'; // Import join from path module
 import { logMessage } from '../../utils/log'; 
-import { getCurrentDateString } from '../../utils/utils'; 
+import { getCurrentDateString, getExpirationDate } from '../../utils/utils'; 
 
 const execPromise = promisify(exec);
 
@@ -19,15 +19,23 @@ export default defineEventHandler(async (event) => {
 		return result;
 	}
 
+  // Function to extract key-value pairs from the output
+  const extractKeyValue = (output, key) => {
+    const regex = new RegExp(`${key}:\\s*(.*)`);
+    const match = output.match(regex);
+    return match ? match[1] : null;
+  }
+
   const config = useRuntimeConfig();
 
   // Handle query params (GET)
   const query = getQuery(event);
   const date = getCurrentDateString();
   const bucket = query.bucket;
-  const password = generateUniqueId(16);
+  //const password = generateUniqueId(16);
   const minioURL = config.public.minioURL;
   const minioHost = config.public.minioHost;
+  const minioUsr = config.public.minioUsr;
   const logPath = config.logPath;
 
   /*const createPresignedURL = (file, newBucket) => {
@@ -55,32 +63,41 @@ export default defineEventHandler(async (event) => {
   const policyJson = JSON.stringify({
     "Version": "2012-10-17",
     "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": [
-                "s3:GetObject",
-                "s3:PutObject"
-            ],
-            "Resource": [
-                `arn:aws:s3:::${date}/${bucket}/*`
+      {
+        "Effect": "Allow",
+        "Action": [
+          "s3:GetObject",
+          "s3:PutObject"
+        ],
+        "Resource": [
+          `arn:aws:s3:::${date}/${bucket}/*`
+        ]
+      },
+      {
+        "Effect": "Allow",
+        "Action": [
+          "s3:ListBucket"
+        ],
+        "Resource": [
+          `arn:aws:s3:::${date}`
+        ],
+        "Condition": {
+          "StringLike": {
+            "s3:prefix": [
+              `${bucket}/*`
             ]
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-                "s3:ListBucket"
-            ],
-            "Resource": [
-                `arn:aws:s3:::${date}`
-            ],
-            "Condition": {
-                "StringLike": {
-                    "s3:prefix": [
-                        `${bucket}/*`
-                    ]
-                }
-            }
+          }
         }
+      },
+      {
+        "Effect": "Deny",
+        "Action": [
+          "admin:CreateServiceAccount"
+        ],
+        "Resource": [
+        "arn:aws:s3:::*"
+        ]
+      }
     ]
   });
   // Write the JSON string to a temporary file
@@ -88,15 +105,25 @@ export default defineEventHandler(async (event) => {
   await writeFile(tempFilePath, policyJson);
 
   try {
-    // Create new user
-    await execPromise(`mc admin user add myminio ${bucket} ${password}`);
+    // Get expiration date
+    const expDate = getExpirationDate(config.public.timeDiff);
+    // Create MinIO Access Keys
+    const output = await execPromise(`mc admin user svcacct add myminio ${minioUsr} --policy ${tempFilePath} --expiry ${expDate}`);
+    // Extract Access Key and Secret Key
+    const accessKey = extractKeyValue(output.stdout, 'Access Key');
+    const secretKey = extractKeyValue(output.stdout, 'Secret Key');
+    // Clean up the temporary file
+    await unlink(tempFilePath);
+
+
+    /*await execPromise(`mc admin user add myminio ${bucket} ${password}`);
     // Set policy
     await execPromise(`mc admin policy create myminio ${bucket}-policy ${tempFilePath}`);
     // Clean up the temporary file
     await unlink(tempFilePath);
     // Attach policy to user
     await execPromise(`mc admin policy attach myminio ${bucket}-policy --user ${bucket}`);
-    // Generate presigned URL for curl
+    // Generate presigned URL for curl*/
     //const curl = await createPresignedURL('trajectory.file', bucket);
     const curl = {
       code: `
@@ -119,13 +146,13 @@ while [ \$# -gt 0 ]; do
   resource="/${date}/${bucket}/\${filename}"
   date=\`date -R\`
   request="PUT\\n\\napplication/octet-stream\\n\${date}\\n\${resource}"
-  signature=\`echo -en \${request} | openssl sha1 -hmac ${password} -binary | base64\`
+  signature=\`echo -en \${request} | openssl sha1 -hmac ${secretKey} -binary | base64\`
 
   curl --progress-bar --upload-file "\${file}" \\
       -H "Host: ${minioHost}" \\
       -H "Date: \${date}" \\
       -H "Content-Type: application/octet-stream" \\
-      -H "Authorization: AWS ${bucket}:\${signature}" \\
+      -H "Authorization: AWS ${accessKey}:\${signature}" \\
       ${minioURL}\${resource} | type
 
   # Shift to the next pair of arguments
@@ -148,20 +175,20 @@ echo "Done!"
       results: {
         curl: curl,
         mc: {
-          alias: `mc alias set myupload ${minioURL} ${bucket} ${password}`,
+          alias: `mc alias set myupload ${minioURL} ${accessKey} ${secretKey}`,
           file: `mc cp /path/to/file myupload/${date}/${bucket}/filename`,
           folder: `mc mirror /path/to/folder myupload/${date}/${bucket}/folder`,
           files: `mc mirror /path/to/folder myupload/${date}/${bucket}`
         },
         aws: {
-          file: `AWS_ACCESS_KEY_ID=${bucket} AWS_SECRET_ACCESS_KEY=${password} aws --endpoint-url ${minioURL} s3 cp /path/to/file s3://${date}/${bucket}/filename`,
-          files: `AWS_ACCESS_KEY_ID=${bucket} AWS_SECRET_ACCESS_KEY=${password} aws --endpoint-url ${minioURL} s3 sync /path/to/folder s3://${date}/${bucket}`,
-          folder: `AWS_ACCESS_KEY_ID=${bucket} AWS_SECRET_ACCESS_KEY=${password} aws --endpoint-url ${minioURL} s3 sync /path/to/folder s3://${date}/${bucket}/folder`
+          file: `AWS_ACCESS_KEY_ID=${accessKey} AWS_SECRET_ACCESS_KEY=${secretKey} aws --endpoint-url ${minioURL} s3 cp /path/to/file s3://${date}/${bucket}/filename`,
+          files: `AWS_ACCESS_KEY_ID=${accessKey} AWS_SECRET_ACCESS_KEY=${secretKey} aws --endpoint-url ${minioURL} s3 sync /path/to/folder s3://${date}/${bucket}`,
+          folder: `AWS_ACCESS_KEY_ID=${accessKey} AWS_SECRET_ACCESS_KEY=${secretKey} aws --endpoint-url ${minioURL} s3 sync /path/to/folder s3://${date}/${bucket}/folder`
         },
         rclone: {
-          file: `rclone sync /path/to/file :s3:${date}/${bucket} --s3-access-key-id ${bucket} --s3-secret-access-key ${password} --s3-endpoint ${minioURL} --s3-provider Minio --s3-no-check-bucket --progress`,
-          files: `rclone sync /path/to/folder :s3:${date}/${bucket} --s3-access-key-id ${bucket} --s3-secret-access-key ${password} --s3-endpoint ${minioURL} --s3-provider Minio --s3-no-check-bucket --progress`,
-          folder: `rclone sync /path/to/folder :s3:${date}/${bucket}/folder --s3-access-key-id ${bucket} --s3-secret-access-key ${password} --s3-endpoint ${minioURL} --s3-provider Minio --s3-no-check-bucket --progress`
+          file: `rclone sync /path/to/file :s3:${date}/${bucket} --s3-access-key-id ${accessKey} --s3-secret-access-key ${secretKey} --s3-endpoint ${minioURL} --s3-provider Minio --s3-no-check-bucket --progress`,
+          files: `rclone sync /path/to/folder :s3:${date}/${bucket} --s3-access-key-id ${accessKey} --s3-secret-access-key ${secretKey} --s3-endpoint ${minioURL} --s3-provider Minio --s3-no-check-bucket --progress`,
+          folder: `rclone sync /path/to/folder :s3:${date}/${bucket}/folder --s3-access-key-id ${accessKey} --s3-secret-access-key ${secretKey} --s3-endpoint ${minioURL} --s3-provider Minio --s3-no-check-bucket --progress`
         },
         bucket: bucket
       }

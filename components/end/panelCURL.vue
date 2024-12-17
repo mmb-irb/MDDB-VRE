@@ -6,7 +6,7 @@
     <code>./curl.sh /path/to/file1 filename1 /path/to/file2 filename2 ...</code>
   </p>
 
-  <p>The credentials used <strong>are temporary</strong> and they will <strong>expire in {{ $globals.curl_expire }}</strong>. Due to its limitations, <strong>curl doesn't allow to upload folders</strong>. So for uploading <strong>multiple files</strong>, please pass them to the shell script <strong>one after the other</strong>. For uploading an entire folder, the <strong>other methods</strong> in this same section can be used in a more confortable way. </p>
+  <p>The credentials used <strong>are temporary</strong> and they will <strong>expire in {{ $globals.expire }}</strong>. Due to its limitations, <strong>curl doesn't allow to upload folders</strong>. So for uploading <strong>multiple files</strong>, please pass them to the shell script <strong>one after the other</strong>. For uploading an entire folder, the <strong>other methods</strong> in this same section can be used in a more confortable way. </p>
 
   <v-textarea
     class="my-2"

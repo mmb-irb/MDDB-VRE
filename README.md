@@ -31,6 +31,7 @@ npm install
 | MINIO_PROTOCOL                 | string                                   | MinIO API protocol (http|https)    |
 | MINIO_URL                 | `<url>`                                   | url for MinIO (ie localhost)     |
 | MINIO_PORT                 | string                                   | MinIO API outer port    |
+| MINIO_USER                 | string                                   | MinIO user with permissions for creating access keys    |
 | NODE_NAME                 | string                                   | node identifier to deploy       |
 
 ## Development Server
