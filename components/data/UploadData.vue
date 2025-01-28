@@ -200,7 +200,7 @@
     // trick for temperature
     metadata.temp = metadata.mds[metadata.mdref].temp
     // trick for framestep (convert to ns)
-    metadata.framestep = metadata.framestep ? metadata.framestep * 1000 : metadata.framestep
+    metadata.framestep = metadata.framestep ? metadata.framestep / 1000 : metadata.framestep
     // trick for mixing both ligands objects
     if(metadata.ligands_other) {
       metadata.ligands = metadata.ligands ? metadata.ligands.concat(metadata.ligands_other) : metadata.ligands_other
