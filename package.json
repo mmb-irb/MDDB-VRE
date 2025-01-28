@@ -19,7 +19,7 @@
   },
   "devDependencies": {
     "@invictus.codes/nuxt-vuetify": "^0.3.0",
-    "@nuxt/devtools": "latest",
+    "@nuxt/devtools": "1.4.1",
     "@vitejs/plugin-vue": "^4.5.2",
     "@vitest/coverage-v8": "^1.0.4",
     "@vue/test-utils": "^2.4.3",
