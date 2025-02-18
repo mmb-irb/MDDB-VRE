@@ -147,7 +147,7 @@
         "force_null": true,
         "default": null,
         "multiple": false,
-        "options": "https://mmb.mddbr.eu/api/rest/current/projects/options?projection=metadata.TYPE",
+        "options": "https://irb.mddbr.eu/api/rest/current/projects/options?projection=metadata.TYPE",
         "cols": 6
       },
       {
@@ -168,7 +168,7 @@
         "default": null,
         "multiple": false,
         "other": true,
-        "options": "https://mmb.mddbr.eu/api/rest/current/projects/options?projection=metadata.PROGRAM",
+        "options": "https://irb.mddbr.eu/api/rest/current/projects/options?projection=metadata.PROGRAM",
         "cols": 6
       },
       {
@@ -302,7 +302,7 @@
         "default": null,
         "multiple": false,
         "other": true,
-        "options": "https://mmb.mddbr.eu/api/rest/current/projects/options?projection=metadata.METHOD",
+        "options": "https://irb.mddbr.eu/api/rest/current/projects/options?projection=metadata.METHOD",
         "cols": 6
       },
       {
@@ -555,7 +555,7 @@
         "force_null": true,
         "default": null,
         "multiple": false,
-        "options": "https://mmb.mddbr.eu/api/rest/current/projects/options?projection=metadata.ENSEMBLE",
+        "options": "https://irb.mddbr.eu/api/rest/current/projects/options?projection=metadata.ENSEMBLE",
         "cols": 6
       },
       {
@@ -570,7 +570,7 @@
         "force_null": true,
         "default": null,
         "multiple": true,
-        "options": "https://mmb.mddbr.eu/api/rest/current/projects/options?projection=metadata.FF",
+        "options": "https://irb.mddbr.eu/api/rest/current/projects/options?projection=metadata.FF",
         "cols": 6
       },
       {
@@ -585,7 +585,7 @@
         "force_null": true,
         "default": null,
         "multiple": false,
-        "options": "https://mmb.mddbr.eu/api/rest/current/projects/options?projection=metadata.WAT",
+        "options": "https://irb.mddbr.eu/api/rest/current/projects/options?projection=metadata.WAT",
         "cols": 6
       },
       {
@@ -600,7 +600,7 @@
         "force_null": true,
         "default": null,
         "multiple": false,
-        "options": "https://mmb.mddbr.eu/api/rest/current/projects/options?projection=metadata.BOXTYPE",
+        "options": "https://irb.mddbr.eu/api/rest/current/projects/options?projection=metadata.BOXTYPE",
         "cols": 6
       },
       {
@@ -714,7 +714,7 @@
             "description": "Type of interaction.",
             "required": false,
             "other": false,
-            "options": "https://mmb.mddbr.eu/api/rest/current/projects/options?projection=metadata.INTERACTIONS.type",
+            "options": "https://irb.mddbr.eu/api/rest/current/projects/options?projection=metadata.INTERACTIONS.type",
             "subCols": 6
           },
           {
