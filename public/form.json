@@ -32,14 +32,6 @@
         "type": "textarea",
         "rows": 3,
         "description": "Write additional comments about the project. The description is displayed in the overview page.",
-        "rules": [
-          {
-            "id": "required",
-            "regex": "!!v",
-            "message": "This field is required"
-          }
-        ],
-        "required": true,
         "force_null": true,
         "default": null,
         "cols": 12
@@ -48,18 +40,13 @@
         "id": "authors",
         "label": "Author",
         "section": 0,
-        "type": "multiple-input",
+        "type": "multiple-select",
         "description": "Write author names. Authors are displayed in the overview page. IMPORTANT: Check already existing values for this field to avoid making duplicates.",
-        "rules": [
-          {
-            "id": "required",
-            "regex": "!!v",
-            "message": "This field is required"
-          }
-        ],
-        "required": true,
         "force_null": true,
         "default": null,
+        "multiple": false,
+        "other": true,
+        "options": "https://irb.mddbr.eu/api/rest/current/projects/options?projection=metadata.AUTHORS",
         "cols": 12,
         "subCols": 6
       },
@@ -67,18 +54,13 @@
         "id": "groups",
         "label": "Group",
         "section": 0,
-        "type": "multiple-input",
+        "type": "multiple-select",
         "description": "Write author group name/s. The group is displayed in the overview page. IMPORTANT: Check already existing values for this field to avoid making duplicates.",
-        "rules": [
-          {
-            "id": "required",
-            "regex": "!!v",
-            "message": "This field is required"
-          }
-        ],
-        "required": true,
         "force_null": true,
         "default": null,
+        "multiple": false,
+        "other": true,
+        "options": "https://irb.mddbr.eu/api/rest/current/projects/options?projection=metadata.GROUPS",
         "cols": 12,
         "subCols": 6
       },
@@ -115,17 +97,11 @@
         "description": "Mail to contact the authors. The contact is displayed in the overview page.",
         "rules": [
           {
-            "id": "required",
-            "regex": "!!v",
-            "message": "This field is required"
-          },
-          {
             "id": "email",
-            "regex": "/.+@.+\\..+/.test(v)",
+            "regex": "v === '' || v === null || /.+@.+\\..+/.test(v)",
             "message": "E-mail must be valid"
           }
         ],
-        "required": true,
         "force_null": true,
         "default": null,
         "cols": 6
@@ -136,14 +112,6 @@
         "section": 0,
         "type": "select",
         "description": "Type of molecular dynamics. At this moment there are only two options in this field: 'trajectory' and 'ensemble'.",
-        "rules": [
-          {
-            "id": "required",
-            "regex": "!!v",
-            "message": "This field is required"
-          }
-        ],
-        "required": true,
         "force_null": true,
         "default": null,
         "multiple": false,
@@ -156,14 +124,6 @@
         "section": 0,
         "type": "select",
         "description": "Program (software) name which carried the trajectory. Program and version are both displayed in the overview page.",
-        "rules": [
-          {
-            "id": "required",
-            "regex": "!!v && v.length > 0",
-            "message": "This field is required"
-          }
-        ],
-        "required": true,
         "force_null": true,
         "default": null,
         "multiple": false,
@@ -178,14 +138,6 @@
         "type": "input",
         "inputType": "text",
         "description": "Version of the program (software) which carried the trajectory. Program and version are both displayed in the overview page.",
-        "rules": [
-          {
-            "id": "required",
-            "regex": "!!v",
-            "message": "This field is required"
-          }
-        ],
-        "required": true,
         "force_null": true,
         "default": null,
         "cols": 6
@@ -203,14 +155,6 @@
             "label": "License text",
             "type": "select",
             "description": "The license is displayed in the overview page.",
-            "rules": [
-              {
-                "id": "required",
-                "regex": "!!v && v.length > 0",
-                "message": "This field is required"
-              }
-            ],
-            "required": true,
             "force_null": true,
             "default": null,
             "other": true,
@@ -268,17 +212,11 @@
             "description": "Under the license there is a 'More information' button. The link is used to redirect the user when this button is clicked.",
             "rules": [
               {
-                "id": "required",
-                "regex": "!!v && v.length > 0",
-                "message": "This field is required"
-              },
-              {
                 "id": "url",
                 "regex": "v === '' || v === null || /^(https?:\\/\\/)?([a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,}(\\/[^\\s]*)?$/.test(v)",
                 "message": "Please type a valid URL (ie http[s]://domain.org)"
               }
             ],
-            "required": true,
             "force_null": true,
             "default": null
           }
@@ -290,14 +228,6 @@
         "section": 0,
         "type": "select",
         "description": "MD method is displayed in the overview.",
-        "rules": [
-          {
-            "id": "required",
-            "regex": "!!v && v.length > 0",
-            "message": "This field is required"
-          }
-        ],
-        "required": true,
         "force_null": true,
         "default": null,
         "multiple": false,

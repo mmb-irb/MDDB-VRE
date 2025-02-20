@@ -13,12 +13,13 @@
     allow-new
     :chips="props.multiple"
     :multiple="props.multiple"
+    ref="autocompleteRefs"
   >
     <template v-slot:chip="{ item, index }">
       <v-chip v-if="index < 2 && props.multiple" class="ma-1" small>
         <span>{{ item.value }}</span>
       </v-chip>
-      <span v-if="!props.multiple">{{ item.value }}</span>
+      <span v-if="!props.multiple" class="truncate">{{ item.value }}</span>
       <span
         v-if="index === 2"
         class="text-grey text-caption align-self-center"
@@ -38,6 +39,7 @@
     :label="`${props.label} (Other) ${required ? '*' : ''}`"
     @update:modelValue="setMetadata(props.id, refModel)"
     @click:clear="other = false"
+    density="comfortable"
     clearable
   >
     <template v-slot:append>
@@ -58,6 +60,8 @@
   const { $sleep } = useNuxtApp()
 
   const { props } = defineProps(['props'])
+  const autocompleteRefs = ref([])
+  const truncateWidth = computed(() => autocompleteRefs.value.$el.offsetWidth + 'px')
   const refModel = ref(props.default)
   if(props.default !== undefined) setMetadata(props.id, refModel.value)
   const required = ref(props.required)
@@ -89,5 +93,11 @@
 </script>
 
 <style scoped>
-
+  .truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    max-width: v-bind(truncateWidth); /* Adjust this value as needed */
+  }
 </style>

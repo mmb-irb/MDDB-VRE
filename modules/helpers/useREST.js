@@ -17,7 +17,7 @@ export default function useREST() {
     try {
       const response = await $axios.get(metaURL);
       const resp = response.data;
-      const options = extractNestedKeys(resp).sort();
+      const options = extractNestedKeys(resp).sort().filter(item => item !== '' && item !== null && item !== undefined);
       return options;
     } catch (err) {
       console.error(err.message);

@@ -10,6 +10,7 @@
         <text-area-field v-if="item.type === 'textarea'" :props="item" />
         <rich-text-area-field v-if="item.type === 'rich-textarea'" :props="item" />
         <select-field v-if="item.type === 'select'" :props="item" />
+        <multiple-select-field v-if="item.type === 'multiple-select'" :props="item" />
         <multiple-input-field v-if="item.type === 'multiple-input'" :props="item" />
         <multiple-multi-input-field v-if="item.type === 'multiple-multi-input'" :props="item" />
         <select-input v-if="item.type === 'select-input'" :props="item" />
