@@ -83,7 +83,7 @@
 <script setup>
 
   import structureStorage from '@/modules/structure/structureStorage'
-  import YAML from 'yaml';
+  import YAML from 'yaml'
 
   const { getMetadata, getObjectFieldIds, getNullExceptions, cleanObjectFields, nullifyFields, getFData } = structureStorage()
 

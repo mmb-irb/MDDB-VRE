@@ -6,11 +6,13 @@
     <v-card>
       <v-card-title v-html="title"></v-card-title>
       <v-card-text>
-        <slot name="viewer"></slot>
+        <div id="dialog-content">
+          <v-icon id="dialog-icon" :color="color">{{ icon }}</v-icon>
+          <p v-html="text" id="dialog-text"></p>
+        </div>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-
         <v-btn
           text="Close"
           @click="closeDialog"
@@ -21,6 +23,8 @@
 </template>
 
 <script setup>
+import { warn } from 'vue';
+
 
   const props = defineProps({
     modelValue: Boolean
@@ -38,16 +42,34 @@
   }
 
   const title = ref('')
-  const updateTitle = (t) => {
-    title.value = t
+  const text = ref('')
+  const icon = ref('')
+  const color = ref('')
+  const icon_types = {
+    info: 'mdi-information-outline',
+    warning: 'mdi-alert-outline',
+    error: 'mdi-close-circle-outline'
+  }
+  const icon_colors = {
+    info: 'purple-lighten-3',
+    warning: 'orange-lighten-4',
+    error: 'red-lighten-2'
+  }
+  const updateContent = (tit, txt, type) => {
+    title.value = tit
+    text.value = txt
+    icon.value = icon_types[type]
+    color.value = icon_colors[type]
   }
 
   defineExpose({
-		updateTitle
+		updateContent
 	});
 
 </script>
 
 <style scoped>
-
+  #dialog-content { display: table; }
+  #dialog-icon { display: table-cell; vertical-align: middle; font-size: 80px; }
+  #dialog-text { display: table-cell; padding-left: 20px; vertical-align: middle; }
 </style>

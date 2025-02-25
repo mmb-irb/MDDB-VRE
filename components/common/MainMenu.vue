@@ -12,13 +12,17 @@
 
         <v-col lg="10" md="10" sm="6" class="py-0">
           <div class="float-right h-100" >
-            <v-btn prepend-icon="mdi-information" rounded="0" color="primary" @click="toggleMenu('/')" to="/" class="common-menu">
-              About
+            <v-btn prepend-icon="mdi-home" rounded="0" color="primary" @click="toggleMenu('/')" to="/" class="common-menu">
+              Home
             </v-btn>
 
-            <v-btn prepend-icon="mdi-cloud-braces" rounded="0" color="primary" @click="toggleMenu('/rest')" to="/rest" class="common-menu">
-              REST API
+            <v-btn prepend-icon="mdi-upload" rounded="0" color="primary" @click="toggleMenu('/upload')" to="/upload" class="common-menu">
+              Upload
             </v-btn>
+
+            <!--<v-btn prepend-icon="mdi-cloud-braces" rounded="0" color="primary" @click="toggleMenu('/rest')" to="/rest" class="common-menu">
+              REST API
+            </v-btn>-->
 
             <v-menu v-model="menu_resp" :close-on-content-click="false">
               <template v-slot:activator="{ props }">
@@ -31,9 +35,9 @@
 
               <v-list id="submenu-search-responsive">
 
-                <v-list-item prepend-icon="mdi-information" title="About" to="/" @click="menu_resp = false; toggleMenu('/')"></v-list-item>
+                <v-list-item prepend-icon="mdi-home" title="Home" to="/" @click="menu_resp = false; toggleMenu('/')"></v-list-item>
 
-                <v-list-item prepend-icon="mdi-cloud-braces" title="REST API" to="/rest" @click="menu_resp = false; toggleMenu('/rest')"></v-list-item>
+                <v-list-item prepend-icon="mdi-upload" title="Upload" to="/upload" @click="menu_resp = false; toggleMenu('/upload')"></v-list-item>
 
               </v-list>
 

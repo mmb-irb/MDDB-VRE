@@ -70,7 +70,10 @@
 
   const { props } = defineProps(['props'])
   const autocompleteRefs = ref([])
-  const truncateWidth = computed(() => autocompleteRefs.value[0].$el.offsetWidth + 'px')
+  const truncateWidth = computed(() => {
+    if(autocompleteRefs.value?.[0]?.$el) return autocompleteRefs.value[0].$el.offsetWidth + 'px'
+    else return '100px'
+  })
   let refInputs = ref([''])
   if(props.default !== undefined) {
     refInputs.value[0] = props.default
