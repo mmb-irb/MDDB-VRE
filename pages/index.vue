@@ -9,13 +9,13 @@
         <v-card>
           <template v-slot:title>
             <v-icon size="small" icon="mdi-button-pointer"></v-icon>&nbsp;
-            <span class="font-weight-black">Select create metadata method</span>
+            <span class="font-weight-black">Select method to create metadata </span>
           </template>
 
           <v-card-text class="py-5">
-            <p>The aim of this website is to <strong>generate</strong> the <strong>metadata</strong> needed for <strong>analysing the trajectories</strong> provided by the user. There are <strong>three ways</strong> of generating this metadata: </p>
+            <p>The aim of this website is to <strong>generate</strong> the <strong>metadata</strong> needed for <strong>analysing the trajectories</strong> provided by the user. The website provides <strong>a form</strong> for this purpose. Although, there are <strong>two ways</strong> to generate this metadata: </p>
             <ul class="ml-5">
-              <li><strong>Upload</strong> a previously generated <strong>metadata</strong> file compatible with <strong>{{ $globals.shortName }}</strong> (data can be modified before uploading topology and trajectory).</li>
+              <li><strong>Upload</strong> a previously generated <strong>metadata</strong> file compatible with <strong>{{ $globals.shortName }}</strong>. The form will be <strong>automatically filled</strong> with the provided data and can be modified <strong>before</strong> uploading <strong>topology</strong> and <strong>trajectory/ies</strong>.</li>
               <!--<li><strong>Upload</strong> a <strong>topology</strong> file and then fill the metadata in the form. The topology file will be used in the form.</li>-->
               <li>Use the <strong>form</strong> to generate the metadata <strong>from scratch</strong>.</li>
             </ul>
@@ -93,6 +93,21 @@
         </v-sheet>
       </v-col>
     </v-row>
+    <v-row> 
+      <v-col cols="12" >
+        <!-- SCHEMA -->
+        <v-card>
+          <template v-slot:title>
+            <v-icon size="small" icon="mdi-sitemap-outline"></v-icon>&nbsp;
+            <span class="font-weight-black">{{ $globals.shortName }} operating schema </span>
+          </template>
+
+          <v-card-text class="py-5">
+            <p style="text-align: center;"><img src="/img/schema.png" alt="Schema" class="img-schema" /></p>
+          </v-card-text>
+        </v-card>
+      </v-col>
+    </v-row>
 
   </v-container>
 
@@ -162,7 +177,7 @@
         return
       }
       console.log('store and go to upload')
-      // TODO: save to structureStorage and go to /upload
+      // TODO: save parsedYaml.value to structureStorage and go to /upload
     } catch (err) {
       console.error('Error parsing YAML:', err)
     }
@@ -206,4 +221,5 @@
     justify-content:center;
   }
   .text-body-2 { min-height:40px; }
+  .img-schema { max-width: 100%; }
 </style>
