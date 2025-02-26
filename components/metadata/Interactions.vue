@@ -84,7 +84,7 @@
 
   import structureStorage from '@/modules/structure/structureStorage'
 
-  const { setMetadata } = structureStorage()
+  const { setMetadata, getMetadataField } = structureStorage()
 
   import useREST from '@/modules/helpers/useREST'
 
@@ -97,6 +97,12 @@
   const initOther = {type: null, agent_1: null, agent_2: null}
   const other = ref([{ ...initOther }])
   const refOther = ref([{ ...initOther }])
+
+  if(getMetadataField(props.id)) {
+    modelGroup.value = getMetadataField(props.id)
+    // reset other fields to null with the same length as modelGroup
+    other.value = modelGroup.value.map(() => ({ ...initOther }));
+  }
 
   const items = {
     type: await getSelectOptions(props.fields.filter(item => item.id === 'type')[0].options),

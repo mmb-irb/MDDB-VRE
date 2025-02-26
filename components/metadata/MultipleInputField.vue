@@ -27,15 +27,18 @@
   import structureStorage from '@/modules/structure/structureStorage'
   import useRules from '@/modules/helpers/useRules'
 
-  const { setMetadata } = structureStorage()
+  const { setMetadata, getMetadataField } = structureStorage()
   const { getRules, checkAllValuesAgainstRules } = useRules()
 
   const { props } = defineProps(['props'])
   let refInputs = ref([''])
-  if(props.default !== undefined) {
+  /*if(props.default !== undefined) {
     refInputs.value[0] = props.default
     setMetadata(props.id, refInputs.value)
-  }
+  }*/
+  if(props.default !== undefined && !getMetadataField(props.id)) setMetadata(props.id, refInputs.value)
+  if(getMetadataField(props.id)) refInputs.value = getMetadataField(props.id)
+
   const required = ref(props.required)
   const rules = ref(props.rules ? getRules(props.rules) : [])
 

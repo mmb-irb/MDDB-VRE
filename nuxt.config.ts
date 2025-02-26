@@ -1,3 +1,5 @@
+import colors from 'vuetify/util/colors'
+
 // modify baseURL depending on the server where the app is running
 const baseURL = process.env.APP_TYPE == 'development' ? process.env.BASE_URL_DEVELOPMENT : process.env.APP_TYPE == 'staging' ? process.env.BASE_URL_STAGING : process.env.BASE_URL_PRODUCTION
 
@@ -17,11 +19,15 @@ export default defineNuxtConfig({
     vuetifyOptions: {
       // @TODO: list all vuetify options
       theme: {
+        // @ts-ignore
+        options: { customProperties: true },
         themes: {
           light: {
             dark: false,
             colors: {
-              primary: '#ff0000'
+              primary: '#ff0000',
+              // import colors from vuetify/util/colors in order to use them in css as variables
+              'purple-accent-1': colors.purple.accent1,
             }
           },
         },

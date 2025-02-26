@@ -24,6 +24,10 @@ export default function structureStorage() {
         metadata[id][index][field] = data
     }
 
+    const cleanMetadata = () => {
+      Object.keys(metadata).forEach(key => delete metadata[key])
+    }
+
     const getMetadata = () => {
         return metadata
     }
@@ -121,6 +125,7 @@ export default function structureStorage() {
         getFData,
         setMetadata,
         setMultiMultiMetadata,
+        cleanMetadata,
         getMetadata,
         getMetadataField,
         getNullExceptions,

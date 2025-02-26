@@ -63,7 +63,7 @@
   import useRules from '@/modules/helpers/useRules'
   import useREST from '@/modules/helpers/useREST'
 
-  const { setMetadata, getDependingItems } = structureStorage()
+  const { setMetadata/*, getDependingItems*/, getMetadataField } = structureStorage()
   const { getRules, checkAllValuesAgainstRules } = useRules()
   const { getSelectOptions } = useREST()
   const { $sleep } = useNuxtApp()
@@ -74,11 +74,14 @@
     if(autocompleteRefs.value?.[0]?.$el) return autocompleteRefs.value[0].$el.offsetWidth + 'px'
     else return '100px'
   })
-  let refInputs = ref([''])
-  if(props.default !== undefined) {
+  let refInputs = ref([null])
+  if(props.default !== undefined && !getMetadataField(props.id)) setMetadata(props.id, refInputs.value)
+  /*if(props.default !== undefined) {
     refInputs.value[0] = props.default
     setMetadata(props.id, refInputs.value)
-  }
+  }*/
+  if(getMetadataField(props.id)) refInputs.value = getMetadataField(props.id)
+
 
   /*const refModel = ref(props.default)
   if(props.default !== undefined) setMetadata(props.id, refModel.value)*/

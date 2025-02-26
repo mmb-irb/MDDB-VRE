@@ -24,13 +24,14 @@
   import structureStorage from '@/modules/structure/structureStorage'
   import useRules from '@/modules/helpers/useRules'
 
-  const { setMetadata } = structureStorage()
+  const { setMetadata, getMetadataField } = structureStorage()
   const { getRules } = useRules()
 
   const { props } = defineProps(['props'])
   const refModel = ref(null)
   const refModel2 = ref(null)
-  if(props.default !== undefined) setMetadata(props.id, refModel.value)
+  // if the default value is set and the metadata field is not set, set the metadata field to the default value
+  if(props.default !== undefined && !getMetadataField(props.id)) setMetadata(props.id, refModel.value)  
   const required = ref(props.required)
   // TODO
   const rules = ref(props.rules ? getRules(props.rules) : [])
@@ -54,6 +55,12 @@
     if (props.default) {
       editor.clipboard.dangerouslyPasteHTML(props.default);
       setMetadata(props.id, editor.root.innerHTML)
+      refModel2.value = editor.root.innerText == '\n' || editor.root.innerText == '' ? '' : editor.root.innerText
+    }
+
+    // if the metadata field is set, set the input value to the metadata field
+    if(getMetadataField(props.id)) {
+      editor.clipboard.dangerouslyPasteHTML(getMetadataField(props.id));
       refModel2.value = editor.root.innerText == '\n' || editor.root.innerText == '' ? '' : editor.root.innerText
     }
 

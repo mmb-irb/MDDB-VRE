@@ -88,7 +88,7 @@
   import structureStorage from '@/modules/structure/structureStorage'
   import useRules from '@/modules/helpers/useRules'
 
-  const { setMetadata } = structureStorage()
+  const { setMetadata, getMetadataField } = structureStorage()
   const { getRules, getMultipleRules, checkMultipleValuesAgainstRules } = useRules()
 
   const { props } = defineProps(['props'])
@@ -98,6 +98,9 @@
   const refModelOther = ref([{ ...initModelOther }])
   const refLigands = ref([])
   const refLigandsOther = ref([])
+
+  //if(getMetadataField(props.id)) refModel.value = getMetadataField(props.id)
+  //console.log(getMetadataField(props.id))
 
   const select = props.fields.filter(f => f.type === 'select')[0]
   const items = select.items

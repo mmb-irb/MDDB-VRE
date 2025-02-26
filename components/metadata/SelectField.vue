@@ -54,16 +54,23 @@
   import useRules from '@/modules/helpers/useRules'
   import useREST from '@/modules/helpers/useREST'
 
-  const { setMetadata, getDependingItems } = structureStorage()
+  const { setMetadata, getDependingItems, getMetadataField } = structureStorage()
   const { getRules } = useRules()
   const { getSelectOptions } = useREST()
   const { $sleep } = useNuxtApp()
 
   const { props } = defineProps(['props'])
   const autocompleteRefs = ref([])
-  const truncateWidth = computed(() => autocompleteRefs.value.$el.offsetWidth + 'px')
+  const truncateWidth = computed(() => {
+    if(autocompleteRefs.value?.[0]?.$el) return autocompleteRefs.value[0].$el.offsetWidth + 'px'
+    else return '100px'
+  })
   const refModel = ref(props.default)
-  if(props.default !== undefined) setMetadata(props.id, refModel.value)
+  //if(props.default !== undefined) setMetadata(props.id, refModel.value)
+  // if the default value is set and the metadata field is not set, set the metadata field to the default value
+  if(props.default !== undefined && !getMetadataField(props.id)) setMetadata(props.id, refModel.value)
+  // if the metadata field is set, set the input value to the metadata field
+  if(getMetadataField(props.id)) refModel.value = getMetadataField(props.id)
   const required = ref(props.required)
   const otherField = ref(null)
   const other = ref(null)
@@ -75,6 +82,7 @@
   else if(props.depending) {
     items = computed(() => getDependingItems(props.depending))
     if(props.default !== undefined) refModel.value = items.value[props.default]
+    if(getMetadataField(props.id)) refModel.value = items.value[getMetadataField(props.id)]
   } else items.value = ref([])
 
   // add Other option if props.other is true

@@ -62,7 +62,7 @@
   import structureStorage from '@/modules/structure/structureStorage'
   import useRules from '@/modules/helpers/useRules'
 
-  const { setMultiMultiMetadata, setMetadata } = structureStorage()
+  const { setMultiMultiMetadata, setMetadata, getMetadataField } = structureStorage()
   const { getMultipleRules, checkMultipleValuesAgainstRules } = useRules()
 
   const { props } = defineProps(['props'])
@@ -73,7 +73,9 @@
   }, {})
 
   const modelGroup = ref([{ ...initModel }])
-  setMetadata(props.id, modelGroup.value)
+  //setMetadata(props.id, modelGroup.value)
+  if(props.default !== undefined && !getMetadataField(props.id)) setMetadata(props.id, modelGroup.value)
+  if(getMetadataField(props.id)) modelGroup.value = getMetadataField(props.id)
 
   const required = ref(props.required)
   const rules = ref(props.rules ? getMultipleRules(props.rules, Object.keys(initModel)) : [])

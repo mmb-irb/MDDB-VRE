@@ -59,21 +59,27 @@
   import structureStorage from '@/modules/structure/structureStorage'
   import useRules from '@/modules/helpers/useRules'
 
-  const { setMetadata } = structureStorage()
+  const { setMetadata, getMetadataField } = structureStorage()
   const { getRules } = useRules()
   const { $sleep } = useNuxtApp()
 
   const { props } = defineProps(['props'])
-  const refModelSelect = ref(null)
-  const refModelInput = ref(null)
   const otherField = ref(null)
   const other = ref(null)
 
   const select = props.fields.filter(f => f.type === 'select')[0]
   const items = select.items
   const input = props.fields.filter(f => f.type === 'input')[0]
-  setMetadata(select.id, refModelSelect.value)
-  setMetadata(input.id, refModelInput.value)
+  const refModelSelect = ref(select.default)
+  const refModelInput = ref(input.default)
+  // if the default value is set and the metadata field is not set, set the metadata field to the default value
+  if(select.default !== undefined && !getMetadataField(select.id)) setMetadata(select.id, refModelSelect.value)
+  if(input.default !== undefined && !getMetadataField(input.id)) setMetadata(input.id, refModelInput.value)
+  // if the metadata field is set, set the input value to the metadata field
+  if(getMetadataField(select.id)) refModelSelect.value = getMetadataField(select.id)
+  if(getMetadataField(input.id)) refModelInput.value = getMetadataField(input.id)
+  /*setMetadata(select.id, refModelSelect.value)
+  setMetadata(input.id, refModelInput.value)*/
 
   const selRules = ref(select.rules ? getRules(select.rules) : [])
   const inpRules = ref(input.rules ? getRules(input.rules) : [])

@@ -41,7 +41,7 @@
         "label": "Author",
         "section": 0,
         "type": "multiple-select",
-        "description": "Write author names. Authors are displayed in the overview page. IMPORTANT: Check already existing values for this field to avoid making duplicates.",
+        "description": "Write author names. Authors are displayed in the overview page. IMPORTANT: Check already existing values for this field to avoid making duplicates. If the author name does not appear in the list, please select 'Other' and write it.",
         "force_null": true,
         "default": null,
         "multiple": false,
@@ -55,7 +55,7 @@
         "label": "Group",
         "section": 0,
         "type": "multiple-select",
-        "description": "Write author group name/s. The group is displayed in the overview page. IMPORTANT: Check already existing values for this field to avoid making duplicates.",
+        "description": "Write author group name/s. The group is displayed in the overview page. IMPORTANT: Check already existing values for this field to avoid making duplicates. If the group name does not appear in the list, please select 'Other' and write it.",
         "force_null": true,
         "default": null,
         "multiple": false,
@@ -148,7 +148,6 @@
         "section": 0,
         "cols": 12,
         "force_null": true,
-        "default": null,
         "fields": [
           {
             "id": "license",

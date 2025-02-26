@@ -71,12 +71,18 @@
           rounded
           width="100%"
         >
-          <v-icon
-            class="mb-5"
-            color="purple-accent-1"
-            icon="mdi-playlist-edit"
-            size="80"
-          ></v-icon>
+          <span class="material-icons icon-stack">
+            <v-icon
+              color="purple-accent-1"
+              icon="mdi-circle-outline"
+              class="icon-back"
+            ></v-icon>
+            <v-icon
+              color="purple-accent-1"
+              icon="mdi-account-edit"
+              class="icon-front"
+            ></v-icon>
+          </span>
 
           <h2 class="text-h5 mb-6">{{ texts.start.title }}</h2>
 
@@ -122,7 +128,7 @@
   import validateYAML from '@/modules/structure/validateYAML'
 
   const { $globals } = useNuxtApp()
-  const { setMetadata } = structureStorage()
+  const { setMetadata, cleanMetadata } = structureStorage()
   const { validate } = validateYAML()
 
   const dialog = ref(false)
@@ -130,6 +136,8 @@
   const parsedYaml = ref(null)
 
   const metaDisabled = computed(() => !metaFile.value)
+
+  cleanMetadata()
 
   useHead({
     title: 'Home'
@@ -167,17 +175,22 @@
     if (!metaFile.value) return
 
     try {
+      // parse YAML
       const content = await readFileAsText(metaFile.value)
       parsedYaml.value = YAML.parse(content)
       const check = validate(content)
+      // check if valid
       if(!check.isValid) {
         //console.error('Error parsing YAML:', check.errors)
         metaFile.value = null
         openDialog('Error parsing YAML', `Parameter <strong>${check.errors[0].instancePath}</strong> ${check.errors[0].message}`, 'error')
         return
       }
-      console.log('store and go to upload')
-      // TODO: save parsedYaml.value to structureStorage and go to /upload
+      // store and go to upload page
+      Object.keys(parsedYaml.value).forEach(key => {
+        setMetadata(key, parsedYaml.value[key])
+      })
+      navigateTo('/upload')
     } catch (err) {
       console.error('Error parsing YAML:', err)
     }
@@ -222,4 +235,21 @@
   }
   .text-body-2 { min-height:40px; }
   .img-schema { max-width: 100%; }
+  .icon-stack {
+    position: relative;
+    display: inline-block;
+    margin-bottom: 20px;
+  }
+
+  .icon-back {
+    font-size: 80px;
+  }
+
+  .icon-front {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 50px;
+  }
 </style>
