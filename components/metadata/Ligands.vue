@@ -99,8 +99,54 @@
   const refLigands = ref([])
   const refLigandsOther = ref([])
 
-  //if(getMetadataField(props.id)) refModel.value = getMetadataField(props.id)
-  //console.log(getMetadataField(props.id))
+  // load predefined inputs
+  if(getMetadataField(props.id)) {
+    const predefinedInputs = getMetadataField(props.id)
+    refModel.value = []
+    refModelOther.value = []
+
+    // get the dbIds from the select field
+    const dbIds = props.fields.filter(f => f.type === 'select')[0].items.map(item => item.option)
+
+    predefinedInputs.forEach((input) => {
+      // check if the input is a predefined ligand
+      const key = Object.keys(input).find(k => k !== "residue" && dbIds.includes(k))
+
+      // check if the input is a predefined other
+      if (key) {
+        refModel.value.push({
+          select: key,
+          input: input[key],
+          residue: input.residue ? input.residue.join(', ') : null
+        })
+        var index = refModel.value.length - 1
+        const obj = {
+          [refModel.value[index].select]: refModel.value[index].input
+        };
+        if (refModel.value[index].residue) obj.residue = refModel.value[index].residue.split(',').map(Number).filter(n => !isNaN(n))
+
+        refLigands.value[index] = obj
+      } else {
+        const otherKey = Object.keys(input).find(k => k !== "residue")
+        refModelOther.value.push({
+          input: input[otherKey],
+          residue: input.residue ? input.residue.join(', ') : null
+        })
+        var index = refModelOther.value.length - 1
+        const obj = {
+            name: refModelOther.value[index].input
+        };
+        if (refModelOther.value[index].residue) obj.residue = refModelOther.value[index].residue.split(',').map(Number).filter(n => !isNaN(n))
+
+        refLigandsOther.value[index] = obj
+      }
+    })
+
+    setMetadata('ligands', refLigands.value)
+    setMetadata('ligands_other', refLigandsOther.value)
+
+    //console.log(refLigands.value, refLigandsOther.value)
+  }
 
   const select = props.fields.filter(f => f.type === 'select')[0]
   const items = select.items
@@ -264,7 +310,7 @@
     //if (index > 0) {
       refModelOther.value.splice(index, 1)
       refLigandsOther.value.splice(index, 1)
-      setMetadata(props.id, refLigandsOther.value)
+      setMetadata('ligands_other', refLigandsOther.value)
     //}
   }
 

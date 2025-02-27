@@ -183,11 +183,14 @@
       if(!check.isValid) {
         //console.error('Error parsing YAML:', check.errors)
         metaFile.value = null
-        openDialog('Error parsing YAML', `Parameter <strong>${check.errors[0].instancePath}</strong> ${check.errors[0].message}`, 'error')
+        const errorMessages = check.errors.map(err => `Parameter <strong>${err.instancePath}</strong> ${err.message}`).join('<br/>')
+        openDialog('Error parsing YAML', errorMessages, 'error')
         return
       }
       // store and go to upload page
       Object.keys(parsedYaml.value).forEach(key => {
+        // trick for framestep (convert to ns)
+        if(key === 'framestep') parsedYaml.value[key] = parsedYaml.value[key] * 1000
         setMetadata(key, parsedYaml.value[key])
       })
       navigateTo('/upload')
