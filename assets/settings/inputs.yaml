@@ -65,13 +65,11 @@ mdref: 0
 pbc_selection: 45, 70
 interactions:
   - name: Canonical WC
-    type: dna-dna
     agent_1: Watson Strand
     selection_1: chain A
     agent_2: Crick Strand
     selection_2: chain B
   - name: Canonical CW
-    type: dna-dna
     agent_1: Crick Strand
     selection_1: chain B
     agent_2: Watson Strand

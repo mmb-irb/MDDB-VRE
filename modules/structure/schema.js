@@ -99,13 +99,13 @@ export const schema = {
         type: 'object',
         properties: {
           name: { type: 'string' },
-          type: { type: 'string' },
+          //type: { type: 'string' },
           agent_1: { type: 'string' },
           selection_1: { type: 'string' },
           agent_2: { type: 'string' },
           selection_2: { type: 'string' }
         },
-        required: ['name', 'type', 'agent_1', 'selection_1', 'agent_2', 'selection_2'],
+        required: ['name'/*, 'type'*/, 'agent_1', 'selection_1', 'agent_2', 'selection_2'],
         additionalProperties: false
       }
     }

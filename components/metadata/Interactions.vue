@@ -15,7 +15,7 @@
             <form-tooltip :props="{width: 300, text: item.description}" />
           </template>
         </v-text-field>
-        <div v-if="item.type === 'select'">
+        <!--<div v-if="item.type === 'select'">
           <v-autocomplete
             v-if="!other[index][item.id]"
             v-model="modelGroup[index][item.id]"
@@ -46,7 +46,7 @@
               <form-tooltip :props="{width: 300, text: item.description}" />
             </template>
           </v-text-field>
-        </div>
+        </div>-->
       </v-col>
     </v-row>
     <div v-if="modelGroup.length > 1"  :class="`${index < modelGroup.length - 1 ? 'bg-bottom-interaction mb-2' : 'pt-2'} btn-remove`">
@@ -89,12 +89,12 @@
   import useREST from '@/modules/helpers/useREST'
 
   const { $sleep } = useNuxtApp()
-  const { getSelectOptions } = useREST()
+  //const { getSelectOptions } = useREST()
 
   const { props } = defineProps(['props'])
-  const initModel = {name: null, type: null, agent_1: null, selection_1: null, agent_2: null, selection_2: null}
+  const initModel = {name: null, agent_1: null, selection_1: null, agent_2: null, selection_2: null}
   const modelGroup = ref([{ ...initModel }])
-  const initOther = {type: null, agent_1: null, agent_2: null}
+  const initOther = {agent_1: null, agent_2: null}
   const other = ref([{ ...initOther }])
   const refOther = ref([{ ...initOther }])
 
@@ -105,18 +105,18 @@
   }
 
   const items = {
-    type: await getSelectOptions(props.fields.filter(item => item.id === 'type')[0].options),
+    //type: await getSelectOptions(props.fields.filter(item => item.id === 'type')[0].options),
     agent_1: props.fields.filter(item => item.id === 'agent_1')[0].items,
     agent_2: props.fields.filter(item => item.id === 'agent_2')[0].items
   }
 
   const otherInit = {
-    type: props.fields.filter(item => item.id === 'type')[0].other,
+    //type: props.fields.filter(item => item.id === 'type')[0].other,
     agent_1: props.fields.filter(item => item.id === 'agent_1')[0].other,
     agent_2: props.fields.filter(item => item.id === 'agent_2')[0].other
   }
 
-  if(otherInit.type) items.type.push('Other')
+  //if(otherInit.type) items.type.push('Other')
   if(otherInit.agent_1) items.agent_1.push({name: 'Other', option: 'other'})
   if(otherInit.agent_2) items.agent_2.push({name: 'Other', option: 'other'})
 
@@ -124,16 +124,16 @@
   const ngEnabled = computed(() => allValuesNonEmpty(modelGroup.value))
 
   // Set reference to input field
-  const setRef = (index, id) => el => {
+  /*const setRef = (index, id) => el => {
     refOther.value[index][id] = el
-  }
+  }*/
 
   const handleInput = (id, index) => {
     //console.log(modelGroup.value[index][id])
     setMetadata(props.id, modelGroup.value)
   }
 
-  const handleSelect = async (id, index) => {
+  /*const handleSelect = async (id, index) => {
     if (modelGroup.value[index][id] === 'other') {
       modelGroup.value[index][id] = ''
       other.value[index][id] = true
@@ -142,7 +142,7 @@
     }
     //console.log(modelGroup.value[index][id])
     setMetadata(props.id, modelGroup.value)
-  }
+  }*/
 
   // Check if all values in an array of objects are non-empty
   const allValuesNonEmpty = (arr) => {

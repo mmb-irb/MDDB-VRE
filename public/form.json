@@ -634,17 +634,7 @@
             "inputType": "text",
             "description": "A string tag used to relate interaction analyses data with their corresponding residues. In addition, the name is used to label the corresponding analyses in the web client.",
             "required": false,
-            "subCols": 6
-          },
-          {
-            "id": "type",
-            "label": "Type",
-            "type": "select",
-            "description": "Type of interaction.",
-            "required": false,
-            "other": false,
-            "options": "https://irb.mddbr.eu/api/rest/current/projects/options?projection=metadata.INTERACTIONS.type",
-            "subCols": 6
+            "subCols": 12
           },
           {
             "id": "agent_1",
