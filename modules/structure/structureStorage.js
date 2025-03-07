@@ -1,5 +1,6 @@
 const metadata = reactive({})
 const fData = reactive([])
+const upStrId = ref(null)
 
 // stores data
 export default function structureStorage() {
@@ -120,6 +121,14 @@ export default function structureStorage() {
       }
     }
 
+    const setStructureId = (id) => {
+      upStrId.value = id
+    }
+
+    const getStructureId = () => {
+      return upStrId.value
+    }
+
     return {
         storeFData,
         getFData,
@@ -132,7 +141,9 @@ export default function structureStorage() {
         getObjectFieldIds,
         cleanObjectFields,
         nullifyFields,
-        getDependingItems
+        getDependingItems,
+        setStructureId,
+        getStructureId
     }
 
 }

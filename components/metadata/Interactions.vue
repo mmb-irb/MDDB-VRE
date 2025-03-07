@@ -8,6 +8,8 @@
           v-model="modelGroup[index][item.id]"
           :label="item.label"
           @update:modelValue="handleInput(item.id, index)"
+          :append-inner-icon="item.inputType === 'selection' && structureId ? `mdi-eyedropper-plus`: null"
+          @click:append-inner="openStructure(index, item)"
           density="compact"
           clearable
         >
@@ -78,25 +80,34 @@
       Add new group of {{ props.label }}
     </v-btn>
   </div>
+
+  <NGLDialog v-model="dialog" ref="dialogRef" @saveSelection="handleSaveSelection" @closeDialog="handleCloseDialog">
+    <template v-slot:viewer>
+      <NGLViewer ref="viewerRef" />
+    </template>
+  </NGLDialog>
 </template>
 
 <script setup>
 
   import structureStorage from '@/modules/structure/structureStorage'
 
-  const { setMetadata, getMetadataField } = structureStorage()
+  const { setMetadata, getMetadataField, getStructureId } = structureStorage()
 
-  import useREST from '@/modules/helpers/useREST'
+  //import useREST from '@/modules/helpers/useREST'
 
-  const { $sleep } = useNuxtApp()
   //const { getSelectOptions } = useREST()
 
   const { props } = defineProps(['props'])
+  const { $sleep } = useNuxtApp()
+
+  const dialog = ref(false)
   const initModel = {name: null, agent_1: null, selection_1: null, agent_2: null, selection_2: null}
   const modelGroup = ref([{ ...initModel }])
   const initOther = {agent_1: null, agent_2: null}
   const other = ref([{ ...initOther }])
   const refOther = ref([{ ...initOther }])
+  const structureId = computed(() => getStructureId())
 
   if(getMetadataField(props.id)) {
     modelGroup.value = getMetadataField(props.id)
@@ -164,6 +175,38 @@
       modelGroup.value.splice(index, 1)
       setMetadata(props.id, modelGroup.value)
     //}
+  }
+
+  const dialogRef = ref(null)
+  const viewerRef = ref(null)
+  let currSel = {
+    id: null,
+    index: null
+  }
+  const openStructure = async (index, item) => {
+
+    currSel.id = item.id
+    currSel.index = index
+
+    dialog.value = true
+
+    // trick for avoiding problems on loading the viewer
+    await $sleep(500)    
+    viewerRef.value.setID(structureId.value)
+  }
+
+  const handleSaveSelection = () => {
+    console.log('save selection')
+    const s = viewerRef.value.getSelection()
+    console.log(s)
+    dialog.value = false
+    modelGroup.value[currSel.index][currSel.id] = s
+  }
+
+  const handleCloseDialog = () => {
+    dialog.value = false
+    currSel.id = null
+    currSel.index = null
   }
 
 </script>

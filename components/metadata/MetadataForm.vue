@@ -17,6 +17,7 @@
         <ligands v-if="item.type === 'ligands'" :props="item" />
         <interactions v-if="item.type === 'interactions'" :props="item" />
         <hidden-field v-if="item.type === 'hidden'" :props="item" />
+        <upload-file v-if="item.type === 'upload-file'" :props="item" />
 
       </v-col>
     </v-row>

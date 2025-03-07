@@ -23,8 +23,6 @@
 </template>
 
 <script setup>
-import { warn } from 'vue';
-
 
   const props = defineProps({
     modelValue: Boolean
