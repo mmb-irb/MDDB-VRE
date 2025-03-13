@@ -1,7 +1,6 @@
 <template>
   <v-dialog
     v-model="dialog"
-    width="700px"
   >
     <v-card>
       <v-card-title>
@@ -9,18 +8,25 @@
         <span v-html="title"></span>
       </v-card-title>
       <v-card-text>
-        <slot name="viewer"></slot>
+        <v-row>
+          <v-col cols="8">
+            <slot name="viewer"></slot>
+          </v-col>
+          <v-col cols="4">
+            <slot name="selection"></slot>
+          </v-col>
+        </v-row>
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn
           color="purple-accent-4"
           variant="tonal"
-          text="Ok"
+          text="Save"
           @click="saveSelection"
         ></v-btn>
         <v-btn
-          text="Close"
+          text="Cancel"
           variant="outlined"
           @click="closeDialog"
         ></v-btn>
@@ -56,6 +62,4 @@
 </script>
 
 <style scoped>
-  #loader-viewer { position: absolute; top: 0; left: 0; background: #dedede; width: 100%; height: 400px; z-index: 1;}
-  #viewport { width: 100%; height: 400px; background-color: #dedede; }
 </style>

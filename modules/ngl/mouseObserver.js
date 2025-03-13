@@ -8,12 +8,12 @@ export default function mouseObserver() {
 		stage.signals.hovered.add( function(pickingProxy){ 
 
 			if (pickingProxy && pickingProxy.atom) {
-				text = `<strong>${pickingProxy.atom.resno}${pickingProxy.atom.resname[0]}</strong> ${pickingProxy.atom.atomname}`
+				text = `<strong>${pickingProxy.atom.resno}${pickingProxy.atom.resname[0]}</strong>:${pickingProxy.atom.chainname} ${pickingProxy.atom.atomname}`
 				status = true
 			}
 
 			if (pickingProxy && pickingProxy.bond) {
-				text = `<strong>${pickingProxy.bond.atom1.resno}${pickingProxy.bond.atom1.resname[0]}</strong> ${pickingProxy.bond.atom1.atomname}-${pickingProxy.bond.atom2.atomname}`
+				text = `<strong>${pickingProxy.bond.atom1.resno}${pickingProxy.bond.atom1.resname[0]}</strong>:${pickingProxy.bond.atom1.chainname} ${pickingProxy.bond.atom1.atomname}-${pickingProxy.bond.atom2.atomname}`
 				status = true
 			}
 

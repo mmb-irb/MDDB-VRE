@@ -7,82 +7,6 @@
     "description": ["The following metadata has no effect on the workflow itself, but it will be written to the <strong>output metadata</strong> file. These values will be <strong>uploaded to the database</strong> and then exposed in the <strong>project overview</strong>. They may be also useful to <strong>search this project</strong> using the browser."],
     "fields": [
       {
-        "id": "analysis_str",
-        "label": "Structure file",
-        "section": 0,
-        "type": "upload-file",
-        "formats": [".pdb"],
-        "description": "In order to ease the process of selecting agents or PBC in the analysis section, a structure file like a PDB can be uploaded for the sake of perform these selections in a more easy and visual way.",
-        "rules": [
-          {
-            "id": "required",
-            "regex": "!!v",
-            "message": "Please add a file"
-          }
-        ],
-        "required": true,
-        "force_null": true,
-        "default": null,
-        "cols": 12
-      },
-      {
-        "id": "interactions",
-        "type": "interactions",
-        "label": "Interactions",
-        "section": 0,
-        "description": "Set which are the interesting interactions to be analyzed. A bunch of interaction-specific analyses will be run for each interaction and displayed in the web client. Interactions are defined by the 'agents' which are meant to interact pairwise. An 'agent' may be anything, even a group of unrelated molecules. The only condition is that agents must be defined by residues. Residues of different agents which are close enought will be considered as interface residues. These residues will be the ones considered in interface analyses. If no interface residues are found then the interaction is considered not valid and the user is warned. Interactions are uploaded to the database as part of the project metadata and as an independent analysis. Project metadata includes the interaction name, agents name and agent residues selections (vmd syntax). Analysis data includes also every agent residue indices (both the whole agent and the interface only). See the <a href='https://www.ks.uiuc.edu/Research/vmd/vmd-1.3/ug/node132.html' target='_blank'>VMD atom selection language</a> for more information about VMD selections.",
-        "cols": 12,
-        "force_null": true,
-        "default": null,
-        "fields": [
-          {
-            "id": "name",
-            "label": "Name",
-            "type": "input",
-            "inputType": "name",
-            "description": "A string tag used to relate interaction analyses data with their corresponding residues. In addition, the name is used to label the corresponding analyses in the web client.",
-            "required": false,
-            "subCols": 12
-          },
-          {
-            "id": "agent_1",
-            "label": "Agent 1",
-            "type": "input",
-            "inputType": "agent",
-            "description": "The name of the first agent in the interaction, which is used to label in the client.",
-            "required": false,
-            "subCols": 6
-          },
-          {
-            "id": "selection_1",
-            "label": "Selection 1",
-            "type": "input",
-            "inputType": "selection",
-            "description": "The VMD selection of the first agent in the interaction.",
-            "required": false,
-            "subCols": 6
-          },
-          {
-            "id": "agent_2",
-            "label": "Agent 2",
-            "type": "input",
-            "inputType": "agent",
-            "description": "The name of the second agent in the interaction, which is used to label in the client.",
-            "required": false,
-            "subCols": 6
-          },
-          {
-            "id": "selection_2",
-            "label": "Selection 2",
-            "type": "input",
-            "inputType": "selection",
-            "description": "The VMD selection of the second agent in the interaction.",
-            "required": false,
-            "subCols": 6
-          }
-        ]
-      },
-      {
         "id": "name",
         "label": "Name",
         "section": 0,
@@ -694,11 +618,30 @@
     "description": ["These fields have an impact in the analysis workflow."],
     "fields": [
       {
+        "id": "analysis_str",
+        "label": "Structure file",
+        "section": 0,
+        "type": "upload-file",
+        "formats": [".pdb"],
+        "description": "In order to ease the process of selecting agents or PBC in the analysis section, a structure file like a PDB can be uploaded for the sake of perform these selections in a more easy and visual way.",
+        "rules": [
+          {
+            "id": "required",
+            "regex": "!!v",
+            "message": "Please add a file"
+          }
+        ],
+        "required": false,
+        "force_null": true,
+        "default": null,
+        "cols": 12
+      },
+      {
         "id": "interactions",
         "type": "interactions",
         "label": "Interactions",
         "section": 0,
-        "description": "Set which are the interesting interactions to be analyzed. A bunch of interaction-specific analyses will be run for each interaction and displayed in the web client. Interactions are defined by the 'agents' which are meant to interact pairwise. An 'agent' may be anything, even a group of unrelated molecules. The only condition is that agents must be defined by residues. Residues of different agents which are close enought will be considered as interface residues. These residues will be the ones considered in interface analyses. If no interface residues are found then the interaction is considered not valid and the user is warned. Interactions are uploaded to the database as part of the project metadata and as an independent analysis. Project metadata includes the interaction name, agents name and agent residues selections (vmd syntax). Analysis data includes also every agent residue indices (both the whole agent and the interface only). See the <a href='https://www.ks.uiuc.edu/Research/vmd/vmd-1.3/ug/node132.html' target='_blank'>VMD atom selection language</a> for more information about VMD selections.",
+        "description": "Set which are the interesting interactions to be analyzed. A pdb file must be provided in the top of this section in order to perform the selections of the agents.",
         "cols": 12,
         "force_null": true,
         "default": null,
@@ -707,7 +650,7 @@
             "id": "name",
             "label": "Name",
             "type": "input",
-            "inputType": "text",
+            "inputType": "name",
             "description": "A string tag used to relate interaction analyses data with their corresponding residues. In addition, the name is used to label the corresponding analyses in the web client.",
             "required": false,
             "subCols": 12
@@ -716,6 +659,7 @@
             "id": "agent_1",
             "label": "Agent 1",
             "type": "input",
+            "inputType": "agent",
             "description": "The name of the first agent in the interaction, which is used to label in the client.",
             "required": false,
             "subCols": 6
@@ -724,8 +668,14 @@
             "id": "selection_1",
             "label": "Selection 1",
             "type": "input",
-            "inputType": "text",
-            "description": "The VMD selection of the first agent in the interaction.",
+            "hidden": true
+          },
+          {
+            "id": "selection_1_ngl",
+            "label": "Selection 1",
+            "type": "input",
+            "inputType": "selection",
+            "description": "The selection of the first agent in the interaction, readonly field, click the eyedropper icon to open the selection window.",
             "required": false,
             "subCols": 6
           },
@@ -733,6 +683,7 @@
             "id": "agent_2",
             "label": "Agent 2",
             "type": "input",
+            "inputType": "agent",
             "description": "The name of the second agent in the interaction, which is used to label in the client.",
             "required": false,
             "subCols": 6
@@ -741,8 +692,14 @@
             "id": "selection_2",
             "label": "Selection 2",
             "type": "input",
-            "inputType": "text",
-            "description": "The VMD selection of the second agent in the interaction.",
+            "hidden": true
+          },
+          {
+            "id": "selection_2_ngl",
+            "label": "Selection 2",
+            "type": "input",
+            "inputType": "selection",
+            "description": "The selection of the second agent in the interaction, readonly field, click the eyedropper icon to open the selection window.",
             "required": false,
             "subCols": 6
           }

@@ -2,7 +2,7 @@
   <p style="color:#777;" v-html="props.description"></p>
   <div v-for="(interaction, index) in modelGroup" :key="index" class="pt-2" >
     <v-row class="mb-0" >
-      <v-col v-for="(item, idx) in props.fields" :key="idx" :lg="item.subCols" :md="item.subCols" sm="12" cols="12" class="pb-0">
+      <v-col v-for="(item, idx) in props.fields.filter(item => item.hidden !== true)" :key="idx" :lg="item.subCols" :md="item.subCols" sm="12" cols="12" class="pb-0">
         <v-text-field
           v-if="item.type === 'input'"
           v-model="modelGroup[index][item.id]"
@@ -11,6 +11,8 @@
           :append-inner-icon="item.inputType === 'selection' && structureId ? `mdi-eyedropper-plus`: null"
           @click:append-inner="openStructure(index, item)"
           density="compact"
+          :disabled="!structureId"
+          :readonly="item.id.startsWith('selection_')"
           clearable
         >
           <template v-slot:append>
@@ -50,6 +52,11 @@
           </v-text-field>
         </div>-->
       </v-col>
+      <v-text-field
+        v-for="(item, k) in props.fields.filter(item => item.hidden === true)"
+        v-model="modelGroup[index][item.id]"
+        v-show="false"
+      ></v-text-field>
     </v-row>
     <div v-if="modelGroup.length > 1"  :class="`${index < modelGroup.length - 1 ? 'bg-bottom-interaction mb-2' : 'pt-2'} btn-remove`">
       <v-tooltip :text="`Remove group of ${ props.label }`" location="bottom" >
@@ -75,7 +82,7 @@
       color="purple-accent-2"
       class="mb-3 btn-add"
       @click="createNewGroup()"
-      :disabled="!ngEnabled"
+      :disabled="!ngEnabled || !structureId"
       >
       Add new group of {{ props.label }}
     </v-btn>
@@ -83,7 +90,10 @@
 
   <NGLDialog v-model="dialog" ref="dialogRef" @saveSelection="handleSaveSelection" @closeDialog="handleCloseDialog">
     <template v-slot:viewer>
-      <NGLViewer ref="viewerRef" />
+      <NGLViewer ref="viewerRef" @nglReady="handleNGLReady" @chainsList="handleChainsList" />
+    </template>
+    <template v-slot:selection>
+      <NGLSelection ref="selectionRef" @setSelection="handleSelection" />
     </template>
   </NGLDialog>
 </template>
@@ -99,15 +109,22 @@
   //const { getSelectOptions } = useREST()
 
   const { props } = defineProps(['props'])
-  const { $sleep } = useNuxtApp()
+  const { $sleep, $waitFor } = useNuxtApp()
 
   const dialog = ref(false)
-  const initModel = {name: null, agent_1: null, selection_1: null, agent_2: null, selection_2: null}
+  const isNGLReady = ref(false)
+  const initModel = {name: null, agent_1: null, selection_1: null, selection_1_ngl: null, agent_2: null, selection_2: null, selection_2_ngl: null}
   const modelGroup = ref([{ ...initModel }])
   const initOther = {agent_1: null, agent_2: null}
   const other = ref([{ ...initOther }])
   const refOther = ref([{ ...initOther }])
-  const structureId = computed(() => getStructureId())
+  const structureId = computed(() => {
+    if(!getStructureId() && !getMetadataField(props.id)) {
+      setMetadata(props.id, [{ ...initModel }])
+      modelGroup.value = [{ ...initModel }]
+    }
+    return getStructureId()
+  })
 
   if(getMetadataField(props.id)) {
     modelGroup.value = getMetadataField(props.id)
@@ -141,6 +158,7 @@
 
   const handleInput = (id, index) => {
     //console.log(modelGroup.value[index][id])
+    console.log(id, index)
     setMetadata(props.id, modelGroup.value)
   }
 
@@ -178,6 +196,7 @@
   }
 
   const dialogRef = ref(null)
+  const selectionRef = ref(null)
   const viewerRef = ref(null)
   let currSel = {
     id: null,
@@ -191,22 +210,62 @@
     dialog.value = true
 
     // trick for avoiding problems on loading the viewer
-    await $sleep(500)    
+    await $waitFor(() => viewerRef.value )
     viewerRef.value.setID(structureId.value)
+    selectionRef.value.setSelection(modelGroup.value[currSel.index][currSel.id])
   }
 
+  const convertNGLtoVMD = (nglSelection) => {
+  // Split the NGL string by comma and trim each token
+    const tokens = nglSelection.split(',').map(token => token.trim());
+    
+    // Map each token "resNum:chain" into VMD format: resid "resNum" and chain chain
+    const vmdTokens = tokens.map(token => {
+      const parts = token.split(':');
+      if (parts.length !== 2) return token;
+      const resid = parts[0].trim();
+      const chain = parts[1].trim();
+      return `resid "${resid}" and chain ${chain}`;
+    });
+    
+    // Join all parts into one VMD selection string with " or " separator
+    return vmdTokens.join(' or ');
+  };
+
   const handleSaveSelection = () => {
-    console.log('save selection')
-    const s = viewerRef.value.getSelection()
-    console.log(s)
+    const s = selection.value
     dialog.value = false
     modelGroup.value[currSel.index][currSel.id] = s
+    setMetadata(props.id, modelGroup.value)
+
+    let residues
+    if(s !== '' && s !== null && s !== undefined) {
+      residues = viewerRef.value.getResiduesFromSelection(s)
+      modelGroup.value[currSel.index][currSel.id.substring(0, currSel.id.length - 4)] = convertNGLtoVMD(residues.join(', '))
+    }
   }
 
   const handleCloseDialog = () => {
     dialog.value = false
     currSel.id = null
     currSel.index = null
+    isNGLReady.value = false
+    selectionRef.value.setEnabled(isNGLReady.value)
+  }
+
+  const selection = ref('')
+  const handleSelection = (s) => {
+    selection.value = s
+    viewerRef.value.setSelection(s)
+  }
+
+  const handleNGLReady = () => {
+    isNGLReady.value = true
+    selectionRef.value.setEnabled(isNGLReady.value)
+  }
+
+  const handleChainsList = (chains) => {
+    selectionRef.value.setChains(chains)
   }
 
 </script>

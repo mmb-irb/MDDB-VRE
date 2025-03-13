@@ -35,11 +35,11 @@ export const schema = {
     },
     pdbIds: {
       type: ['array', 'null'],
-      items: { type: 'string', pattern: '^[0-9][A-Za-z0-9]{3}$' }
+      items: { type: ['string', 'null'], pattern: '^[0-9][A-Za-z0-9]{3}$' }
     },
     forced_references: {
       type: ['array', 'null'],
-      items: { type: 'string', pattern: '^(?:[OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2}|[A-Za-z]: ?(?:[OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2}|noref))$' }
+      items: { type: ['string', 'null'], pattern: '^(?:[OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2}|[A-Za-z]: ?(?:[OPQ][0-9][A-Z0-9]{3}[0-9]|[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2}|noref))$' }
     },
     ligands: {
       type: ['array', 'null'],
@@ -106,7 +106,7 @@ export const schema = {
           selection_2: { type: 'string' }
         },
         required: ['name'/*, 'type'*/, 'agent_1', 'selection_1', 'agent_2', 'selection_2'],
-        additionalProperties: false
+        additionalProperties: true
       }
     }
   },

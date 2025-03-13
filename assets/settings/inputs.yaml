@@ -67,10 +67,14 @@ interactions:
   - name: Canonical WC
     agent_1: Watson Strand
     selection_1: chain A
+    selection_1_ngl: :A
     agent_2: Crick Strand
     selection_2: chain B
+    selection_2_ngl: :B
   - name: Canonical CW
     agent_1: Crick Strand
     selection_1: chain B
+    selection_1_ngl: :B
     agent_2: Watson Strand
     selection_2: chain A
+    selection_2_ngl: :A

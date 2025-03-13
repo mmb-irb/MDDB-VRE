@@ -11,20 +11,25 @@
     <div id="selectors" class="px-2" v-if="!loading">
       <v-row>
         <v-col cols="6">
-          <!-- TODO WITH PROPER VALUES AND REDO REPRESENTATIONS!! -->
           <v-select
             v-model="representation"
             label="Representation"
-            :items="['California', 'Colorado', 'Florida', 'Georgia', 'Texas', 'Wyoming']"
+            :items="representations"
+            item-title="name"
+            item-value="id"
             variant="underlined"
+            @update:model-value="changeRepresentation"
           ></v-select>
         </v-col>
         <v-col cols="6">
           <v-select
             v-model="color"
             label="Color"
-            :items="['California', 'Colorado', 'Florida', 'Georgia', 'Texas', 'Wyoming']"
+            :items="colors"
+            item-title="name"
+            item-value="id"
             variant="underlined"
+            @update:model-value="changeColor"
           ></v-select>
         </v-col>
       </v-row>
@@ -46,8 +51,12 @@
 
   const { $waitFor } = useNuxtApp()
 
+  const emit = defineEmits(['nglReady', 'chainsList'])
+
   let stage = null
   let fileID = null
+  let struct = null
+  let viewer = null
   onMounted(async () => {
     stage = createStage("viewport")
 		stage.setParameters({ backgroundColor: '#dedede' });
@@ -59,12 +68,23 @@
 
     stage.loadFile(blob, { defaultRepresentation: false, ext: 'pdb'})
       .then(async function (component) {
-				component.addRepresentation("licorice", { sele: "*", color: 'sstruc' });
+        viewer = component
+				struct = component.addRepresentation("licorice", { sele: "*", color: 'sstruc' });
 				component.autoView('*');
+
+        //console.log(component.structure)
+
+        let chains = []
+        component.structure.eachChain(chain => {
+          chains.push(chain.chainname)
+        });
+        chains = Array.from(new Set(chains))
+        emit('chainsList', chains)
 
 				setTimeout(async () => {
 					stage.viewer.handleResize()
 					loading.value = false
+          emit('nglReady')
 				}, 500)
       })
 
@@ -88,24 +108,97 @@
   const legend = ref(false)
 	const legendText = ref('')
 
-  const representation = ref('California')
-  const color = ref('Georgia')
+  const representations = reactive([{
+    id: 'backbone',
+    name: 'Backbone'
+  }, {
+    id: 'cartoon',
+    name: 'Cartoon'
+  }, {
+    id: 'ball+stick',
+    name: 'Ball and sticks'
+  }, {
+    id: 'surface',
+    name: 'Surface'
+  }, {
+    id: 'licorice',
+    name: 'Licorice'
+  }, {
+    id: 'spacefill',
+    name: 'Spacefill'
+  }])
+  const colors = reactive([{
+    id: 'sstruc',
+    name: 'Secondary structure'
+  }, {
+    id: 'chainname',
+    name: 'Chain'
+  }, {
+    id: 'resname',
+    name: 'Residue'
+  }, {
+    id: 'element',
+    name: 'Element'
+  }, {
+    id: 'bfactor',
+    name: 'Bfactor'
+  }])
+  const representation = ref('licorice')
+  const color = ref('sstruc')
 
   const setID = async (id) => fileID = id
 
-  const getSelection = () => {
-    return 'MOCK SELECTION'
+  const changeColor = (v) => {
+    struct.setColor(v)
   }
+
+  const changeRepresentation = (v) => {
+    viewer.removeRepresentation(struct);
+    struct = viewer.addRepresentation( v, { sele: "*", color: color.value } );
+  }
+
+  let reprSel = null
+  const setSelection = async (s) => {
+    await $waitFor(() => viewer )
+    if(reprSel) viewer.removeRepresentation(reprSel);
+    if(s != '' && s != undefined) reprSel = viewer.addRepresentation( 'spacefill', { sele: s, color: '#7917a3', opacity: .4 } );
+  }
+
+  // Example function to convert a selection string (e.g. ':A' or 'backbone') into a list of residues
+  const getResiduesFromSelection = (selectionString) => {
+    const structure = stage.compList[0].structure
+    let selection = createSelection(selectionString)
+
+    // Create an empty Set to collect unique residues
+    let residues = new Set();
+
+    // Loop through residues and check if they are in the selection
+    /*structure.eachResidue(residue => {
+      if (selection.test(residue)) residues.add(`${residue.resno}:${residue.chainname}`);
+    });*/
+    structure.eachAtom(atom => {
+      if (selection.test(atom)) {
+        residues.add(`${atom.resno}:${atom.chainname}`);
+      }
+    });
+
+    // Convert Set to an array and log
+    let residueList = Array.from(residues);
+
+    return residueList
+
+  };
 
   defineExpose({
 		setID,
-    getSelection
+    setSelection,
+    getResiduesFromSelection
 	});
 
 </script>
 
 <style scoped>
-  #selectors { position: absolute; bottom: 0; left: 0; z-index: 2; width:100%; background-color: rgba(255, 255, 255, 0.75); }
-  #loader-viewer { position: absolute; top: 0; left: 0; background: #dedede; width: 100%; height: 400px; z-index: 1;}
-  #viewport { width: 100%; height: 400px; background-color: #dedede; }
+  #selectors { position: absolute; bottom: -1rem; left: 0; z-index: 2; width:100%; background-color: rgba(255, 255, 255, 0.75); }
+  #loader-viewer { position: absolute; top: 0; left: 0; background: #dedede; width: 100%; height: 535px; z-index: 1;}
+  #viewport { width: 100%; height: 535px; background-color: #dedede; }
 </style>
