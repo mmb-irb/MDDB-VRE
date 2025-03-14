@@ -7,9 +7,10 @@
           v-if="item.type === 'input'"
           v-model="modelGroup[index][item.id]"
           :label="item.label"
-          @update:modelValue="handleInput(item.id, index)"
+          @update:modelValue="handleInput"
           :append-inner-icon="item.inputType === 'selection' && structureId ? `mdi-eyedropper-plus`: null"
           @click:append-inner="openStructure(index, item)"
+          @mousedown:control="item.id.startsWith('selection_') ? openStructure(index, item) : null"
           density="compact"
           :disabled="!structureId"
           :readonly="item.id.startsWith('selection_')"
@@ -19,38 +20,6 @@
             <form-tooltip :props="{width: 300, text: item.description}" />
           </template>
         </v-text-field>
-        <!--<div v-if="item.type === 'select'">
-          <v-autocomplete
-            v-if="!other[index][item.id]"
-            v-model="modelGroup[index][item.id]"
-            :items="items[item.id]"
-            :label="item.label"
-            item-title="name"
-            item-value="option"
-            @update:modelValue="handleSelect(item.id, index)"
-            clearable
-            density="compact"
-            allow-new
-          >
-            <template v-slot:append>
-              <form-tooltip :props="{width: 300, text: item.description}" />
-            </template>
-          </v-autocomplete>
-          <v-text-field
-            v-if="other[index][item.id]"
-            :ref="setRef(index, item.id)"
-            v-model="modelGroup[index][item.id]"
-            :label="`${item.label} (Other)`"
-            @update:modelValue="handleSelect(item.id, index)"
-            @click:clear="other[index][item.id] = false"
-            density="compact"
-            clearable
-          >
-            <template v-slot:append>
-              <form-tooltip :props="{width: 300, text: item.description}" />
-            </template>
-          </v-text-field>
-        </div>-->
       </v-col>
       <v-text-field
         v-for="(item, k) in props.fields.filter(item => item.hidden === true)"
@@ -101,23 +70,18 @@
 <script setup>
 
   import structureStorage from '@/modules/structure/structureStorage'
+  import utilsNGL from '@/modules/ngl/utils'
 
   const { setMetadata, getMetadataField, getStructureId } = structureStorage()
-
-  //import useREST from '@/modules/helpers/useREST'
-
-  //const { getSelectOptions } = useREST()
+  const { convertNGLtoVMD } = utilsNGL()
 
   const { props } = defineProps(['props'])
-  const { $sleep, $waitFor } = useNuxtApp()
+  const { $waitFor } = useNuxtApp()
 
   const dialog = ref(false)
   const isNGLReady = ref(false)
   const initModel = {name: null, agent_1: null, selection_1: null, selection_1_ngl: null, agent_2: null, selection_2: null, selection_2_ngl: null}
   const modelGroup = ref([{ ...initModel }])
-  const initOther = {agent_1: null, agent_2: null}
-  const other = ref([{ ...initOther }])
-  const refOther = ref([{ ...initOther }])
   const structureId = computed(() => {
     if(!getStructureId() && !getMetadataField(props.id)) {
       setMetadata(props.id, [{ ...initModel }])
@@ -128,8 +92,6 @@
 
   if(getMetadataField(props.id)) {
     modelGroup.value = getMetadataField(props.id)
-    // reset other fields to null with the same length as modelGroup
-    other.value = modelGroup.value.map(() => ({ ...initOther }));
   }
 
   const items = {
@@ -138,40 +100,12 @@
     agent_2: props.fields.filter(item => item.id === 'agent_2')[0].items
   }
 
-  const otherInit = {
-    //type: props.fields.filter(item => item.id === 'type')[0].other,
-    agent_1: props.fields.filter(item => item.id === 'agent_1')[0].other,
-    agent_2: props.fields.filter(item => item.id === 'agent_2')[0].other
-  }
-
-  //if(otherInit.type) items.type.push('Other')
-  if(otherInit.agent_1) items.agent_1.push({name: 'Other', option: 'other'})
-  if(otherInit.agent_2) items.agent_2.push({name: 'Other', option: 'other'})
-
   // computed property to check if all values are non-empty and fulfill the rules
   const ngEnabled = computed(() => allValuesNonEmpty(modelGroup.value))
 
-  // Set reference to input field
-  /*const setRef = (index, id) => el => {
-    refOther.value[index][id] = el
-  }*/
-
-  const handleInput = (id, index) => {
-    //console.log(modelGroup.value[index][id])
-    console.log(id, index)
+  const handleInput = () => {
     setMetadata(props.id, modelGroup.value)
   }
-
-  /*const handleSelect = async (id, index) => {
-    if (modelGroup.value[index][id] === 'other') {
-      modelGroup.value[index][id] = ''
-      other.value[index][id] = true
-      await $sleep(1)
-      refOther.value[index][id].focus();
-    }
-    //console.log(modelGroup.value[index][id])
-    setMetadata(props.id, modelGroup.value)
-  }*/
 
   // Check if all values in an array of objects are non-empty
   const allValuesNonEmpty = (arr) => {
@@ -183,8 +117,8 @@
   const createNewGroup = () => {
     if(allValuesNonEmpty(modelGroup.value)) {
       modelGroup.value.push({ ...initModel })
-      other.value.push({ ...initOther })
-      refOther.value.push({ ...initOther })
+      /*other.value.push({ ...initOther })
+      refOther.value.push({ ...initOther })*/
     }
   }
 
@@ -214,23 +148,6 @@
     viewerRef.value.setID(structureId.value)
     selectionRef.value.setSelection(modelGroup.value[currSel.index][currSel.id])
   }
-
-  const convertNGLtoVMD = (nglSelection) => {
-  // Split the NGL string by comma and trim each token
-    const tokens = nglSelection.split(',').map(token => token.trim());
-    
-    // Map each token "resNum:chain" into VMD format: resid "resNum" and chain chain
-    const vmdTokens = tokens.map(token => {
-      const parts = token.split(':');
-      if (parts.length !== 2) return token;
-      const resid = parts[0].trim();
-      const chain = parts[1].trim();
-      return `resid "${resid}" and chain ${chain}`;
-    });
-    
-    // Join all parts into one VMD selection string with " or " separator
-    return vmdTokens.join(' or ');
-  };
 
   const handleSaveSelection = () => {
     const s = selection.value

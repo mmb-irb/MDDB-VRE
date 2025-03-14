@@ -709,15 +709,29 @@
         "id": "pbc_selection",
         "label": "PBC Selection",
         "section": 0,
-        "type": "input",
-        "inputType": "text",
+        "type": "ngl-input",
         "description": "Set those residues which are under periodic boundary conditions (PBC). These residues are excluded from the imaging centering and fitting.",
-        "rules": [
-        ],
         "required": false,
         "force_null": true,
         "default": null,
-        "cols": 6
+        "cols": 6,
+        "fields": [
+          {
+            "id": "pbc_selection",
+            "label": "PBC Selection",
+            "type": "input",
+            "hidden": true
+          },
+          {
+            "id": "pbc_selection_ngl",
+            "label": "PBC Selection",
+            "type": "input",
+            "inputType": "selection",
+            "description": "The selection of the first agent in the interaction, readonly field, click the eyedropper icon to open the selection window.",
+            "required": false,
+            "subCols": 6
+          }
+        ]
       },
       {
         "id": "collections",

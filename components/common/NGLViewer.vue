@@ -49,7 +49,7 @@
   const { checkMouseSignals } = mouseObserver()
   const { getFile } = useIndexedDB()
 
-  const { $waitFor } = useNuxtApp()
+  const { $globals, $waitFor } = useNuxtApp()
 
   const emit = defineEmits(['nglReady', 'chainsList'])
 
@@ -108,43 +108,10 @@
   const legend = ref(false)
 	const legendText = ref('')
 
-  const representations = reactive([{
-    id: 'backbone',
-    name: 'Backbone'
-  }, {
-    id: 'cartoon',
-    name: 'Cartoon'
-  }, {
-    id: 'ball+stick',
-    name: 'Ball and sticks'
-  }, {
-    id: 'surface',
-    name: 'Surface'
-  }, {
-    id: 'licorice',
-    name: 'Licorice'
-  }, {
-    id: 'spacefill',
-    name: 'Spacefill'
-  }])
-  const colors = reactive([{
-    id: 'sstruc',
-    name: 'Secondary structure'
-  }, {
-    id: 'chainname',
-    name: 'Chain'
-  }, {
-    id: 'resname',
-    name: 'Residue'
-  }, {
-    id: 'element',
-    name: 'Element'
-  }, {
-    id: 'bfactor',
-    name: 'Bfactor'
-  }])
-  const representation = ref('licorice')
-  const color = ref('sstruc')
+  const representations = reactive($globals.ngl.representations)
+  const colors = reactive($globals.ngl.colors)
+  const representation = ref($globals.ngl.defaultRepresentation)
+  const color = ref($globals.ngl.defaultColor)
 
   const setID = async (id) => fileID = id
 
