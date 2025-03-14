@@ -44,15 +44,14 @@
   import useStage from '@/modules/ngl/useStage'
   import mouseObserver from '@/modules/ngl/mouseObserver'
   import useIndexedDB from '@/modules/helpers/useIndexedDB'
-
+  import utilsNGL from '@/modules/ngl/utils'
 
   const { createStage, createSelection } = useStage()
   const { checkMouseSignals } = mouseObserver()
   const { getFile } = useIndexedDB()
+  const { getChainsList, getResiduesList, getListOfResiduesFromSelection } = utilsNGL()
 
-  const { $globals, $waitFor } = useNuxtApp()
-
-  const emit = defineEmits(['nglReady', 'chainsList'])
+  const { $globals, $waitFor, $eventBus } = useNuxtApp()
 
   let stage = null
   let fileID = null
@@ -75,17 +74,16 @@
 
         //console.log(component.structure)
 
-        let chains = []
-        component.structure.eachChain(chain => {
-          chains.push(chain.chainname)
-        });
-        chains = Array.from(new Set(chains))
-        emit('chainsList', chains)
+        const chains = getChainsList(component.structure)
+        $eventBus.emit('chainsList', chains)
+
+        const residues = getResiduesList(component.structure)
+        $eventBus.emit('residuesList', residues)
 
 				setTimeout(async () => {
 					stage.viewer.handleResize()
 					loading.value = false
-          emit('nglReady')
+          $eventBus.emit('nglReady', true);
 				}, 500)
       })
 
@@ -137,24 +135,8 @@
     const structure = stage.compList[0].structure
     let selection = createSelection(selectionString)
 
-    // Create an empty Set to collect unique residues
-    let residues = new Set();
-
-    // Loop through residues and check if they are in the selection
-    /*structure.eachResidue(residue => {
-      if (selection.test(residue)) residues.add(`${residue.resno}:${residue.chainname}`);
-    });*/
-    structure.eachAtom(atom => {
-      if (selection.test(atom)) {
-        residues.add(`${atom.resno}:${atom.chainname}`);
-      }
-    });
-
-    // Convert Set to an array and log
-    let residueList = Array.from(residues);
-
+    const residueList = getListOfResiduesFromSelection(structure, selection)
     return residueList
-
   };
 
   defineExpose({

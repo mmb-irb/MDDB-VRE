@@ -21,7 +21,7 @@
 
   <NGLDialog v-model="dialog" ref="dialogRef" @saveSelection="handleSaveSelection" @closeDialog="handleCloseDialog">
     <template v-slot:viewer>
-      <NGLViewer ref="viewerRef" @nglReady="handleNGLReady" @chainsList="handleChainsList" />
+      <NGLViewer ref="viewerRef" />
     </template>
     <template v-slot:selection>
       <NGLSelection ref="selectionRef" @setSelection="handleSelection" />
@@ -41,7 +41,6 @@
   const { $waitFor } = useNuxtApp()
 
   const dialog = ref(false)
-  const isNGLReady = ref(false)
   const initModel = props.fields.reduce((acc, field) => {
     acc[field.id] = null;
     return acc;
@@ -92,8 +91,6 @@
 
   const handleCloseDialog = () => {
     dialog.value = false
-    isNGLReady.value = false
-    selectionRef.value.setEnabled(isNGLReady.value)
   }
 
   const selection = ref('')
@@ -101,16 +98,6 @@
     selection.value = s
     viewerRef.value.setSelection(s)
   }
-
-  const handleNGLReady = () => {
-    isNGLReady.value = true
-    selectionRef.value.setEnabled(isNGLReady.value)
-  }
-
-  const handleChainsList = (chains) => {
-    selectionRef.value.setChains(chains)
-  }
-
 
 </script>
 

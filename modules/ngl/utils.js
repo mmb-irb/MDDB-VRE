@@ -1,5 +1,6 @@
 export default function utilsNGL() {
 
+  // Convert NGL selection string into VMD selection string
   const convertNGLtoVMD = (nglSelection) => {
     // Split the NGL string by comma and trim each token
     const tokens = nglSelection.split(',').map(token => token.trim());
@@ -17,8 +18,46 @@ export default function utilsNGL() {
     return vmdTokens.join(' or ');
   };
 
+  // Get the list of chains in the structure
+  const getChainsList = (structure) => {
+    let chains = []
+    structure.eachChain(chain => {
+      chains.push(chain.chainname)
+    });
+    chains = Array.from(new Set(chains))
+    return chains
+  }
+
+  const getResiduesList = (structure) => {
+    let residues = []
+    structure.eachResidue(residue => {
+      residues.push(`${residue.resno}:${residue.chainname}`)
+    });
+    residues = Array.from(new Set(residues))
+    return residues
+  }
+
+  // Loop through residues and check if they are in the selection
+  const getListOfResiduesFromSelection = (structure, selection) => {
+    // Create a Set to store unique residues
+    let residues = new Set()
+    // Loop through all atoms in the structure
+    structure.eachAtom(atom => {
+      // Check if the atom is in the selection
+      if (selection.test(atom)) {
+        residues.add(`${atom.resno}:${atom.chainname}`)
+      }
+    });
+    // Convert Set to an array
+    const residueList = Array.from(residues);
+    return residueList
+  }
+
   return { 
-    convertNGLtoVMD
+    convertNGLtoVMD,
+    getChainsList,
+    getResiduesList,
+    getListOfResiduesFromSelection
   }
   
 }

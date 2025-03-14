@@ -7,6 +7,52 @@
     "description": ["The following metadata has no effect on the workflow itself, but it will be written to the <strong>output metadata</strong> file. These values will be <strong>uploaded to the database</strong> and then exposed in the <strong>project overview</strong>. They may be also useful to <strong>search this project</strong> using the browser."],
     "fields": [
       {
+        "id": "analysis_str",
+        "label": "Structure file",
+        "section": 0,
+        "type": "upload-file",
+        "formats": [".pdb"],
+        "description": "In order to ease the process of selecting agents or PBC in the analysis section, a structure file like a PDB can be uploaded for the sake of perform these selections in a more easy and visual way.",
+        "rules": [
+          {
+            "id": "required",
+            "regex": "!!v",
+            "message": "Please add a file"
+          }
+        ],
+        "required": false,
+        "force_null": true,
+        "default": null,
+        "cols": 12
+      },
+      {
+        "id": "pbc_selection",
+        "label": "PBC Selection",
+        "section": 0,
+        "type": "ngl-input",
+        "description": "Set those residues which are under periodic boundary conditions (PBC). These residues are excluded from the imaging centering and fitting. Readonly field, click the eyedropper icon to open the selection window.",
+        "required": false,
+        "force_null": true,
+        "default": null,
+        "cols": 6,
+        "fields": [
+          {
+            "id": "pbc_selection",
+            "label": "PBC Selection",
+            "type": "input",
+            "hidden": true
+          },
+          {
+            "id": "pbc_selection_ngl",
+            "label": "PBC Selection",
+            "type": "input",
+            "inputType": "selection",
+            "required": false,
+            "subCols": 6
+          }
+        ]
+      },
+      {
         "id": "name",
         "label": "Name",
         "section": 0,
@@ -710,7 +756,7 @@
         "label": "PBC Selection",
         "section": 0,
         "type": "ngl-input",
-        "description": "Set those residues which are under periodic boundary conditions (PBC). These residues are excluded from the imaging centering and fitting.",
+        "description": "Set those residues which are under periodic boundary conditions (PBC). These residues are excluded from the imaging centering and fitting. Readonly field, click the eyedropper icon to open the selection window.",
         "required": false,
         "force_null": true,
         "default": null,
@@ -727,7 +773,6 @@
             "label": "PBC Selection",
             "type": "input",
             "inputType": "selection",
-            "description": "The selection of the first agent in the interaction, readonly field, click the eyedropper icon to open the selection window.",
             "required": false,
             "subCols": 6
           }
