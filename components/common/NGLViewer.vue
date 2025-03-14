@@ -44,7 +44,8 @@
   import useStage from '@/modules/ngl/useStage'
   import mouseObserver from '@/modules/ngl/mouseObserver'
   import useIndexedDB from '@/modules/helpers/useIndexedDB'
-  
+
+
   const { createStage, createSelection } = useStage()
   const { checkMouseSignals } = mouseObserver()
   const { getFile } = useIndexedDB()

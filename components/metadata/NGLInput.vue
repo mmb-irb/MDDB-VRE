@@ -59,7 +59,8 @@
   })
 
   if(getMetadataField(props.id)) {
-    refModel.value = getMetadataField(props.id)
+    refModel.value[0] = getMetadataField(firstItemModel[0])
+    refModel.value[1] = getMetadataField(secondItemModel[0])
   }
 
   const dialogRef = ref(null)

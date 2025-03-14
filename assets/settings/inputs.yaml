@@ -63,6 +63,7 @@ mds:
     temp: 315
 mdref: 0
 pbc_selection: 45, 70
+pbc_selection_ngl: resid "45" and chain A or resid "70" and chain A
 interactions:
   - name: Canonical WC
     agent_1: Watson Strand
