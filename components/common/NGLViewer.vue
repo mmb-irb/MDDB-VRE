@@ -49,7 +49,7 @@
   const { createStage, createSelection } = useStage()
   const { checkMouseSignals } = mouseObserver()
   const { getFile } = useIndexedDB()
-  const { getChainsList, getResiduesList, getListOfResiduesFromSelection } = utilsNGL()
+  const { getChainsList, getResiduesList, getListOfResiduesFromSelection, getStructureObj } = utilsNGL()
 
   const { $globals, $waitFor, $eventBus } = useNuxtApp()
 
@@ -72,13 +72,14 @@
 				struct = component.addRepresentation("licorice", { sele: "*", color: 'sstruc' });
 				component.autoView('*');
 
-        //console.log(component.structure)
-
         const chains = getChainsList(component.structure)
         $eventBus.emit('chainsList', chains)
 
         const residues = getResiduesList(component.structure)
         $eventBus.emit('residuesList', residues)
+
+        const strObj = getStructureObj(component.structure)
+        $eventBus.emit('strObj', strObj)
 
 				setTimeout(async () => {
 					stage.viewer.handleResize()

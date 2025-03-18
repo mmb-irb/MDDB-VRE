@@ -47,7 +47,37 @@
     density="compact"
     @update:model-value="changeRepresentationRes"
   ></v-select>
-  <p class="supralabel">Custom selection. If you need help with <strong>NGL Viewer selection language</strong>, <a href="https://nglviewer.org/ngl/api/manual/usage/selection-language.html" target="_blank">please click here</a>.</p>
+  <v-card
+    variant="tonal"
+    color="grey-darken-1"
+  >
+    <v-card-text class="pl-2 py-1 pr-0">
+      <div id="container-residues" style="word-break: break-all;line-height: 35px;
+        word-break: break-all;
+        overflow-y: auto; 
+        overflow-x: hidden; 
+        max-height:15rem;">
+        <div class="chain-sequence margin-bottom-10" v-for="(chain, i) in strObj" :key="i">
+          <div class="chain-title margin-bottom-10" v-if="chain.residues.length > 0">Chain {{ chain.chain }}</div>
+          <!--<Residue 
+            v-for="(item, index) in chain.residues" 
+            :key="index" 
+            :residue="item" 
+            :index="index" 
+            :sheets="modelSheets" 
+            :helixes="modelHelixes" 
+            :window="false"
+            :stage="stage" />-->
+          <residue
+            v-for="(residue, j) in chain.residues" 
+            :index="j"
+            :residue="residue"
+          />
+        </div>
+      </div>
+    </v-card-text>
+  </v-card>
+  <p class="supralabel mt-2">Custom selection. If you need help with <strong>NGL Viewer selection language</strong>, <a href="https://nglviewer.org/ngl/api/manual/usage/selection-language.html" target="_blank">please click here</a>.</p>
   <v-textarea
     v-model="modelSelection"
     label="NGL selection"
@@ -55,7 +85,7 @@
     @update:modelValue="setSelection"
     @click:clear="modelChains = []; modelResidues = []; modelPredefSels = []"
     :disabled="!enabled"
-    rows="16"
+    rows="7"
     no-resize
   />
 </template>
@@ -71,19 +101,22 @@
   const modelPredefSels = ref([])
   const chains = ref([])
   const residues = ref([])
+  const strObj = ref({})
   const enabled = ref(false)
   const predefSels = $globals.ngl.predefinedSelections
 
   onMounted(() => {
-    $eventBus.on('nglReady', setEnabled);
-    $eventBus.on('chainsList', setChains);
-    $eventBus.on('residuesList', setResidues);
+    $eventBus.on('nglReady', setEnabled)
+    $eventBus.on('chainsList', setChains)
+    $eventBus.on('residuesList', setResidues)
+    $eventBus.on('strObj', setStructureObject)
   });
 
   onUnmounted(() => {
-    $eventBus.off('nglReady', setEnabled);
-    $eventBus.off('chainsList', setChains);
-    $eventBus.off('residuesList', setResidues);
+    $eventBus.off('nglReady', setEnabled)
+    $eventBus.off('chainsList', setChains)
+    $eventBus.off('residuesList', setResidues)
+    $eventBus.off('strObj', setStructureObject)
   });
 
   const splitSelection = (selection) => {
@@ -101,7 +134,6 @@
     emit('setSelection', value)
 
     if(modelSelection.value) {
-      console.log('modelSelection.value', modelSelection.value)
       // update modelChains based on the current modelSelection
       const currentSelectionTokens = splitSelection(modelSelection.value)
 
@@ -142,6 +174,11 @@
 
   const setResidues = (rs) => {
     residues.value = rs
+  }
+
+  const setStructureObject = (obj) => {
+    strObj.value = obj
+    console.log(strObj.value)
   }
 
   const removeRepeatedInSelection = (selection) => {
@@ -272,5 +309,20 @@
     display: inline-block;
     /*max-width: v-bind(truncateWidth);  */
     max-width: 100%;
+  }
+  #container-residues {
+    height: 145px;
+    overflow-y: auto;
+  }
+  .chain-sequence {
+    border-bottom: solid 1px #d1d1d1;
+    padding-bottom: .5rem;
+  }
+  .chain-title {
+    font-family: 'Open Sans';
+    border-bottom: solid 1px #555;
+    padding-left: .5rem;
+    line-height: 25px;
+    margin-bottom: .5rem;
   }
 </style>

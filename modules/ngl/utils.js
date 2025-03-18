@@ -53,11 +53,52 @@ export default function utilsNGL() {
     return residueList
   }
 
+  const getStructureObj = (structure) => {
+    // Use an object to accumulate chain data, keyed by chain name.
+    const chainsObj = {};
+  
+    // First iteration: go through all chains in the structure.
+    structure.eachChain(chain => {
+      const chainName = chain.chainname;
+      // Gather residues from this chain
+      const residues = [];
+      chain.eachResidue(residue => {
+        residues.push({
+          resno: residue.resno,
+          resname: residue.resname,
+        });
+      });
+  
+      // If we already encountered this chain, merge unique residues.
+      if (chainsObj[chainName]) {
+        // Add new residues that are not already in the array (by comparing resno)
+        residues.forEach(r => {
+          // A simple check: you can expand this to check both resno and resname
+          const exists = chainsObj[chainName].some(existing => existing.resno === r.resno);
+          if (!exists) {
+            chainsObj[chainName].push(r);
+          }
+        });
+      } else {
+        chainsObj[chainName] = residues;
+      }
+    });
+  
+    // Convert the chains object to an array of objects.
+    const chainsArray = Object.entries(chainsObj).map(([chain, residues]) => ({
+      chain,
+      residues,
+    }));
+  
+    return chainsArray;
+  };  
+
   return { 
     convertNGLtoVMD,
     getChainsList,
     getResiduesList,
-    getListOfResiduesFromSelection
+    getListOfResiduesFromSelection,
+    getStructureObj
   }
   
 }
