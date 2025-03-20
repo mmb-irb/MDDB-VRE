@@ -131,6 +131,17 @@
     if(s != '' && s != undefined) reprSel = viewer.addRepresentation( 'spacefill', { sele: s, color: '#7917a3', opacity: .4 } );
   }
 
+  let prvwSel = null
+  const setSelectionPreview = async (s, t) => {
+    await $waitFor(() => viewer )
+    if(t) {
+      if(prvwSel) viewer.removeRepresentation(prvwSel);
+      if(s != '' && s != undefined) prvwSel = viewer.addRepresentation( 'spacefill', { sele: s, color: '#ccc', opacity: .7, radius: 1 } );
+    } else {
+      if(prvwSel) viewer.removeRepresentation(prvwSel);
+    }
+  }
+
   // Example function to convert a selection string (e.g. ':A' or 'backbone') into a list of residues
   const getResiduesFromSelection = (selectionString) => {
     const structure = stage.compList[0].structure
@@ -143,7 +154,8 @@
   defineExpose({
 		setID,
     setSelection,
-    getResiduesFromSelection
+    getResiduesFromSelection,
+    setSelectionPreview
 	});
 
 </script>

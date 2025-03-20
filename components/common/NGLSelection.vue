@@ -1,6 +1,6 @@
 <template>
   <v-row>
-    <v-col md="6" cols="12" sm="12" >
+    <v-col md="12" cols="12" sm="12" >
       <v-select
         :label="chains.length === 0 ? 'Loading...' : (chains.length <= 1 ? `Single chain structure [:${chains[0]}]` : 'Chains')"
         v-model="modelChains"
@@ -11,7 +11,7 @@
         @update:model-value="changeRepresentationChains"
       ></v-select>
     </v-col>
-    <v-col md="6" cols="12" sm="12" >
+    <!--<v-col md="6" cols="12" sm="12" >
       <v-select
         label="Predefined selections"
         v-model="modelPredefSels"
@@ -23,7 +23,6 @@
         @update:model-value="changeRepresentationPdfSel"
       >
         <template v-slot:selection="{ item, index }">
-          <!-- Display the first two selected items -->
           <span v-if="index < 2">
             {{ item.title }}
             {{ index < modelPredefSels.length - 1 && index < 1 ? ', ' : '' }}
@@ -36,9 +35,9 @@
           </span>
         </template>
       </v-select>
-    </v-col>
+    </v-col>-->
   </v-row>  
-  <v-select
+  <!--<v-select
     :label="residues.length === 0 ? 'Loading...' : 'Residues'"
     v-model="modelResidues"
     :items="residues"
@@ -46,32 +45,22 @@
     :disabled="!enabled || residues.length <= 1"
     density="compact"
     @update:model-value="changeRepresentationRes"
-  ></v-select>
+  ></v-select>-->
   <v-card
     variant="tonal"
     color="grey-darken-1"
   >
     <v-card-text class="pl-2 py-1 pr-0">
-      <div id="container-residues" style="word-break: break-all;line-height: 35px;
-        word-break: break-all;
-        overflow-y: auto; 
-        overflow-x: hidden; 
-        max-height:15rem;">
+      <div id="container-residues" style="">
         <div class="chain-sequence margin-bottom-10" v-for="(chain, i) in strObj" :key="i">
           <div class="chain-title margin-bottom-10" v-if="chain.residues.length > 0">Chain {{ chain.chain }}</div>
-          <!--<Residue 
-            v-for="(item, index) in chain.residues" 
-            :key="index" 
-            :residue="item" 
-            :index="index" 
-            :sheets="modelSheets" 
-            :helixes="modelHelixes" 
-            :window="false"
-            :stage="stage" />-->
           <residue
             v-for="(residue, j) in chain.residues" 
+            :ref="setRefRes(j)"
             :index="j"
             :residue="residue"
+            @updateModelResidues="handleUpdateModelResidues"
+            @previewResidue="handlePreviewResidue"
           />
         </div>
       </div>
@@ -83,27 +72,28 @@
     label="NGL selection"
     clearable
     @update:modelValue="setSelection"
-    @click:clear="modelChains = []; modelResidues = []; modelPredefSels = []"
+    @click:clear="cleanAll"
     :disabled="!enabled"
-    rows="7"
+    rows="8"
     no-resize
   />
 </template>
 
 <script setup>
 
-  const emit = defineEmits(['setSelection'])
-  const { $globals, $eventBus } = useNuxtApp();
+  const emit = defineEmits(['setSelection', 'setPreview'])
+  const { $globals, $eventBus, $waitFor } = useNuxtApp();
 
   const modelSelection = ref('')
   const modelChains = ref([])
   const modelResidues = ref([])
-  const modelPredefSels = ref([])
+  //const modelPredefSels = ref([])
   const chains = ref([])
   const residues = ref([])
   const strObj = ref({})
   const enabled = ref(false)
-  const predefSels = $globals.ngl.predefinedSelections
+  //const predefSels = $globals.ngl.predefinedSelections
+  const refResidue = ref([])
 
   onMounted(() => {
     $eventBus.on('nglReady', setEnabled)
@@ -119,6 +109,13 @@
     $eventBus.off('strObj', setStructureObject)
   });
 
+  const cleanAll = () => {
+    modelChains.value = []
+    //modelPredefSels.value = []
+    modelResidues.value = []
+    refResidue.value.forEach(r => r.setSelected(false))
+  }
+
   const splitSelection = (selection) => {
     let tokens;
     if (selection.includes('or')) {
@@ -129,7 +126,7 @@
     return tokens;
   }
 
-  const setSelection = (value) => {
+  const setSelection = async (value) => {
     modelSelection.value = value
     emit('setSelection', value)
 
@@ -145,21 +142,45 @@
       modelChains.value = filteredSelectionTokensCh
 
       // Filter out predef-specific tokens
-      const filteredSelectionTokensPdf = currentSelectionTokens
+      /*const filteredSelectionTokensPdf = currentSelectionTokens
       .filter(token => predefSels.some(item => item.id === token))
       .map(token => token.replace(/:+/g, ''));
       // Update modelChains
-      modelPredefSels.value = filteredSelectionTokensPdf
+      modelPredefSels.value = filteredSelectionTokensPdf*/
 
+      await $waitFor(() => residues.value.length > 0)
+
+      // Store the old residues array (make sure to clone it)
+      const oldResidues = [...modelResidues.value];
       // Filter out residue-specific tokens
       const filteredSelectionTokensRes = currentSelectionTokens
       .filter(token => token.match(/^[\-A-Za-z0-9]{1,3}:[A-Za-z]$/))
       // Update modelResidues
       modelResidues.value = filteredSelectionTokensRes
+      // Compute the added tokens as the ones present in the new filtered list but not in oldResidues
+      const addedIndexes = filteredSelectionTokensRes
+        .map(token => residues.value.indexOf(token))
+        .filter(index => index !== -1); // filter out any not found (if any)
+      // Set the selected state of the added tokens
+      addedIndexes.forEach(index => {
+        refResidue.value[index].setSelected(true);
+      });
+
+      // Compute the removed tokens as the ones present in oldResidues but not in the new filtered list
+      const removedResidues = oldResidues.filter(token =>
+        !filteredSelectionTokensRes.includes(token)
+      );
+      // Compute the indexes of the removed tokens in the residues array
+      const removedIndexes = removedResidues
+        .map(token => residues.value.indexOf(token))
+        .filter(index => index !== -1); // filter out any not found (if any)
+      removedIndexes.forEach(index => {
+        refResidue.value[index].setSelected(false);
+      });
     } else {
       // If the selection is empty, reset the modelChains, modelPredefSels, and modelResidues
       modelChains.value = []
-      modelPredefSels.value = []
+      //modelPredefSels.value = []
       modelResidues.value = []
     }
   }
@@ -222,7 +243,7 @@
     setSelection(chsel);
   };
 
-  const changeRepresentationPdfSel = () => {
+  /*const changeRepresentationPdfSel = () => {
 
     if (modelSelection.value && modelSelection.value.trim() !== '') {
       // Split the current selection into individual tokens
@@ -255,7 +276,7 @@
     // If modelSelection is empty, just set the selection to the current modelPredefSels
     const resel = modelPredefSels.value.map(c => `${c}`).join(' ');
     setSelection(resel);
-  };
+  };*/
 
   const changeRepresentationRes = () => {
 
@@ -292,6 +313,26 @@
     setSelection(resel);
   };
 
+  // Set reference to input field
+  const setRefRes = (index) => el => {
+    refResidue.value[index] = el
+  }
+
+  const handleUpdateModelResidues = (res, index, select) => {
+    if(select) modelResidues.value.push(res)
+    else modelResidues.value = modelResidues.value.filter(r => r !== res)
+    refResidue.value[index].setSelected(select)
+    changeRepresentationRes()
+  }
+
+  const setPreview = (res, type) => {
+    emit('setPreview', res, type)
+  }
+
+  const handlePreviewResidue = (res, type) => {
+    setPreview(res, type)
+  }
+
   defineExpose({
     setSelection,
     setEnabled,
@@ -311,8 +352,13 @@
     max-width: 100%;
   }
   #container-residues {
-    height: 145px;
+    height: 182px;
     overflow-y: auto;
+    word-break: break-all;line-height: 35px;
+    word-break: break-all;
+    overflow-y: auto; 
+    overflow-x: hidden; 
+    /*max-height:15rem;*/
   }
   .chain-sequence {
     border-bottom: solid 1px #d1d1d1;

@@ -64,7 +64,8 @@ export default function utilsNGL() {
       const residues = [];
       chain.eachResidue(residue => {
         residues.push({
-          resno: residue.resno,
+          num: residue.resno,
+          chain: residue.chainname,
           resname: residue.resname,
         });
       });
