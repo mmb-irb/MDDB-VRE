@@ -5,47 +5,23 @@
         :label="chains.length === 0 ? 'Loading...' : (chains.length <= 1 ? `Single chain structure [:${chains[0]}]` : 'Chains')"
         v-model="modelChains"
         :items="chains"
-        multiple
         :disabled="!enabled || chains.length <= 1"
         density="compact"
         @update:model-value="changeRepresentationChains"
-      ></v-select>
-    </v-col>
-    <!--<v-col md="6" cols="12" sm="12" >
-      <v-select
-        label="Predefined selections"
-        v-model="modelPredefSels"
-        :items="predefSels"
-        item-title="name"
-        item-value="id"
-        multiple
-        density="compact"
-        @update:model-value="changeRepresentationPdfSel"
       >
-        <template v-slot:selection="{ item, index }">
-          <span v-if="index < 2">
-            {{ item.title }}
-            {{ index < modelPredefSels.length - 1 && index < 1 ? ', ' : '' }}
-          </span>
-          <span
-            v-if="index === 2"
-            class="text-grey text-caption align-self-center"
-          >
-            (+{{ modelPredefSels.length - 2 }} others)
-          </span>
+        <template v-slot:item="{ props, item }">
+          <v-list-item 
+            class="item-v-select" 
+            v-bind="props" 
+            :title="item.title" 
+            :value="item.value" 
+            @mouseover="setPreview(`:${item.value}`, true)"
+            @mouseleave="setPreview(`:${item.value}`, false)"
+          ></v-list-item>
         </template>
       </v-select>
-    </v-col>-->
+    </v-col>
   </v-row>  
-  <!--<v-select
-    :label="residues.length === 0 ? 'Loading...' : 'Residues'"
-    v-model="modelResidues"
-    :items="residues"
-    multiple
-    :disabled="!enabled || residues.length <= 1"
-    density="compact"
-    @update:model-value="changeRepresentationRes"
-  ></v-select>-->
   <v-card
     variant="tonal"
     color="grey-darken-1"
@@ -56,11 +32,13 @@
           <div class="chain-title margin-bottom-10" v-if="chain.residues.length > 0">Chain {{ chain.chain }}</div>
           <residue
             v-for="(residue, j) in chain.residues" 
-            :ref="setRefRes(j)"
-            :index="j"
+            :ref="setRefRes(i, j)"
+            :index="[i, j]"
             :residue="residue"
             @updateModelResidues="handleUpdateModelResidues"
+            @selectMultipleResidues="handleSelectMultipleResidues"
             @previewResidue="handlePreviewResidue"
+            @centerResidue="handleCenterResidue"
           />
         </div>
       </div>
@@ -77,23 +55,42 @@
     rows="8"
     no-resize
   />
+  <v-snackbar
+    v-model="snackbar.model"
+    color="purple-accent-1"
+    :timeout="4000"
+    elevation="24"
+  >
+    {{ snackbar.msg }}
+    <template v-slot:actions>
+      <v-btn
+        variant="text"
+        @click="snackbar.model = false"
+      >
+        Close
+      </v-btn>
+    </template>
+  </v-snackbar>
 </template>
 
 <script setup>
 
-  const emit = defineEmits(['setSelection', 'setPreview'])
-  const { $globals, $eventBus, $waitFor } = useNuxtApp();
+  import utilsNGL from '@/modules/ngl/utils'
+
+  const { addMultipleResidues, getResidueRange } = utilsNGL()
+
+  const emit = defineEmits(['setSelection', 'setPreview', 'setView'])
+  const { $eventBus, $waitFor } = useNuxtApp();
 
   const modelSelection = ref('')
-  const modelChains = ref([])
+  const modelChains = ref(null)
   const modelResidues = ref([])
-  //const modelPredefSels = ref([])
   const chains = ref([])
   const residues = ref([])
   const strObj = ref({})
   const enabled = ref(false)
-  //const predefSels = $globals.ngl.predefinedSelections
   const refResidue = ref([])
+  const snackbar = ref({ model: false, msg: '' })
 
   onMounted(() => {
     $eventBus.on('nglReady', setEnabled)
@@ -110,10 +107,11 @@
   });
 
   const cleanAll = () => {
-    modelChains.value = []
-    //modelPredefSels.value = []
+    modelChains.value = null
     modelResidues.value = []
-    refResidue.value.forEach(r => r.setSelected(false))
+    refResidue.value.forEach(ref => {
+      if (ref) ref.setSelected(false)
+    })
   }
 
   const splitSelection = (selection) => {
@@ -133,20 +131,6 @@
     if(modelSelection.value) {
       // update modelChains based on the current modelSelection
       const currentSelectionTokens = splitSelection(modelSelection.value)
-
-      // Filter out chain-specific tokens
-      const filteredSelectionTokensCh = currentSelectionTokens
-      .filter(token => token.startsWith(':'))
-      .map(token => token.replace(/:+/g, ''));
-      // Update modelChains
-      modelChains.value = filteredSelectionTokensCh
-
-      // Filter out predef-specific tokens
-      /*const filteredSelectionTokensPdf = currentSelectionTokens
-      .filter(token => predefSels.some(item => item.id === token))
-      .map(token => token.replace(/:+/g, ''));
-      // Update modelChains
-      modelPredefSels.value = filteredSelectionTokensPdf*/
 
       await $waitFor(() => residues.value.length > 0)
 
@@ -174,12 +158,13 @@
       const removedIndexes = removedResidues
         .map(token => residues.value.indexOf(token))
         .filter(index => index !== -1); // filter out any not found (if any)
+      // Set the selected state of the removed tokens
       removedIndexes.forEach(index => {
         refResidue.value[index].setSelected(false);
       });
     } else {
       // If the selection is empty, reset the modelChains, modelPredefSels, and modelResidues
-      modelChains.value = []
+      modelChains.value = null
       //modelPredefSels.value = []
       modelResidues.value = []
     }
@@ -198,8 +183,8 @@
   }
 
   const setStructureObject = (obj) => {
+    // console.log(obj)
     strObj.value = obj
-    console.log(strObj.value)
   }
 
   const removeRepeatedInSelection = (selection) => {
@@ -210,73 +195,21 @@
 
   const changeRepresentationChains = () => {
     if (modelSelection.value && modelSelection.value.trim() !== '') {
-      // Split the current selection into individual tokens
-      const currentSelectionTokens = splitSelection(modelSelection.value)
-
-      // Filter out chain-specific tokens that are no longer in modelChains
-      const filteredSelectionTokens = currentSelectionTokens.filter(token => {
-        // Check if the token is a chain-specific term (e.g., :J, :C)
-        if (token.startsWith(':')) {
-          const chain = token.slice(1); // Remove the ':' prefix to get the chain ID
-          return modelChains.value.includes(chain); // Keep only if the chain is still in modelChains
-        }
-        // Keep non-chain terms (e.g., 73, 50)
-        return true;
-      });
-
-      // Add new chains from modelChains that are not already in the selection
-      const newChains = modelChains.value
-        .filter(chain => !currentSelectionTokens.includes(`:${chain}`))
-        .map(chain => `:${chain}`);
-
-      // Combine the filtered selection and new chains
-      const combinedSelection = [...filteredSelectionTokens, ...newChains].join(' ');
-
-      // Remove any repeated terms and set the new selection
+      const chsel = strObj.value.filter(item => item.chain === modelChains.value)[0].residues.map(r => `${r.num}:${modelChains.value}`).join(' ');
+      const combinedSelection = `${modelSelection.value} ${chsel}`;
       const newSel = removeRepeatedInSelection(combinedSelection);
       setSelection(newSel);
+
+      modelChains.value = null;
       return;
     }
 
     // If modelSelection is empty, just set the selection to the current modelChains
-    const chsel = modelChains.value.map(c => `:${c}`).join(' ');
+    const chsel = strObj.value.filter(item => item.chain === modelChains.value)[0].residues.map(r => `${r.num}:${modelChains.value}`).join(' ');
     setSelection(chsel);
+
+    modelChains.value = null;
   };
-
-  /*const changeRepresentationPdfSel = () => {
-
-    if (modelSelection.value && modelSelection.value.trim() !== '') {
-      // Split the current selection into individual tokens
-      const currentSelectionTokens = splitSelection(modelSelection.value)
-
-      // Filter out predefined-specific tokens that are no longer in modelPredefSels
-      const filteredSelectionTokens = currentSelectionTokens.filter(token => {
-        // Check if the token is a predefined-specific term (e.g., helix, sheet)
-        if (predefSels.some(item => item.id === token)) {
-          return modelPredefSels.value.includes(token); // Keep only if the predefined selection is still in modelPredefSels
-        }
-        // Keep non-predefined terms (e.g., :A, 1:45)
-        return true;
-      });
-
-      // Add new predefined selections from modelPredefSels that are not already in the selection
-      const newSelections = modelPredefSels.value
-        .filter(selection => !currentSelectionTokens.includes(selection))
-        .map(selection => `${selection}`);
-
-      // Combine the filtered selection and new predefined selections
-      const combinedSelection = [...filteredSelectionTokens, ...newSelections].join(' ');
-
-      // Remove any repeated terms and set the new selection
-      const newSel = removeRepeatedInSelection(combinedSelection);
-      setSelection(newSel);
-      return;
-    }
-
-    // If modelSelection is empty, just set the selection to the current modelPredefSels
-    const resel = modelPredefSels.value.map(c => `${c}`).join(' ');
-    setSelection(resel);
-  };*/
 
   const changeRepresentationRes = () => {
 
@@ -314,15 +247,70 @@
   };
 
   // Set reference to input field
-  const setRefRes = (index) => el => {
-    refResidue.value[index] = el
+  const setRefRes = (i, j) => el => {
+    let offset = 0
+    for (let k = 0; k < i; k++) offset += strObj.value[k].residues.length
+    refResidue.value[offset + j] = el
   }
 
-  const handleUpdateModelResidues = (res, index, select) => {
+  const handleUpdateModelResidues = (res, i, j, select) => {
     if(select) modelResidues.value.push(res)
     else modelResidues.value = modelResidues.value.filter(r => r !== res)
-    refResidue.value[index].setSelected(select)
+    let offset = 0
+    for (let k = 0; k < i; k++) offset += strObj.value[k].residues.length
+    refResidue.value[offset + j].setSelected(select)
     changeRepresentationRes()
+  }
+
+  const handleSelectMultipleResidues = (resnum, chain, i, j) => {
+    const mr = addMultipleResidues({ num: resnum, chain: chain})
+
+    if(mr.error) {
+      snackbar.value = { model: true, msg: mr.msg }
+      document.querySelectorAll('.sequence-item:not(.disabled)').forEach(el => el.style.cursor = 'pointer')
+      document.querySelectorAll('.sequence-item:not(.disabled)').forEach(el => el.classList.remove('sequence-item-mult-selected'))
+      return
+    }
+
+    document.querySelectorAll('.sequence-item:not(.disabled)').forEach(el => el.style.cursor = 'copy')
+    // on second click
+    if(!mr.status) {
+      let first, last
+      // check if error
+      if(mr.error) {
+        snackbar.value = { model: true, msg: mr.msg }
+        document.querySelectorAll('.sequence-item:not(.disabled)').forEach(el => el.style.cursor = 'pointer')
+        document.querySelectorAll('.sequence-item:not(.disabled)').forEach(el => el.classList.remove('sequence-item-mult-selected'))
+        return
+      } else  {
+        // sort first last properly
+        if(mr.firstRes.num > mr.lastRes.num) {
+          first = mr.lastRes
+          last = mr.firstRes
+        } else {
+          first = mr.firstRes
+          last = mr.lastRes
+        }
+      }
+      document.querySelectorAll('.sequence-item:not(.disabled)').forEach(el => el.style.cursor = 'pointer')
+      document.querySelector(`#res-${mr.firstRes.num}-${mr.firstRes.chain}`).classList.remove('sequence-item-mult-selected')
+      const [range, indexes] = getResidueRange(first, last, residues.value)
+
+      const removeFromSelection = range.every(item => modelResidues.value.includes(item));
+      
+      if(removeFromSelection) {
+        modelResidues.value = modelResidues.value.filter(item => !range.includes(item));
+        indexes.forEach(index => {
+          refResidue.value[index].setSelected(false)
+        });
+      } else {
+        modelResidues.value = [...modelResidues.value, ...range]
+      }
+      changeRepresentationRes()
+    // on first click
+    } else {
+      document.querySelector(`#res-${resnum}-${chain}`).classList.add('sequence-item-mult-selected')
+    }
   }
 
   const setPreview = (res, type) => {
@@ -331,6 +319,12 @@
 
   const handlePreviewResidue = (res, type) => {
     setPreview(res, type)
+  }
+
+  const handleCenterResidue = (resnum, chain) => {
+    const s = `${resnum}:${chain}`
+    //setSelection(s)
+    emit('setView', s)
   }
 
   defineExpose({
@@ -348,7 +342,6 @@
     overflow: hidden;
     text-overflow: ellipsis;
     display: inline-block;
-    /*max-width: v-bind(truncateWidth);  */
     max-width: 100%;
   }
   #container-residues {
@@ -358,7 +351,6 @@
     word-break: break-all;
     overflow-y: auto; 
     overflow-x: hidden; 
-    /*max-height:15rem;*/
   }
   .chain-sequence {
     border-bottom: solid 1px #d1d1d1;

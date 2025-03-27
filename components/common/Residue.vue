@@ -1,5 +1,5 @@
 <template>
-  <span class="sequence-number" v-if="index % 10 === 0">{{ residue.num }}
+  <span class="sequence-number" v-if="index[1] % 10 === 0">{{ residue.num }}
       <span v-if="residue.num.toString().length == 4">&nbsp;&nbsp;</span>
       <span v-if="residue.num.toString().length == 3">&nbsp;&nbsp;&nbsp;&nbsp;</span>
       <span v-if="residue.num.toString().length == 2">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -7,9 +7,12 @@
   </span>
 
   <span :class="selected ? 'sequence-item sequence-item-selected' : 'sequence-item'"
+    :id="`res-${residue.num}-${residue.chain}`"
     @mouseover="onMouseOver($event, residue.chain, residue.num)"
     @mouseleave="onMouseLeave($event, residue.chain, residue.num)"
     @click.exact="onClick($event, residue.chain, residue.num)"
+    @click.shift.exact="onSelectMultiple($event, residue.chain, residue.num)"
+    @click.alt.exact="onCenterResidue($event, residue.chain, residue.num)"
   >
     {{ resid }}
   </span>
@@ -17,14 +20,13 @@
 
 <script setup>
 
-  const emit = defineEmits(['updateModelResidues', 'previewResidue'])
+  const emit = defineEmits(['updateModelResidues', 'selectMultipleResidues', 'previewResidue', 'centerResidue'])
 
   const { $globals } = useNuxtApp()
 
   const { index, residue } = defineProps(['index', 'residue'])
 
   const selected = ref(false)  
-  console.log(index)
   const rname = residue.resname.toLowerCase()
   const resid = (rname in $globals.ngl.aminoacids) ? $globals.ngl.aminoacids[rname].id : 'X'
 
@@ -43,7 +45,15 @@
   }
 
   const onClick = (event, chain, resnum) => {
-    emit('updateModelResidues', resnum + ':' + chain, index, !selected.value)
+    emit('updateModelResidues', resnum + ':' + chain, index[0], index[1], !selected.value)
+  }
+
+  const onSelectMultiple = (event, chain, resnum) => {
+    emit('selectMultipleResidues', resnum , chain, index[0], index[1])
+  }
+
+  const onCenterResidue = (event, chain, resnum) => {
+    emit('centerResidue', resnum, chain)
   }
 
   defineExpose({ 
@@ -70,6 +80,20 @@
   .sequence-item-selected {
     color: #fff;
     background: #5E738B;
+  }
+  .sequence-item-mult-selected {
+    position: relative;
+  }
+
+  .sequence-item-mult-selected::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border: 1px dashed #bd78cc;
+    pointer-events: none;
   }
   .sequence-number {
     color: #325880;

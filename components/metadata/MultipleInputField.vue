@@ -31,7 +31,7 @@
   const { getRules, checkAllValuesAgainstRules } = useRules()
 
   const { props } = defineProps(['props'])
-  let refInputs = ref([''])
+  let refInputs = ref([null])
   /*if(props.default !== undefined) {
     refInputs.value[0] = props.default
     setMetadata(props.id, refInputs.value)
@@ -135,7 +135,7 @@
 
   const createNewInput = () => {
     if(allValuesNonEmpty(refInputs.value) && checkAllValuesAgainstRules(refInputs.value, rules.value) === true) {
-      refInputs.value.push('')
+      refInputs.value.push(null)
     }    
   }
 

@@ -26,10 +26,15 @@ export default function mouseObserver() {
 
 		})
 
+		// reset position on double click
+		stage.mouseControls.add('doubleClick+left', function( stage, delta ){
+			stage.autoView(300)
+		} )
+
 	}
 
 	// returns hovered molecules / atoms in structure when double structure (pairwise)
-	const checkMouseSignalsDouble = (stage, updateFunction) => {
+	/*const checkMouseSignalsDouble = (stage, updateFunction) => {
 
 		let status = false
 		let text = ''
@@ -85,12 +90,12 @@ export default function mouseObserver() {
 
 		})
 
-	}
+	}*/
 
 	return {
 		checkMouseSignals,
-		checkMouseSignalsDouble,
-		checkAtomHover
+		/*checkMouseSignalsDouble,
+		checkAtomHover*/
 	}
 
 }

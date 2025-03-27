@@ -1,3 +1,11 @@
+const multipleResidues = reactive({
+  status: false,
+  firstRes: null,
+  lastRes: null,
+  error: false,
+  msg: null
+})
+
 export default function utilsNGL() {
 
   // Convert NGL selection string into VMD selection string
@@ -17,6 +25,15 @@ export default function utilsNGL() {
     // Join all parts into one VMD selection string with " or " separator
     return vmdTokens.join(' or ');
   };
+
+  const getNumberOfModels = (structure) => {
+    let models = []
+    structure.eachModel(model => {
+      models.push(model.index)
+    });
+    models = Array.from(new Set(models))
+    return models.length
+  }
 
   // Get the list of chains in the structure
   const getChainsList = (structure) => {
@@ -75,8 +92,8 @@ export default function utilsNGL() {
         // Add new residues that are not already in the array (by comparing resno)
         residues.forEach(r => {
           // A simple check: you can expand this to check both resno and resname
-          const exists = chainsObj[chainName].some(existing => existing.resno === r.resno);
-          if (!exists) {
+          const exists = chainsObj[chainName].some(existing => existing.num === r.num);
+          if (!exists && r.resname !== 'HOH') {
             chainsObj[chainName].push(r);
           }
         });
@@ -92,14 +109,69 @@ export default function utilsNGL() {
     }));
   
     return chainsArray;
-  };  
+  };
+
+  const addMultipleResidues = function (residue) {
+    multipleResidues.status = !multipleResidues.status
+    if(multipleResidues.status) {
+        multipleResidues.lastRes = null
+        multipleResidues.firstRes = residue
+        multipleResidues.error = false
+    } else {
+        multipleResidues.lastRes = residue
+        //if(multipleResidues.firstRes.model === multipleResidues.lastRes.model && multipleResidues.firstRes.chain === multipleResidues.lastRes.chain) {
+        if(multipleResidues.firstRes.chain === multipleResidues.lastRes.chain) {
+          //console.log('multiple selection wit range: ', multipleResidues.firstRes, multipleResidues.lastRes)
+          multipleResidues.error = false
+        } else {
+          //console.error('You can\'t do a multiple selection with different chain')
+          multipleResidues.status = false
+          multipleResidues.firstRes = null
+          multipleResidues.lastRes = null
+          multipleResidues.error = true
+          multipleResidues.msg = 'You can\'t do a multiple selection with different chain'
+        }        
+    }
+
+    return multipleResidues
+  }
+
+  function getResidueRange(tokenA, tokenB, residuesArray) {
+    const numA = tokenA.num;
+    const chainA = tokenA.chain;
+    const numB = tokenB.num;
+    const chainB = tokenB.chain;
+
+    // Check if the chains are different
+    if (chainA !== chainB) {
+      console.error('You can\'t do a multiple selection with different chain')
+      return false
+    }
+  
+    const start = Math.min(parseInt(numA, 10), parseInt(numB, 10));
+    const end = Math.max(parseInt(numA, 10), parseInt(numB, 10));
+  
+    const mapped = residuesArray.map((token, index) => ({ token, index }));
+    const filtered = mapped.filter(({ token }) => {
+      const [numStr, chain] = token.split(':');
+      const num = parseInt(numStr, 10);
+      return chain === chainA && num >= start && num <= end;
+    });
+    const indexes = filtered.map(item => item.index);
+    const items = filtered.map(item => item.token);
+
+    return [items, indexes];
+  }
 
   return { 
     convertNGLtoVMD,
+    getNumberOfModels,
     getChainsList,
     getResiduesList,
     getListOfResiduesFromSelection,
-    getStructureObj
+    getStructureObj,
+    addMultipleResidues,
+    getResidueRange
   }
   
 }

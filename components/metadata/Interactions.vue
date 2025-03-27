@@ -62,7 +62,7 @@
       <NGLViewer ref="viewerRef" />
     </template>
     <template v-slot:selection>
-      <NGLSelection ref="selectionRef" @setSelection="handleSelection" />
+      <NGLSelection ref="selectionRef" @setSelection="handleSelection" @setPreview="handlePreview" @setView="handleSetView" />
     </template>
   </NGLDialog>
 </template>
@@ -171,6 +171,14 @@
   const handleSelection = (s) => {
     selection.value = s
     viewerRef.value.setSelection(s)
+  }
+
+  const handlePreview = (s, t) => {
+    viewerRef.value.setSelectionPreview(s, t)
+  }
+
+  const handleSetView = (s) => {
+    viewerRef.value.setView(s)
   }
 
 </script>

@@ -1,6 +1,6 @@
 <template>
   <v-text-field
-    v-model="refModel[0]"
+    v-model="refModel[1]"
     :label="props.label"
     :append-inner-icon="structureId ? `mdi-eyedropper-plus`: null"
     @click:append-inner="openStructure"
@@ -15,7 +15,7 @@
     </template>
   </v-text-field>
   <v-text-field
-    v-model="refModel[1]"
+    v-model="refModel[0]"
     v-show="false"
   ></v-text-field>
 
@@ -24,7 +24,7 @@
       <NGLViewer ref="viewerRef" />
     </template>
     <template v-slot:selection>
-      <NGLSelection ref="selectionRef" @setSelection="handleSelection" @setPreview="handlePreview" />
+      <NGLSelection ref="selectionRef" @setSelection="handleSelection" @setPreview="handlePreview" @setView="handleSetView" />
     </template>
   </NGLDialog>
 </template>
@@ -45,7 +45,7 @@
     acc[field.id] = null;
     return acc;
   }, {});
-  const refModel = ref({ ...initModel })
+  const refModel = ref({ })
   const entries = Object.entries(initModel);
   const [firstItemModel, secondItemModel] = entries;
   const structureId = computed(() => {
@@ -72,20 +72,20 @@
     // trick for avoiding problems on loading the viewer
     await $waitFor(() => viewerRef.value )
     viewerRef.value.setID(structureId.value)
-    selectionRef.value.setSelection(refModel.value[0])
+    selectionRef.value.setSelection(refModel.value[1])
   }
 
   const handleSaveSelection = () => {
     const s = selection.value
     dialog.value = false
-    refModel.value[0] = s
-    setMetadata(firstItemModel[0], refModel.value[0])
+    refModel.value[1] = s
+    setMetadata(secondItemModel[0], refModel.value[1])
 
     let residues
     if(s !== '' && s !== null && s !== undefined) {
       residues = viewerRef.value.getResiduesFromSelection(s)
-      refModel.value[1] = convertNGLtoVMD(residues.join(', '))
-      setMetadata(secondItemModel[0], refModel.value[1])
+      refModel.value[0] = convertNGLtoVMD(residues.join(', '))
+      setMetadata(firstItemModel[0], refModel.value[0])
     }
   }
 
@@ -101,6 +101,10 @@
 
   const handlePreview = (s, t) => {
     viewerRef.value.setSelectionPreview(s, t)
+  }
+
+  const handleSetView = (s) => {
+    viewerRef.value.setView(s)
   }
 
 </script>

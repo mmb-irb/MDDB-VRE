@@ -37,6 +37,22 @@
     <div id="viewport"></div>
     <LegendViewer v-model="legendText" position="tr" v-if="legend" />
   </div>
+  <v-snackbar
+    v-model="snackbar.model"
+    color="purple-accent-1"
+    :timeout="4000"
+    elevation="24"
+  >
+    {{ snackbar.msg }}
+    <template v-slot:actions>
+      <v-btn
+        variant="text"
+        @click="snackbar.model = false"
+      >
+        Close
+      </v-btn>
+    </template>
+  </v-snackbar>
 </template>
 
 <script setup>
@@ -49,9 +65,11 @@
   const { createStage, createSelection } = useStage()
   const { checkMouseSignals } = mouseObserver()
   const { getFile } = useIndexedDB()
-  const { getChainsList, getResiduesList, getListOfResiduesFromSelection, getStructureObj } = utilsNGL()
+  const { getNumberOfModels, getChainsList, getResiduesList, getListOfResiduesFromSelection, getStructureObj } = utilsNGL()
 
   const { $globals, $waitFor, $eventBus } = useNuxtApp()
+
+  const snackbar = ref({ model: false, msg: '' })
 
   let stage = null
   let fileID = null
@@ -71,6 +89,9 @@
         viewer = component
 				struct = component.addRepresentation("licorice", { sele: "*", color: 'sstruc' });
 				component.autoView('*');
+
+        const numModels = getNumberOfModels(component.structure)
+        if(numModels > 1) snackbar.value = { model: true, msg: `Warning! This structure has ${numModels} models.` }
 
         const chains = getChainsList(component.structure)
         $eventBus.emit('chainsList', chains)
@@ -142,7 +163,7 @@
     }
   }
 
-  // Example function to convert a selection string (e.g. ':A' or 'backbone') into a list of residues
+  // Function to convert a selection string (e.g. ':A' or 'backbone') into a list of residues
   const getResiduesFromSelection = (selectionString) => {
     const structure = stage.compList[0].structure
     let selection = createSelection(selectionString)
@@ -151,11 +172,16 @@
     return residueList
   };
 
+  const setView = (s) => {
+    viewer.autoView(s, 500)
+  }
+
   defineExpose({
 		setID,
     setSelection,
     getResiduesFromSelection,
-    setSelectionPreview
+    setSelectionPreview,
+    setView
 	});
 
 </script>
