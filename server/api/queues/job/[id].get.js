@@ -13,6 +13,7 @@ export default defineEventHandler(async (event) => {
     const jsonOutput = JSON.parse(stdout);
     return jsonOutput;
   } catch (error) {
+    setResponseStatus(event, 404)
     return {
       "error": error
     }

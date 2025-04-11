@@ -11,12 +11,14 @@ export default defineEventHandler(async (event) => {
   if (Array.isArray(status)) {
     status = status.join(" ");
   }
+  const queue = query.queue;
 
   try {
-    const { stdout, stderr } = await execPromise(`docker run --rm --network jobnet client list --json ${status ? "--status " + status : ""}`);
+    const { stdout, stderr } = await execPromise(`docker run --rm --network jobnet client list --json ${status ? "--status " + status : ""} ${queue ? "--queue " + queue : ""}`);
     const jsonOutput = JSON.parse(stdout);
     return jsonOutput;
   } catch (error) {
+    setResponseStatus(event, 404)
     return {
       "error": error
     }
