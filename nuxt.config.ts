@@ -109,6 +109,7 @@ export default defineNuxtConfig({
         '/api', 
         '/api/upload',
         '/^\/api/queues/add(\\?.*)?$/',
+        '/^\/api/queues/stop(\\?.*)?$/',
         '/^\/api/queues/list(\\?.*)?$/',
         '/api/queues/job/',
         '/^\/api/mc(\\?.*)?$/'
