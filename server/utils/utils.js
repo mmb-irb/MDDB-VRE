@@ -23,3 +23,19 @@ export const  getExpirationDate = (daysToAdd) => {
   // format date to ISO 8601
   return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}`;
 }
+
+export const compareVersions = (version1, version2) => {
+  const v1Parts = version1.split('.').map(Number);
+  const v2Parts = version2.split('.').map(Number);
+  
+  // Pad arrays to same length
+  const maxLength = Math.max(v1Parts.length, v2Parts.length);
+  while (v1Parts.length < maxLength) v1Parts.push(0);
+  while (v2Parts.length < maxLength) v2Parts.push(0);
+  
+  for (let i = 0; i < maxLength; i++) {
+    if (v1Parts[i] > v2Parts[i]) return 1;   // version1 is newer
+    if (v1Parts[i] < v2Parts[i]) return -1;  // version2 is newer
+  }
+  return 0; // versions are equal
+}

@@ -95,6 +95,8 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     logPath: process.env.LOG_PATH,
+    mongodbUri: `mongodb://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_SERVER}:${process.env.DB_PORT}/${process.env.DB_NAME}?authSource=${process.env.DB_NAME}`,
+    githubToken: process.env.PAT,
     public: {
       baseURL: baseURL,
       nodeName: process.env.NODE_NAME,
@@ -105,10 +107,43 @@ export default defineNuxtConfig({
       minioURL: `${process.env.MINIO_PROTOCOL}://${process.env.MINIO_URL}:${process.env.MINIO_PORT}`,
       minioHost: `${process.env.MINIO_URL}:${process.env.MINIO_PORT}`,
       minioUsr: process.env.MINIO_USER,
+      repos: {
+        client: {
+          name: "Client",
+          org: "mmb-irb",
+          repo: "MDposit-client-build",
+          image: "client_image"
+        },
+        rest: {
+          name: "REST API",
+          org: "mmb-irb",
+          repo: "MDDB-REST-API",
+          image: "rest_image"
+        },
+        vre_lite: {
+          name: "VRElite",
+          org: "mmb-irb",
+          repo: "MDDB-VRE",
+          image: "vre_lite_image"
+        },
+        loader: {
+          name: "Loader",
+          org: "mmb-irb",
+          repo: "MDDB-loader",
+          image: "loader_image"
+        },
+        workflow: {
+          name: "Workflow",
+          org: "mmb-irb",
+          repo: "MDDB-workflow",
+          image: "workflow_image"
+        }
+      },
       apiEndPoints: [
         '/api', 
         '/api/upload',
-        '/^\/api/mc(\\?.*)?$/'
+        '/^\/api/mc(\\?.*)?$/',
+        '/api/version'
       ]
     }
   },

@@ -32,6 +32,12 @@ npm install
 | MINIO_URL                 | `<url>`                                   | url for MinIO (ie localhost)     |
 | MINIO_PORT                 | string                                   | MinIO API outer port    |
 | MINIO_USER                 | string                                   | MinIO user with permissions for creating access keys    |
+| MINIO_USER                 | string                                   | MinIO user with permissions for creating access keys    |
+| DB_USER                 | string                                   | Database user    |
+| DB_PASS                 | string                                   | Database password    |
+| DB_SERVER                 |  `<url>`                                    | Database url server    |
+| DB_PORT                 | number                                   | Database port    |
+| PAT                 | string                                   | Personal Access Token with read access to the GH repo services    |
 | NODE_NAME                 | string                                   | node identifier to deploy       |
 
 ## Development Server
