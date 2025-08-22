@@ -110,6 +110,12 @@
         color: 'purple-lighten-1',
         text: 'No repository'
       }
+    } else if (status === 'dev') {
+      return {
+        icon: 'mdi-cog',
+        color: 'purple-lighten-4',
+        text: 'Development'
+      }
     } else {
       return 'Unknown'
     }

@@ -37,6 +37,8 @@ export default defineEventHandler(async (event) => {
         if (comparison === 0) status = 'up-to-date';
         else if (comparison < 0) status = 'updatable';
         else status = 'ahead'; // local version is newer than latest tag
+
+        if(element.version === 'dev') status = 'dev';
       }
 
       serviceData.push({
@@ -120,23 +122,6 @@ export default defineEventHandler(async (event) => {
         service.status = 'unknown';
       });
     }
-
-//     const stdout = `{"ID":"0grxqpr8cbc9","Image":"apache_image:latest","Mode":"replicated","Name":"my_stack_apache","Ports":"*:80->80/tcp, *:443->443/tcp, *:7000->7000/tcp","Replicas":"1/1"}
-// {"ID":"nqioq6e16rqg","Image":"client_image:latest","Mode":"replicated","Name":"my_stack_client","Ports":"*:8080->80/tcp","Replicas":"2/2"}
-// {"ID":"9llxod6cpwjr","Image":"loader_image:latest","Mode":"replicated","Name":"my_stack_loader","Ports":"","Replicas":"0/0"}
-// {"ID":"fu2cnk4421np","Image":"minio/minio:latest","Mode":"replicated","Name":"my_stack_minio","Ports":"*:9001-9002->9001-9002/tcp","Replicas":"1/1 (max 1 per node)"}
-// {"ID":"4b33c8z8cro2","Image":"mongo:latest","Mode":"replicated","Name":"my_stack_mongo-backup","Ports":"","Replicas":"1/1"}
-// {"ID":"2bkerbdxej68","Image":"mongo:6","Mode":"replicated","Name":"my_stack_mongodb","Ports":"*:27017->27017/tcp","Replicas":"1/1"}
-// {"ID":"x2oksqiw9ho9","Image":"rest_image:latest","Mode":"replicated","Name":"my_stack_rest","Ports":"*:8081->3000/tcp","Replicas":"2/2"}
-// {"ID":"0y2u1r6wwo36","Image":"utils_image:latest","Mode":"replicated","Name":"my_stack_utils","Ports":"","Replicas":"0/0"}
-// {"ID":"ddpsn486kjm2","Image":"vre_lite_image:latest","Mode":"replicated","Name":"my_stack_vre_lite","Ports":"*:8082->3001/tcp","Replicas":"1/1"}
-// {"ID":"ion8jcwei31i","Image":"workflow_image:latest","Mode":"replicated","Name":"my_stack_workflow","Ports":"","Replicas":"0/0"}`;
-
-//     const containers = stdout
-//         .trim()
-//         .split("\n")
-//         .filter(line => line.length > 0)
-//         .map(line => JSON.parse(line));
 
     return serviceData
 
