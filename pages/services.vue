@@ -107,13 +107,13 @@
     } else if (status === 'no-repo') {
       return {
         icon: 'mdi-circle-outline',
-        color: 'purple-lighten-1',
+        color: 'purple-lighten-4',
         text: 'No repository'
       }
     } else if (status === 'dev') {
       return {
         icon: 'mdi-cog',
-        color: 'purple-lighten-4',
+        color: 'purple-lighten-3',
         text: 'Development'
       }
     } else {
