@@ -107,7 +107,7 @@ export default defineNuxtConfig({
       minioURL: `${process.env.MINIO_PROTOCOL}://${process.env.MINIO_URL}:${process.env.MINIO_PORT}`,
       minioHost: `${process.env.MINIO_URL}:${process.env.MINIO_PORT}`,
       minioUsr: process.env.MINIO_USER,
-      repos: {
+      services: {
         client: {
           name: "Client",
           org: "mmb-irb",
@@ -137,13 +137,19 @@ export default defineNuxtConfig({
           org: "mmb-irb",
           repo: "MDDB-workflow",
           image: "workflow_image"
+        },
+        minio: {
+          name: "MinIO",
+          org: "mmb-irb",
+          repo: undefined,
+          image: "minio/minio"
         }
       },
       apiEndPoints: [
         '/api', 
         '/api/upload',
         '/^\/api/mc(\\?.*)?$/',
-        '/api/version'
+        '/api/services'
       ]
     }
   },

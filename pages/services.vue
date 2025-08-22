@@ -25,6 +25,9 @@
                     Latest Tag
                   </th>
                   <th class="text-left">
+                    Update
+                  </th>
+                  <th class="text-left">
                     Status
                   </th>
                 </tr>
@@ -49,6 +52,7 @@
                       inline
                     ></v-badge>
                   </td>
+                  <td><v-icon :icon="getUpdate(item.update).icon" :color="getUpdate(item.update).color"></v-icon> {{ getUpdate(item.update).text }}</td>
                   <td><v-icon :icon="getStatus(item.status).icon" :color="getStatus(item.status).color"></v-icon> {{ getStatus(item.status).text }}</td>
                 </tr>
               </tbody>
@@ -70,7 +74,7 @@
 
   const data = ref([])
   try {
-      const resp = await fetch('api/version', {
+      const resp = await fetch('api/services', {
           method: 'GET',
           headers: {
               'Content-Type': 'application/json'
@@ -81,7 +85,7 @@
       console.error(error)
   }
 
-  const getStatus = (status) => {
+  const getUpdate = (status) => {
     if (status === 'up-to-date') {
       return {
         icon: 'mdi-check-decagram',
@@ -99,6 +103,36 @@
         icon: 'mdi-alert-circle',
         color: 'orange',
         text: 'Ahead'
+      }
+    } else if (status === 'no-repo') {
+      return {
+        icon: 'mdi-circle-outline',
+        color: 'purple-lighten-1',
+        text: 'No repository'
+      }
+    } else {
+      return 'Unknown'
+    }
+  }
+
+  const getStatus = (status) => {
+    if (status === 'running') {
+      return {
+        icon: 'mdi-check-circle',
+        color: 'green',
+        text: 'Running'
+      }
+    } else if (status === 'offline') {
+      return {
+        icon: 'mdi-close-circle',
+        color: 'red',
+        text: 'Offline'
+      }
+    } else if (status === 'idle') {
+      return {
+        icon: 'mdi-circle',
+        color: 'grey',
+        text: 'Idle'
       }
     } else {
       return 'Unknown'
