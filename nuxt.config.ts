@@ -104,6 +104,7 @@ export default defineNuxtConfig({
       timeDiff: process.env.TIME_DIFF,
       logoUrl: `${baseURL}img/logo.png`,
       apiBase: `${baseURL}api`,
+      domain: process.env.MINIO_URL,
       minioURL: `${process.env.MINIO_PROTOCOL}://${process.env.MINIO_URL}:${process.env.MINIO_PORT}`,
       minioHost: `${process.env.MINIO_URL}:${process.env.MINIO_PORT}`,
       minioUsr: process.env.MINIO_USER,

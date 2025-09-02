@@ -11,7 +11,15 @@
             <span class="font-weight-black">List of services for {{ nodeName }} node </span>
           </template>
 
-          <div v-if="loading" class="text-center py-8">
+          <div v-if="error && !loading">
+            <v-alert
+              text="Failed to load services data. Please try again later."
+              title="Error loading services"
+              class="ma-4"
+              type="error"
+            ></v-alert>
+          </div>
+          <div v-if="!error && loading" class="text-center py-8">
             <v-progress-circular
               :width="8"
               :size="75"
@@ -20,7 +28,7 @@
             ></v-progress-circular>
           </div>
           <div v-else>
-          <v-card-text class="py-5">
+          <v-card-text class="py-5" v-if="!error">
             <v-table>
               <thead>
                 <tr>
@@ -91,6 +99,7 @@
   const nodeName = config.public.nodeName
 
   const loading = ref(true)
+  const error = ref(false)
   const data = ref([])
 
   data.value.push({
@@ -144,10 +153,13 @@
         if (dbIndex !== -1) {
           data.value[dbIndex].status = 'offline'
         }
+        error.value = true
+        loading.value = false
     }
 
-  } catch (error) {
-      console.error('Services API error:', error)
+  } catch (err) {
+      console.error('Services API error:', err)
+      error.value = true
       loading.value = false
   }
 

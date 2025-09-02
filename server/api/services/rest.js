@@ -1,7 +1,7 @@
 export default defineEventHandler(async (event) => {
 
-  const url = getRequestURL(event);
-  const domain = url.hostname;
+  const config = useRuntimeConfig();
+  const domain = config.public.domain || 'localhost:3000';
 
   const endpoint = `https://${domain}/api/rest/v1/projects/summary`;
 
@@ -12,9 +12,7 @@ export default defineEventHandler(async (event) => {
     };
   } catch (error) {
     return {
-      status: 500,
-      domain: domain,
-      endpoint: endpoint
+      status: 500
     };
   }
 
