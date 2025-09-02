@@ -624,13 +624,7 @@
         "type": "upload-file",
         "formats": [".pdb"],
         "description": "In order to ease the process of selecting agents or PBC in the analysis section, a structure file like a PDB can be uploaded for the sake of perform these selections in a more easy and visual way.",
-        "rules": [
-          {
-            "id": "required",
-            "regex": "!!v",
-            "message": "Please add a file"
-          }
-        ],
+        "rules": [],
         "required": false,
         "force_null": true,
         "default": null,

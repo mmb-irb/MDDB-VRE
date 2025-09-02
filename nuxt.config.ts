@@ -1,4 +1,4 @@
-import colors from 'vuetify/util/colors'
+// import colors from 'vuetify/util/colors'
 
 // modify baseURL depending on the server where the app is running
 const baseURL = process.env.APP_TYPE == 'development' ? process.env.BASE_URL_DEVELOPMENT : process.env.APP_TYPE == 'staging' ? process.env.BASE_URL_STAGING : process.env.BASE_URL_PRODUCTION
