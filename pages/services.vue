@@ -26,6 +26,8 @@
               color="purple-lighten-3"
               indeterminate
             ></v-progress-circular>
+            <br>
+            <div class="text-center mt-4">Fetching services info, please wait...</div>
           </div>
           <div v-else>
           <v-card-text class="py-5" v-if="!error">
@@ -111,57 +113,59 @@
     status: 'checking'
   })
 
-  try {
-    // First API call - get services data
-    const resp = await fetch('api/services', {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    })
-    const servicesData = await resp.json()
-    data.value.push(...servicesData)
-    data.value.sort((a, b) => a.name.localeCompare(b.name))
-    loading.value = false
-
-    // Second API call - check REST API status (runs AFTER the first completes)
+  onMounted(async () => {
     try {
-      const restResp = await fetch('api/services/rest', {
+      // First API call - get services data
+      const resp = await fetch('api/services', {
           method: 'GET',
           headers: {
               'Content-Type': 'application/json'
           }
       })
-      const rest = await restResp.json()
+      const servicesData = await resp.json()
+      data.value.push(...servicesData)
+      data.value.sort((a, b) => a.name.localeCompare(b.name))
+      loading.value = false
 
-      if (rest.status === 200) {
-        const dbIndex = data.value.findIndex(item => item.service === 'db')
-        if (dbIndex !== -1) {
-          data.value[dbIndex].status = 'running'
+      // Second API call - check REST API status (runs AFTER the first completes)
+      try {
+        const restResp = await fetch('api/services/rest', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        const rest = await restResp.json()
+
+        if (rest.status === 200) {
+          const dbIndex = data.value.findIndex(item => item.service === 'db')
+          if (dbIndex !== -1) {
+            data.value[dbIndex].status = 'running'
+          }
+        } else if (rest.status === 500) {
+          const dbIndex = data.value.findIndex(item => item.service === 'db')
+          if (dbIndex !== -1) {
+            data.value[dbIndex].status = 'offline'
+          }
         }
-      } else if (rest.status === 500) {
-        const dbIndex = data.value.findIndex(item => item.service === 'db')
-        if (dbIndex !== -1) {
-          data.value[dbIndex].status = 'offline'
-        }
+
+      } catch (restError) {
+          console.error('REST API error:', restError)
+          // Set database status to error if REST call fails
+          const dbIndex = data.value.findIndex(item => item.service === 'db')
+          if (dbIndex !== -1) {
+            data.value[dbIndex].status = 'offline'
+          }
+          error.value = true
+          loading.value = false
       }
 
-    } catch (restError) {
-        console.error('REST API error:', restError)
-        // Set database status to error if REST call fails
-        const dbIndex = data.value.findIndex(item => item.service === 'db')
-        if (dbIndex !== -1) {
-          data.value[dbIndex].status = 'offline'
-        }
+    } catch (err) {
+        console.error('Services API error:', err)
         error.value = true
         loading.value = false
     }
-
-  } catch (err) {
-      console.error('Services API error:', err)
-      error.value = true
-      loading.value = false
-  }
+  })
 
   const getServiceIcon = (service) => {
     const services = config.public.services
