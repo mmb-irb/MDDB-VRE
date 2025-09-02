@@ -11,6 +11,15 @@
             <span class="font-weight-black">List of services for {{ nodeName }} node </span>
           </template>
 
+          <div v-if="loading" class="text-center py-8">
+            <v-progress-circular
+              :width="8"
+              :size="75"
+              color="purple-lighten-3"
+              indeterminate
+            ></v-progress-circular>
+          </div>
+          <div v-else>
           <v-card-text class="py-5">
             <v-table>
               <thead>
@@ -37,7 +46,10 @@
                   v-for="item in data"
                   :key="item.service"
                 >
-                  <td><strong>{{ item.name }}</strong></td>
+                  <td>
+                    <v-icon :icon="getServiceIcon(item.service)" color="grey-darken-1" class="me-2"></v-icon>
+                    <strong>{{ item.name }}</strong>
+                  </td>
                   <td>
                     <v-badge
                       color="purple-accent-3"
@@ -52,13 +64,19 @@
                       inline
                     ></v-badge>
                   </td>
-                  <td><v-icon :icon="getUpdate(item.update).icon" :color="getUpdate(item.update).color"></v-icon> {{ getUpdate(item.update).text }}</td>
-                  <td><v-icon :icon="getStatus(item.status).icon" :color="getStatus(item.status).color"></v-icon> {{ getStatus(item.status).text }}</td>
+                  <td>
+                    <v-icon :icon="getUpdate(item.update).icon" :color="getUpdate(item.update).color"></v-icon> {{ getUpdate(item.update).text }}
+                  </td>
+                  <td>
+                    <v-icon :icon="getStatus(item.status).icon" :color="getStatus(item.status).color"></v-icon> {{ getStatus(item.status).text }}
+                  </td>
                 </tr>
               </tbody>
             </v-table>
           </v-card-text>
+          </div>
         </v-card>
+        
       </v-col>
     </v-row>
   </v-container>
@@ -72,17 +90,72 @@
 
   const nodeName = config.public.nodeName
 
+  const loading = ref(true)
   const data = ref([])
+
+  data.value.push({
+    service: 'db',
+    name: 'Database',
+    version: 'N/A',
+    latestTag: 'N/A',
+    update: 'no-repo',
+    status: 'checking'
+  })
+
   try {
-      const resp = await fetch('api/services', {
+    // First API call - get services data
+    const resp = await fetch('api/services', {
+        method: 'GET',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    })
+    const servicesData = await resp.json()
+    data.value.push(...servicesData)
+    data.value.sort((a, b) => a.name.localeCompare(b.name))
+    loading.value = false
+
+    // Second API call - check REST API status (runs AFTER the first completes)
+    try {
+      const restResp = await fetch('api/services/rest', {
           method: 'GET',
           headers: {
               'Content-Type': 'application/json'
           }
       })
-      data.value = await resp.json()
+      const rest = await restResp.json()
+
+      if (rest.status === 200) {
+        const dbIndex = data.value.findIndex(item => item.service === 'db')
+        if (dbIndex !== -1) {
+          data.value[dbIndex].status = 'running'
+          console.log('Database is running')
+        }
+      } else if (rest.status === 500) {
+        const dbIndex = data.value.findIndex(item => item.service === 'db')
+        if (dbIndex !== -1) {
+          data.value[dbIndex].status = 'offline'
+          console.log('Database is offline')
+        }
+      }
+
+    } catch (restError) {
+        console.error('REST API error:', restError)
+        // Set database status to error if REST call fails
+        const dbIndex = data.value.findIndex(item => item.service === 'db')
+        if (dbIndex !== -1) {
+          data.value[dbIndex].status = 'offline'
+        }
+    }
+
   } catch (error) {
-      console.error(error)
+      console.error('Services API error:', error)
+      loading.value = false
+  }
+
+  const getServiceIcon = (service) => {
+    const services = config.public.services
+    return services[service]?.icon || 'mdi-cog'
   }
 
   const getUpdate = (status) => {
@@ -139,6 +212,12 @@
         icon: 'mdi-circle',
         color: 'grey',
         text: 'Idle'
+      }
+    } else if (status === 'checking') {
+      return {
+        icon: 'mdi-autorenew mdi-spin',
+        color: 'orange-lighten-1',
+        text: 'Checking'
       }
     } else {
       return 'Unknown'

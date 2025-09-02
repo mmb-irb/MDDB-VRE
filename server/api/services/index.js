@@ -51,7 +51,7 @@ export default defineEventHandler(async (event) => {
 
     }));
 
-    const otherServices = Object.keys(services).filter(svc => services[svc].repo === '');
+    const otherServices = Object.keys(services).filter(svc => services[svc].repo === 'no-repo');
     otherServices.forEach(svc => {
       serviceData.push({
         service: svc,

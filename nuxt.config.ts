@@ -110,46 +110,60 @@ export default defineNuxtConfig({
       services: {
         client: {
           name: "Client",
+          icon: "mdi-xml",
           org: "mmb-irb",
           repo: "MDposit-client-build",
           image: "client_image"
         },
         rest: {
           name: "REST API",
+          icon: "mdi-code-block-braces",
           org: "mmb-irb",
           repo: "MDDB-REST-API",
           image: "rest_image"
         },
         vre_lite: {
           name: "VRElite",
+          icon: "mdi-cloud-upload-outline",
           org: "mmb-irb",
           repo: "MDDB-VRE",
           image: "vre_lite_image"
         },
         loader: {
           name: "Loader",
+          icon: "mdi-upload-outline",
           org: "mmb-irb",
           repo: "MDDB-loader",
           image: "loader_image"
         },
         workflow: {
           name: "Workflow",
+          icon: "mdi-cog-outline",
           org: "mmb-irb",
           repo: "MDDB-workflow",
           image: "workflow_image"
         },
         minio: {
           name: "MinIO",
+          icon: "mdi-pail-plus-outline",
           org: "mmb-irb",
-          repo: undefined,
+          repo: "no-repo",
           image: "minio/minio"
+        },
+        db: {
+          name: "Database",
+          icon: "mdi-database-outline",
+          org: undefined,
+          repo: undefined,
+          image: undefined
         }
       },
       apiEndPoints: [
         '/api', 
         '/api/upload',
         '/^\/api/mc(\\?.*)?$/',
-        '/api/services'
+        '/api/services',
+        '/api/services/rest'
       ]
     }
   },
