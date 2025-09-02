@@ -129,13 +129,11 @@
         const dbIndex = data.value.findIndex(item => item.service === 'db')
         if (dbIndex !== -1) {
           data.value[dbIndex].status = 'running'
-          console.log('Database is running')
         }
       } else if (rest.status === 500) {
         const dbIndex = data.value.findIndex(item => item.service === 'db')
         if (dbIndex !== -1) {
           data.value[dbIndex].status = 'offline'
-          console.log('Database is offline')
         }
       }
 
