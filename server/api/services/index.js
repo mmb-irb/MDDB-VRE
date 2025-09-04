@@ -46,7 +46,8 @@ export default defineEventHandler(async (event) => {
         name: services[element.service].name,
         version: element.version,
         latestTag: latestTag,
-        update: status
+        update: status,
+        type: services[element.service].type
       });
 
     }));
@@ -58,7 +59,8 @@ export default defineEventHandler(async (event) => {
         name: services[svc].name,
         version: 'N/A',
         latestTag: 'N/A',
-        update: 'no-repo'
+        update: 'no-repo',
+        type: services[svc].type
       });
     });
 

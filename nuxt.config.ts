@@ -114,49 +114,64 @@ export default defineNuxtConfig({
           icon: "mdi-xml",
           org: "mmb-irb",
           repo: "MDposit-client-build",
-          image: "client_image"
+          image: "client_image",
+          type: "common"
         },
         rest: {
           name: "REST API",
           icon: "mdi-code-block-braces",
           org: "mmb-irb",
           repo: "MDDB-REST-API",
-          image: "rest_image"
+          image: "rest_image",
+          type: "common"
         },
         vre_lite: {
           name: "VRElite",
           icon: "mdi-cloud-upload-outline",
           org: "mmb-irb",
           repo: "MDDB-VRE",
-          image: "vre_lite_image"
+          image: "vre_lite_image",
+          type: "common"
         },
         loader: {
           name: "Loader",
           icon: "mdi-upload-outline",
           org: "mmb-irb",
           repo: "MDDB-loader",
-          image: "loader_image"
+          image: "loader_image",
+          type: "common"
         },
         workflow: {
           name: "Workflow",
           icon: "mdi-cog-outline",
           org: "mmb-irb",
           repo: "MDDB-workflow",
-          image: "workflow_image"
+          image: "workflow_image",
+          type: "common"
         },
         minio: {
           name: "MinIO",
           icon: "mdi-pail-plus-outline",
           org: "mmb-irb",
           repo: "no-repo",
-          image: "minio/minio"
+          image: "minio/minio",
+          type: "common"
         },
         db: {
           name: "Database",
           icon: "mdi-database-outline",
           org: undefined,
           repo: undefined,
-          image: undefined
+          image: undefined,
+          type: "common"
+        },
+        optimade: {
+          name: "OPTIMADE",
+          icon: "mdi-hexagon-outline",
+          org: undefined,
+          repo: "no-repo",
+          image: "optimade_image",
+          type: "extension"
         }
       },
       apiEndPoints: [
