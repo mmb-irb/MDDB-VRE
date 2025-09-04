@@ -86,7 +86,8 @@ export default defineNuxtConfig({
     { path: '~/components/common', extensions: ['vue'] },
     { path: '~/components/metadata', extensions: ['vue'] },
     { path: '~/components/data', extensions: ['vue'] },
-    { path: '~/components/end', extensions: ['vue'] }
+    { path: '~/components/end', extensions: ['vue'] },
+    { path: '~/components/services', extensions: ['vue'] }
   ],
 
   plugins: [
@@ -115,7 +116,7 @@ export default defineNuxtConfig({
           org: "mmb-irb",
           repo: "MDposit-client-build",
           image: "client_image",
-          type: "common"
+          type: "core"
         },
         rest: {
           name: "REST API",
@@ -123,7 +124,7 @@ export default defineNuxtConfig({
           org: "mmb-irb",
           repo: "MDDB-REST-API",
           image: "rest_image",
-          type: "common"
+          type: "core"
         },
         vre_lite: {
           name: "VRElite",
@@ -131,7 +132,7 @@ export default defineNuxtConfig({
           org: "mmb-irb",
           repo: "MDDB-VRE",
           image: "vre_lite_image",
-          type: "common"
+          type: "core"
         },
         loader: {
           name: "Loader",
@@ -139,7 +140,7 @@ export default defineNuxtConfig({
           org: "mmb-irb",
           repo: "MDDB-loader",
           image: "loader_image",
-          type: "common"
+          type: "core"
         },
         workflow: {
           name: "Workflow",
@@ -147,7 +148,7 @@ export default defineNuxtConfig({
           org: "mmb-irb",
           repo: "MDDB-workflow",
           image: "workflow_image",
-          type: "common"
+          type: "core"
         },
         minio: {
           name: "MinIO",
@@ -155,7 +156,7 @@ export default defineNuxtConfig({
           org: "mmb-irb",
           repo: "no-repo",
           image: "minio/minio",
-          type: "common"
+          type: "core"
         },
         db: {
           name: "Database",
@@ -163,7 +164,7 @@ export default defineNuxtConfig({
           org: undefined,
           repo: undefined,
           image: undefined,
-          type: "common"
+          type: "core"
         },
         optimade: {
           name: "OPTIMADE",
