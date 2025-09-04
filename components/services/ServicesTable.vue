@@ -125,6 +125,12 @@
         color: 'grey',
         text: 'Idle'
       }
+    } else if (status === 'not-found') {
+      return {
+        icon: 'mdi-cancel',
+        color: 'red',
+        text: 'Not Found'
+      }
     } else if (status === 'checking') {
       return {
         icon: 'mdi-autorenew mdi-spin',

@@ -101,9 +101,11 @@
 
       data_extension.value.push(...servicesData.filter(s => s.type === 'extension'))
       data_extension.value.sort((a, b) => a.name.localeCompare(b.name))
+      data_extension.value = data_extension.value.filter(item => item.status !== 'not-found')
 
       data_development.value.push(...servicesData.filter(s => s.type === 'development'))
       data_development.value.sort((a, b) => a.name.localeCompare(b.name))
+      data_development.value = data_development.value.filter(item => item.status !== 'not-found')
 
       loading.value = false
 
