@@ -64,7 +64,6 @@
 </template>
   
 <script setup>
-
   const { $globals } = useNuxtApp()
   const config = useRuntimeConfig()
 
@@ -82,6 +81,7 @@
     version: 'N/A',
     latestTag: 'N/A',
     update: 'no-repo',
+    type: 'core',
     status: 'checking'
   })
 

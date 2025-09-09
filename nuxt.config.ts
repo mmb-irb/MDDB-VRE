@@ -173,6 +173,14 @@ export default defineNuxtConfig({
           repo: "no-repo",
           image: "optimade_image",
           type: "extension"
+        },
+        service_monitor: {
+          name: "Service Monitor",
+          icon: "mdi-incognito",
+          org: undefined,
+          repo: "no-repo",
+          image: "services_monitor_image",
+          type: "development"
         }
       },
       apiEndPoints: [
