@@ -174,7 +174,7 @@ export default defineNuxtConfig({
           image: "optimade_image",
           type: "extension"
         },
-        service_monitor: {
+        services_monitor: {
           name: "Service Monitor",
           icon: "mdi-incognito",
           org: undefined,
