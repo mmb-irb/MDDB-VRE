@@ -7,9 +7,9 @@ on:
     branches: [ main ]
 
 jobs:
-  test-rest-api:
+  test-and-build:
     runs-on: ubuntu-latest
-    name: Test REST API
+    name: Test REST API and Build application
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -21,3 +21,24 @@ jobs:
 
       - name: Run tests
         run: npm test
+
+      - name: Create .env file
+        run: |
+          echo "BASE_URL_PRODUCTION=/vre/" >> .env
+          echo "LOG_PATH=/path/to/log" >> .env
+          echo "MAX_FILE_SIZE=957010000" >> .env
+          echo "TIME_DIFF=3" >> .env
+          echo "MINIO_PROTOCOL=http" >> .env
+          echo "MINIO_URL=na" >> .env
+          echo "MINIO_PORT=9000" >> .env
+          echo "MINIO_USER=na" >> .env
+          echo "DB_USER=na" >> .env
+          echo "DB_PASS=na" >> .env
+          echo "DB_SERVER=na" >> .env
+          echo "DB_PORT=27017" >> .env
+          echo "DB_NAME=na" >> .env
+          echo "PAT=na" >> .env
+          echo "NODE_NAME=dev" >> .env
+
+      - name: Build project
+        run: npm run build:production
