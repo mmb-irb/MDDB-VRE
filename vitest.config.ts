@@ -1,34 +1,22 @@
-import vue from '@vitejs/plugin-vue'
+import { defineConfig } from 'vitest/config'
+import { resolve } from 'path'
 
-export default {
-  plugins: [vue({
-    template: {
-      compilerOptions: {
-        isCustomElement: (tag) => ['v-container'].includes(tag) 
-        || ['v-footer'].includes(tag) 
-        || ['v-row'].includes(tag)
-        || ['v-col'].includes(tag)
-        || ['v-btn'].includes(tag)
-        || ['v-app'].includes(tag)
-        || ['v-app-bar'].includes(tag)
-        //|| ['v-menu'].includes(tag)
-        || ['v-list'].includes(tag)
-        || ['v-list-item'].includes(tag)
-        //|| ['v-list-group'].includes(tag)
-        || ['NuxtLink'].includes(tag)
-        
-        
-        //isCustomElement: (tag) => tag.startsWith('v-')
-      }
-    }
-  })],
+export default defineConfig({
   test: {
     environment: 'happy-dom',
-    globals: true,
-    server: {
-      deps: {
-        inline: ['vuetify'],
-      }
+    // Test files patterns
+    include: ['tests/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    // Exclude patterns
+    exclude: ['tests/e2e/**'],
+    // Global test timeout
+    testTimeout: 10000,
+    // Global setup for tests
+    globals: true
+  },
+  resolve: {
+    alias: {
+      '~': resolve(__dirname, './'),
+      '@': resolve(__dirname, './')
     }
   }
-}
+})

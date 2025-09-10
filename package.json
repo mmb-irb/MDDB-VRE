@@ -15,16 +15,17 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "test": "vitest",
-    "coverage": "vitest run --coverage"
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage"
   },
   "devDependencies": {
     "@nuxt/devtools": "1.4.1",
-    "@vitejs/plugin-vue": "^4.5.2",
-    "@vitest/coverage-v8": "^1.0.4",
-    "@vue/test-utils": "^2.4.3",
-    "happy-dom": "^12.10.3",
+    "@nuxt/test-utils": "^3.19.2",
+    "@vitest/coverage-v8": "^3.2.4",
+    "@vue/test-utils": "^2.4.6",
+    "happy-dom": "^18.0.1",
     "nuxt": "^3.8.2",
-    "vitest": "^1.0.4",
+    "vitest": "^3.2.4",
     "vue": "^3.3.10",
     "vue-router": "^4.2.5"
   },

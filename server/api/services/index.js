@@ -128,9 +128,13 @@ export default defineEventHandler(async (event) => {
     return serviceData
 
   } catch (error) {
-    throw createError({
-      statusCode: 500,
-      statusMessage: 'Failed to fetch version'
-    })
+    // Force JSON response regardless of Accept header
+    setResponseStatus(event, 500)
+    setResponseHeader(event, 'content-type', 'application/json')
+
+    return {
+      "error": "Failed to fetch services",
+      "details": error.message
+    }
   }
 })

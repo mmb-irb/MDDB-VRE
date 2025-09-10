@@ -56,6 +56,9 @@ export default defineNuxtConfig({
 
   nitro: {
     //plugins: ['~/server/index.js'],
+    experimental: {
+      wasm: true
+    }
   },
 
   app: {  
@@ -182,16 +185,8 @@ export default defineNuxtConfig({
           image: "services_monitor_image",
           type: "development"
         }
-      },
-      apiEndPoints: [
-        '/api', 
-        '/api/upload',
-        '/^\/api/mc(\\?.*)?$/',
-        '/api/services',
-        '/api/services/rest'
-      ]
+      }
     }
   },
-
   compatibilityDate: '2024-09-09',
 })
