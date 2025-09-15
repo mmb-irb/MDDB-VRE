@@ -85,6 +85,8 @@
   const data_development = ref([])
   const isDev = config.public.hasApiKey
 
+  console.log(config.public.apiKey, config.public.urlDev)
+
   data_core.value.push({
     service: 'db',
     name: 'Database',
