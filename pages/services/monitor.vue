@@ -85,9 +85,18 @@
         })
       }
 
+      const config = useRuntimeConfig()
+
+      if (!config.public.hasApiKey || !config.public.urlDev) {
+        throw createError({
+          statusCode: 403,
+          statusMessage: 'Access forbidden'
+        })
+      }
+
       // Additionally, verify API key by calling health endpoint
-      const apiKey = useRuntimeConfig().public.apiKey
-      const checkApiKey = await fetch(`${useRuntimeConfig().public.urlDev}services-monitor/health`, {
+      const apiKey = config.public.apiKey
+      const checkApiKey = await fetch(`${config.public.urlDev}services-monitor/health`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
