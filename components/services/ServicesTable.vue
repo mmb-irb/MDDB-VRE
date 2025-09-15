@@ -1,5 +1,6 @@
 <template>
   <v-alert
+    v-if="title"
     :title="title"
     :icon="icon"
     :color="color"
@@ -22,6 +23,9 @@
         </th>
         <th class="text-left">
           Status
+        </th>
+        <th v-if="replicas" class="text-left">
+          Replicas
         </th>
       </tr>
     </thead>
@@ -54,6 +58,9 @@
         <td>
           <v-icon :icon="getStatus(item.status).icon" :color="getStatus(item.status).color"></v-icon> {{ getStatus(item.status).text }}
         </td>
+        <td v-if="replicas">
+          {{ item.replicas ? `${item.replicas.running} / ${item.replicas.desired}` : 'N/A' }}
+        </td>
       </tr>
     </tbody>
   </v-table>
@@ -61,7 +68,7 @@
 
 <script setup>
 
-  const { data, title, icon, color, textColor } = defineProps(['data', 'title', 'icon', 'color', 'textColor'])
+  const { data, title, icon, color, textColor, replicas } = defineProps(['data', 'title', 'icon', 'color', 'textColor', 'replicas'])
 
   const config = useRuntimeConfig()
 

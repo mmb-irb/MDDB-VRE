@@ -7,8 +7,17 @@
       <v-col cols="12" >
         <v-card>
           <template v-slot:title>
-            <v-icon size="small" icon="mdi-cloud-print"></v-icon>&nbsp;
-            <span class="font-weight-black">List of services for {{ nodeName }} node </span>
+            <div id="header-container">
+              <div>
+                <v-icon size="small" icon="mdi-cloud-print"></v-icon>&nbsp;
+                <span class="font-weight-black">List of services for {{ nodeName }} node </span>
+              </div>
+              <v-btn v-if="isDev" prepend-icon="mdi-incognito"
+                variant="outlined"
+                color="purple-lighten-2"
+                :to="`/services/monitor`"
+                >Services monitor</v-btn>
+            </div>
           </template>
 
           <div v-if="error && !loading">
@@ -74,6 +83,7 @@
   const data_core = ref([])
   const data_extension = ref([])
   const data_development = ref([])
+  const isDev = config.public.hasApiKey
 
   data_core.value.push({
     service: 'db',
@@ -88,13 +98,7 @@
   onMounted(async () => {
     try {
       // First API call - get services data
-      const resp = await fetch('api/services', {
-          method: 'GET',
-          headers: {
-              'Content-Type': 'application/json'
-          }
-      })
-      const servicesData = await resp.json()
+      const servicesData = await $fetch('/api/services')
 
       data_core.value.push(...servicesData.filter(s => s.type === 'core'))
       data_core.value.sort((a, b) => a.name.localeCompare(b.name))
@@ -157,4 +161,15 @@
 
 <style scoped>
   h1 { margin-bottom: 1rem; }
+  #header-container {
+    display: flex; 
+    justify-content: space-between;
+  }
+
+  @media only screen and (max-width: 600px) {
+    #header-container {
+      flex-direction: column;
+    }
+    #header-container .v-btn {  margin-top: 1rem; }
+  }
 </style>
