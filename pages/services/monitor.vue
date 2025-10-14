@@ -96,7 +96,7 @@
 
       // Additionally, verify API key by calling health endpoint
       const apiKey = config.public.apiKey
-      const checkApiKey = await fetch(`${config.public.urlDev}services-monitor/health`, {
+      const checkApiKey = await fetch(`${config.public.urlDev}services_monitor/health`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -123,8 +123,8 @@
 
   onMounted(async () => {
     try {
-      // Get nodes data from the services-monitor microservice
-      const resp = await fetch(`${urlDev}services-monitor/api/data?latest=true`, {
+      // Get nodes data from the services_monitor microservice
+      const resp = await fetch(`${urlDev}services_monitor/api/data?latest=true`, {
           method: 'GET',
           headers: {
               'Content-Type': 'application/json'
