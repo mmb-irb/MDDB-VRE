@@ -12,8 +12,7 @@ export default defineEventHandler(async (event) => {
     };
   } catch (error) {
     return {
-      status: 500,
-      endpoint: endpoint
+      status: 500
     };
   }
 
