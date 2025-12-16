@@ -105,7 +105,7 @@ export default defineEventHandler(async (event) => {
               service.status = 'running';
             }
             
-            // Optionally add replica info
+            // Add replica info
             service.replicas = {
               running: running,
               desired: desired
@@ -117,12 +117,55 @@ export default defineEventHandler(async (event) => {
         }
       });
 
-    } catch (execError) {
-      console.error('Docker exec error:', execError);
-      // Set all services to unknown status if docker command fails
-      serviceData.forEach(service => {
-        service.status = 'unknown';
-      });
+    } catch (execError1) {
+      //console.error('Docker exec error:', execError1);
+
+      // check if basic deploy (no docker services) by running docker ps
+      try {
+        const { stdout, stderr } = await execAsync("docker ps -a --format '{{json .}}'");
+
+        if (stderr) {
+          console.error(`stderr: ${stderr}`);
+        }
+
+        // Split output by newlines, filter out empty lines, and parse JSON
+        const containers = stdout
+          .trim()
+          .split("\n")
+          .filter(line => line.length > 0)
+          .map(line => JSON.parse(line));
+
+        // Match serviceData with Docker containers
+        serviceData.forEach(service => {
+          // Find matching Docker container by name
+          const dockerService = containers.find(srv => 
+            srv.Names.toLowerCase().includes(service.service.toLowerCase())
+          );
+          
+          if (dockerService) {
+            // Determine status based on State
+            if (dockerService.State === 'running') {
+              service.status = 'running';
+              service.replicas = { running: 1, desired: 1 };
+            } else if (dockerService.State === 'exited') {
+              service.status = 'offline';
+              service.replicas = { running: 0, desired: 1 };
+            } else {
+              service.status = dockerService.State; // paused, restarting, etc.
+              service.replicas = { running: 0, desired: 1 };
+            }
+          } else {
+            service.status = 'not-found';
+          }
+        });
+      } catch (execError2) {
+          console.error('Docker exec error:', execError1, execError2);
+          // Set all services to unknown status if docker command fails
+          serviceData.forEach(service => {
+            service.status = 'unknown';
+          });
+      }
+      
     }
 
     return serviceData
