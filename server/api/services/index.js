@@ -155,7 +155,13 @@ export default defineEventHandler(async (event) => {
               service.replicas = { running: 0, desired: 1 };
             }
           } else {
-            service.status = 'not-found';
+            // trick for one-off services in basic deploy
+            if(service.service.toLowerCase() === 'loader' || service.service.toLowerCase() === 'workflow') {
+              service.status = 'idle';
+              service.replicas = { running: 0, desired: 0 };
+            } else {
+              service.status = 'not-found';
+            }
           }
         });
       } catch (execError2) {
