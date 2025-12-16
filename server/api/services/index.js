@@ -156,11 +156,13 @@ export default defineEventHandler(async (event) => {
             }
           } else {
             // trick for one-off services in basic deploy
+            service.test = service.service;
             if(service.service.toLowerCase() === 'loader' || service.service.toLowerCase() === 'workflow') {
               service.status = 'idle';
               service.replicas = { running: 0, desired: 0 };
             } else {
               service.status = 'not-found';
+              service.test2 = 'no-match';
             }
           }
         });
