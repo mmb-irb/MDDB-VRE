@@ -1,4 +1,5 @@
 <template>
+  <p style="color:#777;">{{ props.description }}</p>
   <v-text-field
     v-model="refModel[1]"
     :label="props.label"
@@ -9,10 +10,9 @@
     :disabled="!structureId"
     :readonly="true"
     clearable
+    @click:clear="onClear"
   >
-    <template v-slot:append>
-      <form-tooltip :props="{width: 300, text: props.description}" />
-    </template>
+    
   </v-text-field>
   <v-text-field
     v-model="refModel[0]"
@@ -105,6 +105,13 @@
 
   const handleSetView = (s) => {
     viewerRef.value.setView(s)
+  }
+
+  const onClear = () => {
+    refModel.value[0] = null
+    refModel.value[1] = null
+    setMetadata(firstItemModel[0], null)
+    setMetadata(secondItemModel[0], null)
   }
 
 </script>

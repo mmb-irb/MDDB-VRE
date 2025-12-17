@@ -33,7 +33,7 @@ export const schema = {
         additionalProperties: false
       }
     },
-    pdbIds: {
+    pdb_ids: {
       type: ['array', 'null'],
       items: { type: ['string', 'null'], pattern: '^[0-9][A-Za-z0-9]{3}$' }
     },

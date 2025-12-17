@@ -118,8 +118,6 @@ export default defineEventHandler(async (event) => {
       });
 
     } catch (execError1) {
-      //console.error('Docker exec error:', execError1);
-
       // check if basic deploy (no docker services) by running docker ps
       try {
         const { stdout, stderr } = await execAsync("docker ps -a --format '{{json .}}'");

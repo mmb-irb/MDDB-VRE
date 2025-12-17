@@ -68,7 +68,7 @@
         "id": "citation",
         "label": "Write here the citation",
         "section": 0,
-        "type": "rich-textarea",
+        "type": "textarea",
         "rows": 4,
         "description": "Citation for refering this simulation or related paper. The citation is displayed in the overview page.",
         "required": false,
@@ -297,7 +297,7 @@
         "subCols": 6
       },
       {
-        "id": "pdbIds",
+        "id": "pdb_ids",
         "label": "PDB id",
         "section": 0,
         "type": "multiple-input",
@@ -704,11 +704,11 @@
         "label": "PBC Selection",
         "section": 0,
         "type": "ngl-input",
-        "description": "Set those residues which are under periodic boundary conditions (PBC). These residues are excluded from the imaging centering and fitting. Readonly field, click the eyedropper icon to open the selection window.",
+        "description": "Solvent, counter ions and membrane lipids are automatically selected as PBC residues. In case that you want to explicitly define a different set of PBC residues (e.g. crowded environments or simulations with multiple proteins / nucleic acid / ligands floating around), click the eyedropper icon to open the selection window.",
         "required": false,
         "force_null": true,
         "default": null,
-        "cols": 6,
+        "cols": 12,
         "fields": [
           {
             "id": "pbc_selection",

@@ -5,7 +5,7 @@ authors:
   - author name 2
 groups:
   - group name
-citation: <p>text with <strong>citation</strong> </p>
+citation: text with citation
 thanks: aknowledgements
 contact: address@mail.com
 type: trajectory
@@ -20,7 +20,7 @@ links:
     url: http://www.link1.com
   - name: link label 2
     url: http://www.link2.com
-pdbIds:
+pdb_ids:
   - 1aki
   - 3ebp
   - 1bna
@@ -62,8 +62,8 @@ mds:
     mdir: replica_2
     temp: 315
 mdref: 0
-pbc_selection: 45, 70
-pbc_selection_ngl: resid "45" and chain A or resid "70" and chain A
+pbc_selection: resid "45" and chain A or resid "70" and chain A
+pbc_selection_ngl: 45, 70
 interactions:
   - name: Canonical WC
     agent_1: Watson Strand

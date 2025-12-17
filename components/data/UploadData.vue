@@ -209,6 +209,9 @@
     // tricks for avoiding dani's mess with nulls
     if(metadata.ligands === undefined) metadata.ligands = null
     if(metadata.interactions === undefined) metadata.interactions = null
+    // tricks for pbc_selection
+    if(metadata.pbc_selection === null) metadata.pbc_selection = 'auto'
+    if(metadata.pbc_selection_ngl === null || metadata.pbc_selection_ngl === undefined || metadata.pbc_selection_ngl === "") metadata.pbc_selection = 'auto'
     const exceptions = getNullExceptions(fData)
     exceptions.push('linkcense')
     metadata = cleanObjectFields(metadata, exceptions)

@@ -15,6 +15,7 @@
           :disabled="!structureId"
           :readonly="item.id.startsWith('selection_')"
           clearable
+          @click:clear="onClear"
         >
           <template v-slot:append>
             <form-tooltip :props="{width: 300, text: item.description}" />
@@ -179,6 +180,12 @@
 
   const handleSetView = (s) => {
     viewerRef.value.setView(s)
+  }
+
+  const onClear = () => {
+    modelGroup.value[currSel.index][currSel.id] = null
+    modelGroup.value[currSel.index][currSel.id.substring(0, currSel.id.length - 4)] = null
+    setMetadata(props.id, modelGroup.value)
   }
 
 </script>
