@@ -10,6 +10,7 @@
     @update:modelValue="setMetadata(props.id, refModel)"
     control-variant="stacked"
     density="comfortable"
+    :precision="props.decimals !== undefined ? props.decimals : 0"
     inset
   >
     <template v-slot:append>

@@ -464,12 +464,13 @@
         "section": 0,
         "type": "number",
         "min": 1,
-        "step": 1,
+        "step": 0.1,
         "suffix": "fs",
         "description": "Simulation timestep in femtoseconds (fs).",
         "required": false,
         "force_null": true,
         "default": null,
+        "decimals": 1,
         "cols": 6
       },
       {
