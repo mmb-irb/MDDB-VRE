@@ -116,6 +116,8 @@ export default defineNuxtConfig({
       apiKey: process.env.API_KEY,
       urlDev: process.env.URL_DEV,
       hasApiKey: process.env.API_KEY ? true : false,
+      hasUrlDev: process.env.URL_DEV ? true : false,
+      isDev: process.env.API_KEY && process.env.URL_DEV ? true : false,
       services: {
         client: {
           name: "Client",

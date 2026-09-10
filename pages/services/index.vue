@@ -61,7 +61,7 @@
             icon="mdi-cog-clockwise" 
             color="deep-purple-lighten-5" 
             text-color="text-grey-lighten-1" 
-            v-if="data_development.length > 0"
+            v-if="data_development.length > 0 && isDev"
           />
           </v-card-text>
           </div>
@@ -83,7 +83,7 @@
   const data_core = ref([])
   const data_extension = ref([])
   const data_development = ref([])
-  const isDev = config.public.hasApiKey
+  const isDev = config.public.isDev
 
   data_core.value.push({
     service: 'db',
