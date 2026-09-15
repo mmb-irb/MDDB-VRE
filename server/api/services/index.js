@@ -120,7 +120,9 @@ export default defineEventHandler(async (event) => {
     } catch (execError1) {
       // check if basic deploy (no docker services) by running docker ps
       try {
-        const { stdout, stderr } = await execAsync("docker ps -a --format '{{json .}}'");
+
+        const command = process.env.STACK_NAME !="" ? `docker ps -a --filter "label=com.docker.stack.namespace=${process.env.STACK_NAME}" --format '{{json .}}'` : `docker ps -a --format '{{json .}}'`;
+        const { stdout, stderr } = await execAsync(command);
 
         if (stderr) {
           console.error(`stderr: ${stderr}`);
