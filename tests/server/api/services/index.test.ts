@@ -46,15 +46,6 @@ const expectedServicesResponse: ServiceResponse[] = [
     status: "unknown"
   },
   {
-    service: "optimade",
-    name: "OPTIMADE",
-    version: "N/A",
-    latestTag: "N/A",
-    update: "no-repo", 
-    type: "extension",
-    status: "unknown"
-  },
-  {
     service: "rest",
     name: "REST API",
     version: "dev",
@@ -143,12 +134,6 @@ describe('/api/services endpoint logic', () => {
       expect(coreServiceNames).toContain('vre_lite')
     })
 
-    it('should have extension services', () => {
-      const extensionServices = expectedServicesResponse.filter(s => s.type === 'extension')
-      expect(extensionServices.length).toBeGreaterThan(0)
-      expect(extensionServices.some(s => s.service === 'optimade')).toBe(true)
-    })
-
     it('should have development services', () => {
       const devServices = expectedServicesResponse.filter(s => s.type === 'development')
       expect(devServices.length).toBeGreaterThan(0)
@@ -174,7 +159,7 @@ describe('/api/services endpoint logic', () => {
       noRepoServices.forEach(service => {
         expect(service.version).toBe('N/A')
         expect(service.latestTag).toBe('N/A')
-        expect(['minio', 'optimade', 'services_monitor']).toContain(service.service)
+        expect(['minio', 'services_monitor']).toContain(service.service)
       })
     })
 

@@ -175,14 +175,6 @@ export default defineNuxtConfig({
           image: undefined,
           type: "core"
         },
-        optimade: {
-          name: "OPTIMADE",
-          icon: "mdi-hexagon-outline",
-          org: undefined,
-          repo: "no-repo",
-          image: "optimade_image",
-          type: "extension"
-        },
         services_monitor: {
           name: "Services Monitor",
           icon: "mdi-incognito",
