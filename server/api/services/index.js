@@ -1,9 +1,6 @@
 import { connectToDatabase } from '../../utils/db';
 import { compareVersions } from '../../utils/utils';
-import { execFile } from "child_process";
-import { promisify } from 'util';
-
-const execFileAsync = promisify(execFile);
+import { serviceStatus } from '../../utils/status';
 
 export default defineEventHandler(async (event) => {
   try {
@@ -66,113 +63,10 @@ export default defineEventHandler(async (event) => {
 
     serviceData.sort((a, b) => a.service.localeCompare(b.service));
 
-    // Wait for docker service command to complete
-    try {
-      const { stdout, stderr } = await execFileAsync('docker', ['service', 'ls', '--format', '{{json .}}']);
-      
-      if (stderr) {
-        console.error(`stderr: ${stderr}`);
-      }
-
-      // Split output by newlines, filter out empty lines, and parse JSON
-      const containers = stdout
-        .trim()
-        .split("\n")
-        .filter(line => line.length > 0)
-        .map(line => JSON.parse(line));
-
-      // Match serviceData with Docker services and add status based on replicas
-      serviceData.forEach(service => {
-        // Find matching Docker service by partial name match
-        const dockerService = containers.find(srv => 
-          srv.Name.toLowerCase().includes(service.service.toLowerCase())
-        );
-        
-        if (dockerService) {
-          // Extract replicas numbers (e.g., "1/1 (max 1 per node)" -> "1/1")
-          const replicasMatch = dockerService.Replicas.match(/^(\d+)\/(\d+)/);
-          
-          if (replicasMatch) {
-            const running = parseInt(replicasMatch[1]);
-            const desired = parseInt(replicasMatch[2]);
-            
-            // Determine status based on replicas
-            if (running === 0 && desired === 0) {
-              service.status = 'idle';
-            } else if (running === 0 && desired > 0) {
-              service.status = 'offline';
-            } else {
-              service.status = 'running';
-            }
-            
-            // Add replica info
-            service.replicas = {
-              running: running,
-              desired: desired
-            };
-          }
-        } else {
-          // Service not found in Docker services
-          service.status = 'not-found';
-        }
-      });
-
-    } catch (execError1) {
-      // check if basic deploy (no docker services) by running docker ps
-      try {
-
-        const args = process.env.STACK_NAME != "" ? ['ps', '-a', '--filter', `label=com.docker.stack.namespace=${process.env.STACK_NAME}`, '--format', '{{json .}}'] : ['ps', '-a', '--format', '{{json .}}'];
-        const { stdout, stderr } = await execFileAsync('docker', args);
-
-        if (stderr) {
-          console.error(`stderr: ${stderr}`);
-        }
-
-        // Split output by newlines, filter out empty lines, and parse JSON
-        const containers = stdout
-          .trim()
-          .split("\n")
-          .filter(line => line.length > 0)
-          .map(line => JSON.parse(line));
-
-        // Match serviceData with Docker containers
-        serviceData.forEach(service => {
-          // Find matching Docker container by name
-          const dockerService = containers.find(srv => 
-            srv.Names.toLowerCase().includes(service.service.toLowerCase())
-          );
-          
-          if (dockerService) {
-            // Determine status based on State
-            if (dockerService.State === 'running') {
-              service.status = 'running';
-              service.replicas = { running: 1, desired: 1 };
-            } else if (dockerService.State === 'exited') {
-              service.status = 'offline';
-              service.replicas = { running: 0, desired: 1 };
-            } else {
-              service.status = dockerService.State; // paused, restarting, etc.
-              service.replicas = { running: 0, desired: 1 };
-            }
-          } else {
-            // trick for one-off services in basic deploy
-            if(service.service.toLowerCase() === 'loader' || service.service.toLowerCase() === 'workflow') {
-              service.status = 'idle';
-              service.replicas = { running: 0, desired: 0 };
-            } else {
-              service.status = 'not-found';
-            }
-          }
-        });
-      } catch (execError2) {
-          console.error('Docker exec error:', execError1, execError2);
-          // Set all services to unknown status if docker command fails
-          serviceData.forEach(service => {
-            service.status = 'unknown';
-          });
-      }
-      
-    }
+    // Ask each service directly instead of using the Docker socket
+    await Promise.all(serviceData.map(async (service) => {
+      service.status = await serviceStatus(service.service, service.type);
+    }));
 
     return serviceData
 
