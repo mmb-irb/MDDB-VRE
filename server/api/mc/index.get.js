@@ -1,12 +1,15 @@
-import { exec } from 'child_process';
+import { execFile } from 'child_process';
+import { randomUUID } from 'crypto';
 import { promisify } from 'util';
 import { tmpdir } from 'os';
 import { writeFile, unlink } from 'fs/promises';
 import { join } from 'path'; // Import join from path module
 import { logMessage } from '../../utils/log'; 
 import { getCurrentDateString, getExpirationDate } from '../../utils/utils'; 
+import { parseBucket } from '../../utils/validate';
 
-const execPromise = promisify(exec);
+// execFile runs mc without a shell, so no argument can be interpreted as a shell command
+const execFilePromise = promisify(execFile);
 
 export default defineEventHandler(async (event) => {
 
@@ -31,7 +34,7 @@ export default defineEventHandler(async (event) => {
   // Handle query params (GET)
   const query = getQuery(event);
   const date = getCurrentDateString();
-  const bucket = query.bucket;
+  const bucket = parseBucket(query.bucket);
   //const password = generateUniqueId(16);
   const minioURL = config.public.minioURL;
   const minioHost = config.public.minioHost;
@@ -101,14 +104,14 @@ export default defineEventHandler(async (event) => {
     ]
   });
   // Write the JSON string to a temporary file
-  const tempFilePath = join(tmpdir(), `${bucket}-policy.json`);
+  const tempFilePath = join(tmpdir(), `policy-${randomUUID()}.json`);
   await writeFile(tempFilePath, policyJson);
 
   try {
     // Get expiration date
     const expDate = getExpirationDate(config.public.timeDiff);
     // Create MinIO Access Keys
-    const output = await execPromise(`mc admin user svcacct add myminio ${minioUsr} --policy ${tempFilePath} --expiry ${expDate}`);
+    const output = await execFilePromise('mc', ['admin', 'user', 'svcacct', 'add', 'myminio', minioUsr, '--policy', tempFilePath, '--expiry', expDate]);
     // Extract Access Key and Secret Key
     const accessKey = extractKeyValue(output.stdout, 'Access Key');
     const secretKey = extractKeyValue(output.stdout, 'Secret Key');

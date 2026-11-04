@@ -1,9 +1,9 @@
 import { connectToDatabase } from '../../utils/db';
 import { compareVersions } from '../../utils/utils';
-import { exec } from "child_process"; 
+import { execFile } from "child_process";
 import { promisify } from 'util';
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 
 export default defineEventHandler(async (event) => {
   try {
@@ -68,7 +68,7 @@ export default defineEventHandler(async (event) => {
 
     // Wait for docker service command to complete
     try {
-      const { stdout, stderr } = await execAsync("docker service ls --format '{{json .}}'");
+      const { stdout, stderr } = await execFileAsync('docker', ['service', 'ls', '--format', '{{json .}}']);
       
       if (stderr) {
         console.error(`stderr: ${stderr}`);
@@ -121,8 +121,8 @@ export default defineEventHandler(async (event) => {
       // check if basic deploy (no docker services) by running docker ps
       try {
 
-        const command = process.env.STACK_NAME !="" ? `docker ps -a --filter "label=com.docker.stack.namespace=${process.env.STACK_NAME}" --format '{{json .}}'` : `docker ps -a --format '{{json .}}'`;
-        const { stdout, stderr } = await execAsync(command);
+        const args = process.env.STACK_NAME != "" ? ['ps', '-a', '--filter', `label=com.docker.stack.namespace=${process.env.STACK_NAME}`, '--format', '{{json .}}'] : ['ps', '-a', '--format', '{{json .}}'];
+        const { stdout, stderr } = await execFileAsync('docker', args);
 
         if (stderr) {
           console.error(`stderr: ${stderr}`);
