@@ -1,6 +1,7 @@
 import { connectToDatabase } from '../../utils/db';
 import { compareVersions } from '../../utils/utils';
 import { serviceStatus } from '../../utils/status';
+import { runningVersion } from '../../utils/runningVersion';
 
 export default defineEventHandler(async (event) => {
   try {
@@ -18,6 +19,18 @@ export default defineEventHandler(async (event) => {
     const services = config.public.services || [];
     const serviceData = [];
     await Promise.all(versions.map(async (element) => {
+
+      // Prefer the version reported by the running service, and keep the database in step with it
+      // (the database version is still used for services that cannot answer, like loader and workflow)
+      const running = await runningVersion(element.service);
+      if (running && running !== element.version) {
+        await db.collection('version').updateOne(
+          { service: element.service },
+          { $set: { version: running, timestamp: new Date() } }
+        );
+        element.version = running;
+      }
+      const versionSource = running ? 'service' : 'database';
 
       const response = await $fetch(`https://api.github.com/repos/${services[element.service].org}/${services[element.service].repo}/tags`, {
         headers: {
@@ -42,6 +55,7 @@ export default defineEventHandler(async (event) => {
         service: element.service,
         name: services[element.service].name,
         version: element.version,
+        versionSource,
         latestTag: latestTag,
         update: status,
         type: services[element.service].type
