@@ -38,6 +38,14 @@ describe('checkService', () => {
   it('reports not-found when the host name does not exist', async () => {
     expect(await checkService(missingHostUrl)).toBe('not-found')
   }, DNS_TIMEOUT)
+  it('reports not-found when the DNS server does not answer for the name (EAI_AGAIN)', async () => {
+    const noAnswer = async () => { throw Object.assign(new Error('getaddrinfo EAI_AGAIN services_monitor'), { code: 'EAI_AGAIN' }) }
+    expect(await checkService(missingHostUrl, 5000, noAnswer)).toBe('not-found')
+  })
+  it('throws on other lookup errors', async () => {
+    const broken = async () => { throw Object.assign(new Error('boom'), { code: 'EBADNAME' }) }
+    await expect(checkService(missingHostUrl, 5000, broken)).rejects.toThrow('boom')
+  })
 })
 
 describe('serviceStatus', () => {

@@ -13,14 +13,19 @@ export const serviceUrls = (env = process.env) => ({
   services_monitor: `http://services_monitor:${env.SERVICES_MONITOR_API_INNER_PORT || 3001}/`,
 });
 
+// Name lookup errors that mean "this service does not exist in the network".
+// Docker's DNS forwards unknown names to the host's DNS server: most answer ENOTFOUND, but some
+// (e.g. on irb.mddbr.eu) do not answer single-label names at all and the lookup ends in EAI_AGAIN.
+const MISSING_NAME_CODES = ['ENOTFOUND', 'EAI_AGAIN'];
+
 // Returns 'running', 'offline' or 'not-found' (the host name does not exist in the network).
 // Network errors are the expected way to learn that a service is down, so they become a status here.
-export const checkService = async (url, timeoutMs = 5000) => {
+export const checkService = async (url, timeoutMs = 5000, resolve = lookup) => {
   // Resolve the name first: a missing name can take longer than the HTTP timeout to fail
   try {
-    await lookup(new URL(url).hostname);
+    await resolve(new URL(url).hostname);
   } catch (error) {
-    if (error.code === 'ENOTFOUND') return 'not-found';
+    if (MISSING_NAME_CODES.includes(error.code)) return 'not-found';
     throw error;
   }
   try {
